@@ -191,6 +191,6 @@ const handleRemoveSong = (songId: string) => {
 
 const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement
-  target.src = '/covers/playlist-default.jpg'
+  target.style.display = 'none'
 }
 </script>

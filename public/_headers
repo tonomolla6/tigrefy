@@ -1,0 +1,11 @@
+/audio/*.mp3
+  Content-Type: audio/mpeg
+  cache-control: public, max-age=31536000
+
+/covers/*.png
+  Content-Type: image/png
+  cache-control: public, max-age=31536000
+
+/covers/*.jpg
+  Content-Type: image/jpeg
+  cache-control: public, max-age=31536000

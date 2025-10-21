@@ -20,7 +20,7 @@ export const useUserPlaylists = () => {
       id: `user_${Date.now()}`,
       name,
       description,
-      cover: '/covers/playlist-default.jpg',
+      cover: '/covers/airbeat-cecot.png',
       songIds: [],
       public: false,
       collaborative: false,

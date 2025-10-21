@@ -50,6 +50,6 @@ const handlePlay = () => {
 
 const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement
-  target.src = '/covers/default.jpg'
+  target.style.display = 'none'
 }
 </script>
