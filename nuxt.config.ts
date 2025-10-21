@@ -3,6 +3,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
+  // Configuración para Cloudflare Pages
+  ssr: false,
+
   modules: ['@nuxtjs/tailwindcss'],
 
   components: [
@@ -29,5 +32,9 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
       ]
     }
+  },
+
+  nitro: {
+    preset: 'cloudflare-pages'
   }
 })
