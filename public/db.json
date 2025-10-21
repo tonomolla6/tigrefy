@@ -1,0 +1,108 @@
+{
+  "artists": [
+    {
+      "id": "1",
+      "name": "Tigre Number One",
+      "image": "/artists/tigre_number_1.jpg",
+      "followers": 999999,
+      "genres": ["Party", "Electronic", "Urban"],
+      "bio": "El primer tigre del grupo, conocido por su energía inigualable y sus letras directas."
+    },
+    {
+      "id": "2",
+      "name": "Tigre Number Two",
+      "image": "/artists/tiger_number_2.jpg",
+      "followers": 999999,
+      "genres": ["Party", "Electronic", "Urban"],
+      "bio": "El segundo tigre, maestro de las melodías pegajosas y los ritmos que no se olvidan."
+    },
+    {
+      "id": "3",
+      "name": "Tigre Number Three",
+      "image": "/artists/tigre_number_3.jpg",
+      "followers": 999999,
+      "genres": ["Party", "Electronic", "Urban"],
+      "bio": "El tercer tigre, el que siempre sorprende con sus colaboraciones épicas."
+    }
+  ],
+  "albums": [
+    {
+      "id": "1",
+      "title": "Varios 2025",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "cover": "/covers/OMAR_ESTÁ_SOLTERO.png",
+      "releaseDate": "2025-01-01",
+      "totalTracks": 2,
+      "duration": 360,
+      "genres": ["Party", "Urban"]
+    },
+    {
+      "id": "2",
+      "title": "Tigres 2025",
+      "artistId": "2",
+      "artistName": "Tigre Number Two",
+      "cover": "/covers/AIRBEAT_ONE_-_ME_HAN_ENCERRADO_EN_EL_CECÓT.png",
+      "releaseDate": "2025-01-01",
+      "totalTracks": 1,
+      "duration": 210,
+      "genres": ["Electronic", "Festival", "Party"]
+    }
+  ],
+  "songs": [
+    {
+      "id": "1",
+      "title": "Omar Está Soltero (Versión 1)",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "albumId": "1",
+      "albumName": "Varios 2025",
+      "duration": 180,
+      "cover": "/covers/OMAR_ESTÁ_SOLTERO.png",
+      "audioUrl": "/audio/OMAR_ESTÁ_SOLTERO_v1.mp3",
+      "lyrics": "Verso 1\nDe lunes a domingo vive relajado,\ncon copa en la mano, siempre bien parado.\nOmar anda suelto, libre y desatado,\nse folla al mundo entero y nunca está cansado.\n\nEstribillo\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.\n\nVerso 2\nLe cuentan que lo vieron gozando en un callejón,\nque nunca se detiene, que es pura pasión.\nQue no se compromete, que solo es vacilón,\npero él vive la vida con todo el corazón.\n\nEstribillo\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.\n\nPuente\nEn enero hasta marzo la fiesta no termina,\nde abril hasta diciembre la vida lo fascina.\nY cuando cae la noche, siempre tiene adrenalina,\nOmar sigue soltero, que la música lo ilumina.\n\nEstribillo (final)\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.",
+      "plays": 999999,
+      "releaseDate": "2025-01-01"
+    },
+    {
+      "id": "3",
+      "title": "Omar Está Soltero (Versión 2)",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "albumId": "1",
+      "albumName": "Varios 2025",
+      "duration": 180,
+      "cover": "/covers/OMAR_ESTÁ_SOLTERO.png",
+      "audioUrl": "/audio/OMAR_ESTÁ_SOLTERO_v2.mp3",
+      "lyrics": "Verso 1\nDe lunes a domingo vive relajado,\ncon copa en la mano, siempre bien parado.\nOmar anda suelto, libre y desatado,\nse folla al mundo entero y nunca está cansado.\n\nEstribillo\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.\n\nVerso 2\nLe cuentan que lo vieron gozando en un callejón,\nque nunca se detiene, que es pura pasión.\nQue no se compromete, que solo es vacilón,\npero él vive la vida con todo el corazón.\n\nEstribillo\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.\n\nPuente\nEn enero hasta marzo la fiesta no termina,\nde abril hasta diciembre la vida lo fascina.\nY cuando cae la noche, siempre tiene adrenalina,\nOmar sigue soltero, que la música lo ilumina.\n\nEstribillo (final)\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.",
+      "plays": 888888,
+      "releaseDate": "2025-01-01"
+    },
+    {
+      "id": "2",
+      "title": "Encerrado en el CECÓT",
+      "artistId": "2",
+      "artistName": "Tigre Number Two",
+      "albumId": "2",
+      "albumName": "Tigres 2025",
+      "duration": 210,
+      "cover": "/covers/AIRBEAT_ONE_-_ME_HAN_ENCERRADO_EN_EL_CECÓT.png",
+      "audioUrl": "/audio/AIRBEAT_ONE_-_ME_HAN_ENCERRADO_EN_EL_CECÓT.mp3",
+      "lyrics": "[Intro]\nEsta historia empieza… pero sólo acaba en el CECÓT\n\n[Verse 1]\nHoy no dormimos, empieza el festival\nLlaves bajo llave, Wesley no va a fallar\nOmar con la birra, campeón internacional\nAndoni y las colombianas, modo sentimental\nJordi con el carrito, trayendo el arsenal\nCamping de locos, la cabaña es irreal\n\n[Pre-Chorus]\nLa pista se mueve, todos van a saltar\nEl autobús retumba, algo va a estallar\n\n[Chorus]\nEstá a punto de romper\nYa no puedo soportar\nEncerrado otra vez\n¿Quién me viene a rescatar?\n\n[Drop]\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\n\n[Verse 2]\nLas colombianas bailan, Omar admiró\nWesley con la llave, nadie se la quitó\nOmar está listo, la birra ganó\nEl coche sin batería, eso sí que flipó\nJordi va rodando, ritmo de improvisar\nWesley buscando poste, el móvil quiere cargar\nScroll infinito, no puede parar\n\n[Pre-Chorus]\nTigres rugiendo, la fiesta sigue ya\n¿Dónde está Wesley? Nadie sabe dónde está\nGuardando la llave, vuelve a despistar\nSiempre en la sombra, se va a camuflar\n\n[Chorus]\nEstá a punto de romper\nYa no puedo soportar\nEncerrado otra vez\n¿Quién me viene a rescatar?\n\n[Drop]\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\n\n[Outro]\nEl drop se apaga, la noche va a acabar\nPero con los Tigres, el viaje va a durar\nSi me encierran en el CECÓT, siempre volveré a saltar\nEntre risas y roces, juntos vamos a brillar",
+      "plays": 1999999,
+      "releaseDate": "2025-01-01"
+    }
+  ],
+  "playlists": [
+    {
+      "id": "1",
+      "name": "Top Tigres",
+      "description": "Las mejores canciones de Los Tigres",
+      "cover": "/covers/AIRBEAT_ONE_-_ME_HAN_ENCERRADO_EN_EL_CECÓT.png",
+      "songIds": ["2", "1", "3"],
+      "public": true,
+      "collaborative": false,
+      "createdAt": "2025-01-01"
+    }
+  ]
+}
