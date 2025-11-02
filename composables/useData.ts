@@ -82,7 +82,7 @@ export const useData = () => {
   const searchByGenre = (genre: string) => {
     const lowerGenre = genre.toLowerCase()
 
-    // Encontrar artistas y álbums que tienen este género
+    // Encontrar artistas y álbumes que tienen este género
     const matchingArtists = data.value.artists.filter(artist =>
       artist.genres?.some((g: string) => g.toLowerCase() === lowerGenre)
     )
@@ -90,14 +90,27 @@ export const useData = () => {
       album.genres?.some((g: string) => g.toLowerCase() === lowerGenre)
     )
 
-    // Obtener IDs para filtrar canciones
-    const artistIds = matchingArtists.map(a => a.id)
+    // Obtener IDs de álbumes que tienen el género
     const albumIds = matchingAlbums.map(a => a.id)
 
+    // Filtrar canciones: priorizar el género del álbum
+    // Solo incluir por artista si el álbum no tiene géneros definidos
+    const matchingSongs = data.value.songs.filter(song => {
+      // Primero buscar el álbum de la canción
+      const album = data.value.albums.find(a => a.id === song.albumId)
+
+      // Si el álbum tiene géneros, usar solo esos
+      if (album && album.genres && album.genres.length > 0) {
+        return album.genres.some((g: string) => g.toLowerCase() === lowerGenre)
+      }
+
+      // Si el álbum no tiene géneros, usar los del artista
+      const artist = data.value.artists.find(a => a.id === song.artistId)
+      return artist?.genres?.some((g: string) => g.toLowerCase() === lowerGenre)
+    })
+
     return {
-      songs: data.value.songs.filter(song =>
-        artistIds.includes(song.artistId) || albumIds.includes(song.albumId)
-      ),
+      songs: matchingSongs,
       albums: matchingAlbums,
       artists: matchingArtists,
       playlists: []
