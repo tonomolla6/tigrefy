@@ -104,11 +104,15 @@ definePageMeta({
   layout: 'default'
 })
 
-const { data } = useData()
+const { data, searchAll } = useData()
 const { playSong, currentSong, isPlaying, formatTime } = usePlayer()
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 
 const searchQuery = ref('')
+const searchResults = ref<any>(null)
+
+// Debouncing
+let searchTimeout: NodeJS.Timeout | null = null
 
 const allSongs = computed(() => data.value.songs || [])
 
@@ -117,12 +121,12 @@ const filteredSongs = computed(() => {
     return allSongs.value
   }
 
-  const query = searchQuery.value.toLowerCase()
-  return allSongs.value.filter(song =>
-    song.title.toLowerCase().includes(query) ||
-    song.artistName.toLowerCase().includes(query) ||
-    song.albumName.toLowerCase().includes(query)
-  )
+  // Usar resultados del composable si existen
+  if (searchResults.value) {
+    return searchResults.value.songs || []
+  }
+
+  return []
 })
 
 const isCurrentSong = (song: any) => currentSong.value?.id === song.id
@@ -146,4 +150,20 @@ const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement
   target.style.display = 'none'
 }
+
+// Watch para búsqueda con debouncing
+watch(searchQuery, (newQuery) => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
+  if (!newQuery.trim()) {
+    searchResults.value = null
+    return
+  }
+
+  searchTimeout = setTimeout(() => {
+    searchResults.value = searchAll(newQuery.trim())
+  }, 300) // Debounce de 300ms
+})
 </script>

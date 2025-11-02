@@ -17,14 +17,28 @@
       </div>
 
       <!-- Contenido de playlists -->
-      <div v-if="activeTab === 'playlists'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        <PlaylistCard v-for="playlist in allPlaylists" :key="playlist.id" :playlist="playlist" />
-        <div
-          @click="handleCreatePlaylist"
-          class="bg-dark-highlight p-4 rounded-lg cursor-pointer hover:bg-dark-press transition-colors flex flex-col items-center justify-center aspect-square"
-        >
-          <IconPlus :size="48" class="text-secondary mb-2" />
-          <p class="font-semibold">Crear playlist</p>
+      <div v-if="activeTab === 'playlists'">
+        <div v-if="allPlaylists.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <PlaylistCard v-for="playlist in allPlaylists" :key="playlist.id" :playlist="playlist" />
+          <div
+            @click="isCreateModalOpen = true"
+            class="bg-dark-highlight p-4 rounded-lg cursor-pointer hover:bg-dark-press transition-colors flex flex-col items-center justify-center aspect-square"
+          >
+            <IconPlus :size="48" class="text-secondary mb-2" />
+            <p class="font-semibold">Crear playlist</p>
+          </div>
+        </div>
+        <div v-else class="text-center py-16 max-w-md mx-auto">
+          <div class="mb-6">
+            <IconLibrary :size="64" class="text-secondary mx-auto opacity-50" />
+          </div>
+          <h3 class="text-2xl font-bold mb-2">Crea tu primera playlist</h3>
+          <p class="text-secondary mb-6">
+            Las playlists te permiten organizar tus canciones favoritas como tú quieras. Crea una ahora y empieza a añadir música.
+          </p>
+          <button @click="isCreateModalOpen = true" class="btn-tiger">
+            Crear playlist
+          </button>
         </div>
       </div>
 
@@ -54,6 +68,13 @@
         </div>
       </div>
     </div>
+
+    <!-- Create Playlist Modal -->
+    <CreatePlaylistModal
+      :isOpen="isCreateModalOpen"
+      @close="isCreateModalOpen = false"
+      @create="handleCreatePlaylist"
+    />
   </div>
 </template>
 
@@ -67,6 +88,7 @@ const { userPlaylists, createPlaylist } = useUserPlaylists()
 const { favoriteAlbums, favoriteArtists } = useFavorites()
 
 const activeTab = ref('playlists')
+const isCreateModalOpen = ref(false)
 
 const tabs = [
   { id: 'playlists', label: 'Playlists' },
@@ -86,11 +108,8 @@ const favoriteArtistsList = computed(() => {
   return favoriteArtists.value.map(id => getArtistById(id)).filter(Boolean)
 })
 
-const handleCreatePlaylist = () => {
-  const name = prompt('Nombre de la playlist:')
-  if (name) {
-    const newPlaylist = createPlaylist(name, 'Mi playlist')
-    navigateTo(`/playlist/${newPlaylist.id}`)
-  }
+const handleCreatePlaylist = (name: string, description: string, cover: string) => {
+  const newPlaylist = createPlaylist(name, description, cover)
+  navigateTo(`/playlist/${newPlaylist.id}`)
 }
 </script>

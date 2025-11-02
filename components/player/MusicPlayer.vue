@@ -1,18 +1,9 @@
 <template>
-  <div class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-gradient-to-t from-black via-gray-950 to-gray-900 border-t border-gray-800 z-50 shadow-2xl">
-    <!-- Mensaje cuando no hay canción -->
-    <div v-if="!currentSong" class="px-4 md:px-6 py-4 md:py-5 text-center">
-      <p class="text-gray-400 text-sm">
-        Selecciona una canción para comenzar a reproducir
-      </p>
-    </div>
-
-    <!-- Reproductor cuando hay canción -->
-    <div v-else>
-      <div class="px-3 md:px-6 py-3 md:py-4">
-        <div class="flex items-center justify-between gap-3 md:gap-6">
-          <!-- Info de la canción (izquierda) -->
-          <div class="flex items-center gap-3 md:gap-4 flex-1 min-w-0 md:w-[30%]">
+  <div v-if="currentSong" class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-gradient-to-t from-black via-gray-950 to-gray-900 border-t border-gray-800 z-50 shadow-2xl">
+    <div class="px-3 md:px-6 py-3 md:py-4">
+      <div class="flex items-center justify-between gap-3 md:gap-6">
+        <!-- Info de la canción (izquierda) -->
+        <div class="flex items-center gap-3 md:gap-4 flex-1 min-w-0 md:w-[30%]">
             <img
               v-if="currentSong.cover"
               :src="currentSong.cover"
@@ -116,6 +107,13 @@
           <!-- Controles de volumen y extras (derecha) -->
           <div class="hidden md:flex items-center gap-4 flex-1 justify-end md:w-[30%]">
             <button
+              @click="showAddToPlaylistModal = true"
+              class="text-gray-400 hover:text-white transition-all hover:scale-110"
+              title="Añadir a playlist"
+            >
+              <IconPlus :size="22" />
+            </button>
+            <button
               v-if="currentSong.lyrics"
               @click="toggleLyrics"
               class="text-gray-400 hover:text-white transition-all text-sm font-semibold whitespace-nowrap hover:scale-105 px-3 py-1.5 rounded-full border border-gray-700 hover:border-tiger-500"
@@ -215,6 +213,13 @@
                 <span class="text-[10px] font-medium">Repetir</span>
               </button>
               <button
+                @click="showAddToPlaylistModal = true"
+                class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-white transition-all"
+              >
+                <IconPlus :size="22" />
+                <span class="text-[10px] font-medium">Añadir</span>
+              </button>
+              <button
                 @click="toggleFavoriteSong(currentSong.id)"
                 class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-white transition-all"
                 :class="{'text-tiger-500': isFavoriteSong(currentSong.id)}"
@@ -272,8 +277,17 @@
             </div>
           </div>
         </transition>
-      </div>
     </div>
+
+    <!-- Add to Playlist Modal -->
+    <AddToPlaylistModal
+      v-if="currentSong"
+      :isOpen="showAddToPlaylistModal"
+      :songId="currentSong.id"
+      :songTitle="currentSong.title"
+      @close="showAddToPlaylistModal = false"
+      @createNew="handleCreateNewPlaylist"
+    />
   </div>
 </template>
 
@@ -302,6 +316,12 @@ const {
 
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 const showMobileMenu = ref(false)
+const showAddToPlaylistModal = ref(false)
+
+const handleCreateNewPlaylist = () => {
+  // Navigate to library page which has create playlist functionality
+  navigateTo('/library')
+}
 
 const volumeLevel = computed(() => {
   if (isMuted.value || volume.value === 0) return 'mute'

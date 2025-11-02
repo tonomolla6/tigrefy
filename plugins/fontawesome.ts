@@ -17,7 +17,11 @@ import {
   faArrowLeft,
   faEllipsisVertical,
   faXmark,
-  faMusic
+  faMusic,
+  faGlassCheers,
+  faBolt,
+  faMicrophone,
+  faFlag
 } from '@fortawesome/free-solid-svg-icons'
 
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons'
@@ -44,7 +48,11 @@ library.add(
   faArrowLeft,
   faEllipsisVertical,
   faXmark,
-  faMusic
+  faMusic,
+  faGlassCheers,
+  faBolt,
+  faMicrophone,
+  faFlag
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

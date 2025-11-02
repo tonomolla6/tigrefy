@@ -29,7 +29,8 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Tigrefy - Tu app de música favorita' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+        { rel: 'apple-touch-icon', href: '/favicon.png' }
       ]
     }
   },

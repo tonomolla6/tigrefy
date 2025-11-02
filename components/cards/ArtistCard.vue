@@ -16,7 +16,12 @@
         </button>
       </div>
       <h3 class="font-bold text-primary truncate mb-1">{{ artist.name }}</h3>
-      <p class="text-sm text-secondary truncate">Artista</p>
+      <div class="flex items-center gap-2">
+        <p class="text-sm text-secondary truncate">Artista</p>
+        <span v-if="artist.genres && artist.genres.length > 0" class="text-xs px-2 py-0.5 bg-tiger-500/20 text-tiger-400 rounded-full">
+          {{ artist.genres[0] }}
+        </span>
+      </div>
     </div>
   </NuxtLink>
 </template>

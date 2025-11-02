@@ -51,21 +51,128 @@ export const useData = () => {
   const searchAll = (query: string) => {
     const lowerQuery = query.toLowerCase()
     return {
-      songs: data.value.songs.filter(song =>
-        song.title.toLowerCase().includes(lowerQuery) ||
-        song.artistName.toLowerCase().includes(lowerQuery)
-      ),
-      albums: data.value.albums.filter(album =>
-        album.title.toLowerCase().includes(lowerQuery) ||
-        album.artistName.toLowerCase().includes(lowerQuery)
-      ),
-      artists: data.value.artists.filter(artist =>
-        artist.name.toLowerCase().includes(lowerQuery)
-      ),
+      songs: data.value.songs.filter(song => {
+        const matchTitle = song.title.toLowerCase().includes(lowerQuery)
+        const matchArtist = song.artistName.toLowerCase().includes(lowerQuery)
+        const matchAlbum = song.albumName?.toLowerCase().includes(lowerQuery)
+        const matchLyrics = song.lyrics?.toLowerCase().includes(lowerQuery)
+        return matchTitle || matchArtist || matchAlbum || matchLyrics
+      }),
+      albums: data.value.albums.filter(album => {
+        const matchTitle = album.title.toLowerCase().includes(lowerQuery)
+        const matchArtist = album.artistName.toLowerCase().includes(lowerQuery)
+        const matchGenres = album.genres?.some((genre: string) =>
+          genre.toLowerCase().includes(lowerQuery)
+        )
+        return matchTitle || matchArtist || matchGenres
+      }),
+      artists: data.value.artists.filter(artist => {
+        const matchName = artist.name.toLowerCase().includes(lowerQuery)
+        const matchGenres = artist.genres?.some((genre: string) =>
+          genre.toLowerCase().includes(lowerQuery)
+        )
+        return matchName || matchGenres
+      }),
       playlists: data.value.playlists.filter(playlist =>
         playlist.name.toLowerCase().includes(lowerQuery)
       )
     }
+  }
+
+  const searchByGenre = (genre: string) => {
+    const lowerGenre = genre.toLowerCase()
+
+    // Encontrar artistas y álbums que tienen este género
+    const matchingArtists = data.value.artists.filter(artist =>
+      artist.genres?.some((g: string) => g.toLowerCase() === lowerGenre)
+    )
+    const matchingAlbums = data.value.albums.filter(album =>
+      album.genres?.some((g: string) => g.toLowerCase() === lowerGenre)
+    )
+
+    // Obtener IDs para filtrar canciones
+    const artistIds = matchingArtists.map(a => a.id)
+    const albumIds = matchingAlbums.map(a => a.id)
+
+    return {
+      songs: data.value.songs.filter(song =>
+        artistIds.includes(song.artistId) || albumIds.includes(song.albumId)
+      ),
+      albums: matchingAlbums,
+      artists: matchingArtists,
+      playlists: []
+    }
+  }
+
+  interface AdvancedFilters {
+    genres?: string[]
+    yearFrom?: number
+    yearTo?: number
+    durationRange?: 'short' | 'medium' | 'long' // <3min, 3-5min, >5min
+  }
+
+  const applyAdvancedFilters = (results: any, filters: AdvancedFilters) => {
+    let filteredResults = { ...results }
+
+    // Filtrar por géneros (si se especifican)
+    if (filters.genres && filters.genres.length > 0) {
+      const lowerGenres = filters.genres.map(g => g.toLowerCase())
+
+      filteredResults.songs = results.songs.filter((song: any) => {
+        const album = data.value.albums.find(a => a.id === song.albumId)
+        const artist = data.value.artists.find(a => a.id === song.artistId)
+        const songGenres = [
+          ...(album?.genres || []),
+          ...(artist?.genres || [])
+        ].map(g => g.toLowerCase())
+        return lowerGenres.some(fg => songGenres.includes(fg))
+      })
+
+      filteredResults.albums = results.albums.filter((album: any) =>
+        album.genres?.some((g: string) =>
+          lowerGenres.includes(g.toLowerCase())
+        )
+      )
+
+      filteredResults.artists = results.artists.filter((artist: any) =>
+        artist.genres?.some((g: string) =>
+          lowerGenres.includes(g.toLowerCase())
+        )
+      )
+    }
+
+    // Filtrar por rango de años
+    if (filters.yearFrom || filters.yearTo) {
+      const filterByYear = (item: any) => {
+        if (!item.releaseDate) return false
+        const year = new Date(item.releaseDate).getFullYear()
+        if (filters.yearFrom && year < filters.yearFrom) return false
+        if (filters.yearTo && year > filters.yearTo) return false
+        return true
+      }
+
+      filteredResults.songs = filteredResults.songs.filter(filterByYear)
+      filteredResults.albums = filteredResults.albums.filter(filterByYear)
+    }
+
+    // Filtrar por duración (solo para canciones)
+    if (filters.durationRange) {
+      filteredResults.songs = filteredResults.songs.filter((song: any) => {
+        const durationInMinutes = song.duration / 60
+        switch (filters.durationRange) {
+          case 'short':
+            return durationInMinutes < 3
+          case 'medium':
+            return durationInMinutes >= 3 && durationInMinutes <= 5
+          case 'long':
+            return durationInMinutes > 5
+          default:
+            return true
+        }
+      })
+    }
+
+    return filteredResults
   }
 
   return {
@@ -79,6 +186,8 @@ export const useData = () => {
     getAlbumsByArtistId,
     getSongsByArtistId,
     getSongsByIds,
-    searchAll
+    searchAll,
+    searchByGenre,
+    applyAdvancedFilters
   }
 }

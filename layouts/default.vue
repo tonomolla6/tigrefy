@@ -18,15 +18,20 @@
 
     <!-- Modal Global -->
     <Modal />
+
+    <!-- Toast Notifications -->
+    <ToastContainer />
   </div>
 </template>
 
 <script setup lang="ts">
 const { loadData } = useData()
 const { loadFavorites } = useFavorites()
+const { loadUserPlaylists } = useUserPlaylists()
 
 onMounted(async () => {
   await loadData()
   loadFavorites()
+  loadUserPlaylists()
 })
 </script>

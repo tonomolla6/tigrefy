@@ -20,12 +20,12 @@
       </NuxtLink>
 
       <NuxtLink
-        to="/artists"
+        to="/library"
         class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors"
-        :class="isActive('/artists') ? 'text-tiger-500' : 'text-secondary'"
+        :class="isActive('/library') ? 'text-tiger-500' : 'text-secondary'"
       >
-        <font-awesome-icon :icon="['fas', 'music']" class="text-xl" />
-        <span class="text-xs font-medium">Artistas</span>
+        <IconLibrary :size="24" />
+        <span class="text-xs font-medium">Biblioteca</span>
       </NuxtLink>
 
       <NuxtLink

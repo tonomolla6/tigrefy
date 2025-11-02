@@ -3,8 +3,8 @@
     <!-- Logo -->
     <div class="p-6">
       <NuxtLink to="/" class="flex items-center gap-2">
-        <div class="w-10 h-10 bg-tiger-500 rounded-full flex items-center justify-center">
-          <span class="text-2xl font-bold">T</span>
+        <div class="w-10 h-10 flex items-center justify-center">
+          <img src="/favicon.png" alt="Tigrefy" class="w-10 h-10" />
         </div>
         <span class="text-2xl font-bold">Tigrefy</span>
       </NuxtLink>
@@ -51,6 +51,16 @@
           >
             <IconSearch :size="24" />
             <span class="font-semibold">Buscar</span>
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink
+            to="/library"
+            class="sidebar-link"
+            :class="{ 'active': isActive('/library') }"
+          >
+            <IconLibrary :size="24" />
+            <span class="font-semibold">Tu Biblioteca</span>
           </NuxtLink>
         </li>
       </ul>

@@ -15,12 +15,12 @@ export const useUserPlaylists = () => {
     localStorage.setItem('tigrefy_user_playlists', JSON.stringify(userPlaylists.value))
   }
 
-  const createPlaylist = (name: string, description: string = '') => {
+  const createPlaylist = (name: string, description: string = '', cover: string = '/covers/airbeat-cecot.png') => {
     const newPlaylist = {
       id: `user_${Date.now()}`,
       name,
       description,
-      cover: '/covers/airbeat-cecot.png',
+      cover,
       songIds: [],
       public: false,
       collaborative: false,
@@ -41,12 +41,14 @@ export const useUserPlaylists = () => {
     }
   }
 
-  const addSongToPlaylist = (playlistId: string, songId: string) => {
+  const addSongToPlaylist = (playlistId: string, songId: string): boolean => {
     const playlist = userPlaylists.value.find(p => p.id === playlistId)
     if (playlist && !playlist.songIds.includes(songId)) {
       playlist.songIds.push(songId)
       saveUserPlaylists()
+      return true
     }
+    return false
   }
 
   const removeSongFromPlaylist = (playlistId: string, songId: string) => {
@@ -68,6 +70,14 @@ export const useUserPlaylists = () => {
     }
   }
 
+  const reorderPlaylistSongs = (playlistId: string, newSongIds: string[]) => {
+    const playlist = userPlaylists.value.find(p => p.id === playlistId)
+    if (playlist) {
+      playlist.songIds = newSongIds
+      saveUserPlaylists()
+    }
+  }
+
   return {
     userPlaylists,
     loadUserPlaylists,
@@ -75,6 +85,7 @@ export const useUserPlaylists = () => {
     deletePlaylist,
     addSongToPlaylist,
     removeSongFromPlaylist,
-    updatePlaylist
+    updatePlaylist,
+    reorderPlaylistSongs
   }
 }

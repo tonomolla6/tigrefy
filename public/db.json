@@ -33,8 +33,8 @@
       "artistName": "Tigre Number Three",
       "cover": "/covers/omar-soltero.png",
       "releaseDate": "2025-01-01",
-      "totalTracks": 2,
-      "duration": 360,
+      "totalTracks": 3,
+      "duration": 540,
       "genres": ["Party", "Urban"]
     },
     {
@@ -62,7 +62,7 @@
       "audioUrl": "/audio/omar-soltero-v1.mp3",
       "lyrics": "Verso 1\nDe lunes a domingo vive relajado,\ncon copa en la mano, siempre bien parado.\nOmar anda suelto, libre y desatado,\nse folla al mundo entero y nunca está cansado.\n\nEstribillo\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.\n\nVerso 2\nLe cuentan que lo vieron gozando en un callejón,\nque nunca se detiene, que es pura pasión.\nQue no se compromete, que solo es vacilón,\npero él vive la vida con todo el corazón.\n\nEstribillo\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.\n\nPuente\nEn enero hasta marzo la fiesta no termina,\nde abril hasta diciembre la vida lo fascina.\nY cuando cae la noche, siempre tiene adrenalina,\nOmar sigue soltero, que la música lo ilumina.\n\nEstribillo (final)\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.",
       "plays": 999999,
-      "releaseDate": "2025-01-01"
+      "releaseDate": "2025-10-15"
     },
     {
       "id": "3",
@@ -76,7 +76,7 @@
       "audioUrl": "/audio/omar-soltero-v2.mp3",
       "lyrics": "Verso 1\nDe lunes a domingo vive relajado,\ncon copa en la mano, siempre bien parado.\nOmar anda suelto, libre y desatado,\nse folla al mundo entero y nunca está cansado.\n\nEstribillo\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.\n\nVerso 2\nLe cuentan que lo vieron gozando en un callejón,\nque nunca se detiene, que es pura pasión.\nQue no se compromete, que solo es vacilón,\npero él vive la vida con todo el corazón.\n\nEstribillo\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.\n\nPuente\nEn enero hasta marzo la fiesta no termina,\nde abril hasta diciembre la vida lo fascina.\nY cuando cae la noche, siempre tiene adrenalina,\nOmar sigue soltero, que la música lo ilumina.\n\nEstribillo (final)\nOmar está soltero, se folla al mundo entero,\nno importa mujer que venga,\npa' que sepas que es sincero.\nComo un caballero, se juega la vida en el juego,\nOmar está soltero, se folla al mundo entero.",
       "plays": 888888,
-      "releaseDate": "2025-01-01"
+      "releaseDate": "2025-10-15"
     },
     {
       "id": "2",
@@ -90,7 +90,21 @@
       "audioUrl": "/audio/airbeat-cecot.mp3",
       "lyrics": "[Intro]\nEsta historia empieza… pero sólo acaba en el CECÓT\n\n[Verse 1]\nHoy no dormimos, empieza el festival\nLlaves bajo llave, Wesley no va a fallar\nOmar con la birra, campeón internacional\nAndoni y las colombianas, modo sentimental\nJordi con el carrito, trayendo el arsenal\nCamping de locos, la cabaña es irreal\n\n[Pre-Chorus]\nLa pista se mueve, todos van a saltar\nEl autobús retumba, algo va a estallar\n\n[Chorus]\nEstá a punto de romper\nYa no puedo soportar\nEncerrado otra vez\n¿Quién me viene a rescatar?\n\n[Drop]\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\n\n[Verse 2]\nLas colombianas bailan, Omar admiró\nWesley con la llave, nadie se la quitó\nOmar está listo, la birra ganó\nEl coche sin batería, eso sí que flipó\nJordi va rodando, ritmo de improvisar\nWesley buscando poste, el móvil quiere cargar\nScroll infinito, no puede parar\n\n[Pre-Chorus]\nTigres rugiendo, la fiesta sigue ya\n¿Dónde está Wesley? Nadie sabe dónde está\nGuardando la llave, vuelve a despistar\nSiempre en la sombra, se va a camuflar\n\n[Chorus]\nEstá a punto de romper\nYa no puedo soportar\nEncerrado otra vez\n¿Quién me viene a rescatar?\n\n[Drop]\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\nME HAN ENCERRADO EN EL CECÓT\n\n[Outro]\nEl drop se apaga, la noche va a acabar\nPero con los Tigres, el viaje va a durar\nSi me encierran en el CECÓT, siempre volveré a saltar\nEntre risas y roces, juntos vamos a brillar",
       "plays": 1999999,
-      "releaseDate": "2025-01-01"
+      "releaseDate": "2025-10-20"
+    },
+    {
+      "id": "4",
+      "title": "Omar en Altura",
+      "artistId": "3",
+      "artistName": "Tigre Number Three",
+      "albumId": "1",
+      "albumName": "Varios 2025",
+      "duration": 180,
+      "cover": "/covers/omar-en-altura.jpg",
+      "audioUrl": "/audio/omar-en-altura.mp3",
+      "lyrics": "[Intro]\nEsto vamo' a arrancarlo con altura\nJavalambre, dos mil metros de locura\nTono y Omar en esquís, preparados\nJordi y su hermano con snow en las manos\n\n[Verse 1]\nLlegamo' a la estación con emoción\nTono y Omar listos pa' la acción\nPrimera pista verde, qué bonito\nBajamo' juntos, chill, tranquilito\n\nOmar contento, sonriendo, feliz\nSu primer descenso, ¡dale, adelante, vé!\nJordi y su hermano haciendo tricks en la nieve\nPero nosotros en esquís, ¡mira qué se mueve!\n\n[Pre-Chorus]\nCongelado en la altura (¡Con altura!)\nEmocionado en la aventura (¡Con altura!)\nDel chill al remonte, ¡vamo'!\nDicen: \"Que suba, que suba, que suba\"\n\n[Chorus]\nDe chill al remonte, fue la locura (¡Con altura!)\nSe empotró Omar, ¡perdió toda la cordura! (¡Con altura!)\nDe lado empotrado, ¡sin compostura! (¡Con altura!)\n¡De Javalambre a Valdelinares, la aventura! (¡Con altura!)\n\nDe chill al remonte, fue la locura (¡Con altura!)\nSe empotró Omar, ¡perdió toda la cordura! (¡Con altura!)\n\n[Verse 2]\nLlegamo' arriba y dice Omar \"no freno\"\nArranca hacia abajo, ¡ay, mira, qué escenario!\nInclinado de lado, sin saber cómo frenar\n¡Directo a la valla, se va a empotrar!\n\nSe pone de lado, Omar tira la cabeza\nContra la valla de madera, ¡qué belleza!\nSe quedó clavado, hermano, de costado\n¡Como un clavo en la madera, de lado!\n\nUna chica lo ayuda, lo socorre con fe\nDe Javalambre hacia Valdelinares, ¡dale, vé!\nPero Omar sigue fuerte, no renuncia, ¡va!\nBaja su primera azul en 50 horas, ¡ya!\n\nEl vídeo queda, la foto quedó\n¡Omar empotrado, eso es lo mejor!\n\n[Pre-Chorus]\nCongelado en la altura (¡Con altura!)\nDe lado en esa aventura (¡Con altura!)\nDel remonte a la valla (¡Viene!)\n¡Se empotró, se empotró, ¡se empotró!\n\n[Chorus]\nDe chill al remonte, fue la locura (¡Con altura!)\nSe empotró Omar, ¡perdió toda la cordura! (¡Con altura!)\nDe lado empotrado, ¡sin compostura! (¡Con altura!)\n¡De Javalambre a Valdelinares, la aventura! (¡Con altura!)\n\nDe chill al remonte, fue la locura (¡Con altura!)\nSe empotró Omar, ¡perdió toda la cordura! (¡Con altura!)\n\n[Bridge]\nJordi en el snow, haciendo su cosa\nSu hermano también, ¡mira qué cosa!\nTono en esquís, bajando bien fuerte\nOmar aprendiendo, ¡dale, que no muere!\n\nEsa primera pista, ¡qué bonito fue!\nEsa azul después, ¡Omar lo logró, vé!\nLa gente ayudando, la chica que vio\nDe Javalambre a Valdelinares, ¡eso pasó!\n\nTodos juntos, la nieve cayendo\n¡De Teruel, con altura, vamo' a dejarlo en cuento!\n\n[Chorus] [Energy climax - Full group]\nDe chill al remonte, fue la locura (¡Con altura!)\nSe empotró Omar, ¡perdió toda la cordura! (¡Con altura!)\nDe lado empotrado, ¡sin compostura! (¡Con altura!)\n¡De Javalambre a Valdelinares, la aventura! (¡Con altura!)\n\nDe chill al remonte, fue la locura (¡Con altura!)\nSe empotró Omar, ¡perdió toda la cordura! (¡Con altura!)\n\n[Outro] [Fade con viento/nieve]\nCon altura, con altura\nOmar en altura, eh\nJavalambre a Valdelinares\nDe Teruel, esto vamo' a dejarlo pa' la historia",
+      "plays": 999999,
+      "releaseDate": "2025-11-02"
     }
   ],
   "playlists": [
@@ -99,7 +113,7 @@
       "name": "Top Tigres",
       "description": "Las mejores canciones de Los Tigres",
       "cover": "/covers/airbeat-cecot.png",
-      "songIds": ["2", "1", "3"],
+      "songIds": ["2", "1", "3", "4"],
       "public": true,
       "collaborative": false,
       "createdAt": "2025-01-01"

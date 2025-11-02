@@ -6,6 +6,16 @@
   body {
     @apply bg-dark-base text-primary;
   }
+
+  /* Evitar imágenes estiradas: reglas globales para preservar proporciones
+     Las utilidades de Tailwind (object-cover / aspect-*) siguen aplicándose
+     cuando se usan explícitamente en los elementos. */
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    image-rendering: auto;
+  }
 }
 
 @layer components {
@@ -89,6 +99,6 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]:focus::-webkit-slider-thumb {
-  outline: 3px solid #f97316;
+  outline: 3px solid #627d98;
   outline-offset: 0.125rem;
 }
