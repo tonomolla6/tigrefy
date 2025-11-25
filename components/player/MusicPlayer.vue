@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentSong" class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-gradient-to-t from-black via-gray-950 to-gray-900 border-t border-gray-800 z-50 shadow-2xl">
+  <div v-if="currentSong" class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-dark-base border-t border-dark-card z-50 shadow-2xl">
     <div class="px-3 md:px-6 py-3 md:py-4">
       <div class="flex items-center justify-between gap-3 md:gap-6">
         <!-- Info de la canción (izquierda) -->
@@ -8,20 +8,20 @@
               v-if="currentSong.cover"
               :src="currentSong.cover"
               :alt="currentSong.title"
-              class="w-14 h-14 md:w-16 md:h-16 rounded-lg shadow-xl object-cover flex-shrink-0 border border-gray-800"
+              class="w-14 h-14 md:w-16 md:h-16 rounded-lg shadow-xl object-cover flex-shrink-0 border border-dark-card"
               @error="handleImageError"
             />
             <div class="flex-1 min-w-0">
               <h4 class="text-sm md:text-base font-bold text-white truncate hover:underline cursor-pointer">
                 {{ currentSong.title }}
               </h4>
-              <p class="text-xs md:text-sm text-gray-400 truncate hover:text-white hover:underline cursor-pointer transition-colors">
+              <p class="text-xs md:text-sm text-secondary truncate hover:text-white hover:underline cursor-pointer transition-colors">
                 {{ currentSong.artistName }}
               </p>
             </div>
             <button
               @click="toggleFavoriteSong(currentSong.id)"
-              class="hidden md:block text-gray-400 hover:text-tiger-500 transition-all flex-shrink-0 hover:scale-110"
+              class="hidden md:block text-secondary hover:text-tiger-500 transition-all flex-shrink-0 hover:scale-110"
             >
               <IconHeart :size="22" :filled="isFavoriteSong(currentSong.id)" :class="{'text-tiger-500': isFavoriteSong(currentSong.id)}" />
             </button>
@@ -32,7 +32,7 @@
             <div class="flex items-center gap-3 md:gap-6">
               <button
                 @click="toggleShuffle"
-                class="hidden md:block text-gray-400 hover:text-white transition-all hover:scale-110"
+                class="hidden md:block text-secondary hover:text-white transition-all hover:scale-110"
                 :class="{'text-tiger-500 hover:text-tiger-400': isShuffled}"
                 title="Aleatorio"
               >
@@ -40,7 +40,7 @@
               </button>
               <button
                 @click="previousSong"
-                class="text-gray-400 hover:text-white transition-all hover:scale-110"
+                class="text-secondary hover:text-white transition-all hover:scale-110"
                 title="Anterior"
               >
                 <IconSkipBack :size="22" class="md:hidden" />
@@ -62,7 +62,7 @@
               </button>
               <button
                 @click="nextSong"
-                class="text-gray-400 hover:text-white transition-all hover:scale-110"
+                class="text-secondary hover:text-white transition-all hover:scale-110"
                 title="Siguiente"
               >
                 <IconSkipForward :size="22" class="md:hidden" />
@@ -70,7 +70,7 @@
               </button>
               <button
                 @click="toggleRepeat"
-                class="hidden md:block text-gray-400 hover:text-white transition-all hover:scale-110"
+                class="hidden md:block text-secondary hover:text-white transition-all hover:scale-110"
                 :class="{'text-tiger-500 hover:text-tiger-400': repeatMode !== 'off'}"
                 :title="repeatMode === 'off' ? 'Repetir' : repeatMode === 'all' ? 'Repetir todo' : 'Repetir una'"
               >
@@ -80,11 +80,11 @@
 
             <!-- Barra de progreso -->
             <div class="hidden md:flex items-center gap-2 w-full max-w-2xl">
-              <span class="text-xs text-gray-400 font-medium min-w-[40px] text-right">
+              <span class="text-xs text-secondary font-medium min-w-[40px] text-right">
                 {{ formatTime(currentTime) }}
               </span>
               <div class="relative flex-1 group">
-                <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
+                <div class="h-1 bg-dark-card rounded-full overflow-hidden">
                   <div 
                     class="h-full bg-white group-hover:bg-tiger-500 transition-colors"
                     :style="{ width: progressPercentage + '%' }"
@@ -98,7 +98,7 @@
                   class="absolute inset-0 w-full opacity-0 cursor-pointer"
                 />
               </div>
-              <span class="text-xs text-gray-400 font-medium min-w-[40px]">
+              <span class="text-xs text-secondary font-medium min-w-[40px]">
                 {{ formatTime(duration) }}
               </span>
             </div>
@@ -108,7 +108,7 @@
           <div class="hidden md:flex items-center gap-4 flex-1 justify-end md:w-[30%]">
             <button
               @click="showAddToPlaylistModal = true"
-              class="text-gray-400 hover:text-white transition-all hover:scale-110"
+              class="text-secondary hover:text-white transition-all hover:scale-110"
               title="Añadir a playlist"
             >
               <IconPlus :size="22" />
@@ -116,7 +116,7 @@
             <button
               v-if="currentSong.lyrics"
               @click="toggleLyrics"
-              class="text-gray-400 hover:text-white transition-all text-sm font-semibold whitespace-nowrap hover:scale-105 px-3 py-1.5 rounded-full border border-gray-700 hover:border-tiger-500"
+              class="text-secondary hover:text-white transition-all text-sm font-semibold whitespace-nowrap hover:scale-105 px-3 py-1.5 rounded-full border border-dark-card hover:border-tiger-500"
               :class="{'text-white border-tiger-500 bg-tiger-500/20': showLyrics}"
             >
               <span class="hidden lg:inline">Letras</span>
@@ -125,12 +125,12 @@
             <div class="flex items-center gap-2 group">
               <button
                 @click="toggleMute"
-                class="text-gray-400 hover:text-white transition-all hover:scale-110"
+                class="text-secondary hover:text-white transition-all hover:scale-110"
               >
                 <IconVolume :size="22" :level="volumeLevel" />
               </button>
               <div class="relative w-24 lg:w-32">
-                <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
+                <div class="h-1 bg-dark-card rounded-full overflow-hidden">
                   <div 
                     class="h-full bg-white group-hover:bg-tiger-500 transition-colors"
                     :style="{ width: (volume * 100) + '%' }"
@@ -152,7 +152,7 @@
           <!-- Botón menú móvil -->
           <button
             @click="showMobileMenu = !showMobileMenu"
-            class="md:hidden text-gray-400 hover:text-white transition-colors p-2"
+            class="md:hidden text-secondary hover:text-white transition-colors p-2"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="1" fill="currentColor" />
@@ -165,7 +165,7 @@
         <!-- Barra de progreso móvil -->
         <div class="md:hidden mt-3">
           <div class="relative group">
-            <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
+            <div class="h-1 bg-dark-card rounded-full overflow-hidden">
               <div 
                 class="h-full bg-white transition-all"
                 :style="{ width: progressPercentage + '%' }"
@@ -179,7 +179,7 @@
               class="absolute inset-0 w-full opacity-0 cursor-pointer"
             />
           </div>
-          <div class="flex justify-between text-xs text-gray-400 font-medium mt-1.5 px-0.5">
+          <div class="flex justify-between text-xs text-secondary font-medium mt-1.5 px-0.5">
             <span>{{ formatTime(currentTime) }}</span>
             <span>{{ formatTime(duration) }}</span>
           </div>
@@ -194,11 +194,11 @@
           enter-to-class="opacity-100 max-h-40"
           leave-from-class="opacity-100 max-h-40"
         >
-          <div v-if="showMobileMenu" class="md:hidden mt-4 pt-4 border-t border-gray-800">
+          <div v-if="showMobileMenu" class="md:hidden mt-4 pt-4 border-t border-dark-card">
             <div class="flex items-center justify-around mb-3">
               <button
                 @click="toggleShuffle"
-                class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-white transition-all"
+                class="flex flex-col items-center gap-1 p-2 text-secondary hover:text-white transition-all"
                 :class="{'text-tiger-500': isShuffled}"
               >
                 <IconShuffle :size="22" />
@@ -206,7 +206,7 @@
               </button>
               <button
                 @click="toggleRepeat"
-                class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-white transition-all"
+                class="flex flex-col items-center gap-1 p-2 text-secondary hover:text-white transition-all"
                 :class="{'text-tiger-500': repeatMode !== 'off'}"
               >
                 <IconRepeat :size="22" :mode="repeatMode" />
@@ -214,14 +214,14 @@
               </button>
               <button
                 @click="showAddToPlaylistModal = true"
-                class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-white transition-all"
+                class="flex flex-col items-center gap-1 p-2 text-secondary hover:text-white transition-all"
               >
                 <IconPlus :size="22" />
                 <span class="text-[10px] font-medium">Añadir</span>
               </button>
               <button
                 @click="toggleFavoriteSong(currentSong.id)"
-                class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-white transition-all"
+                class="flex flex-col items-center gap-1 p-2 text-secondary hover:text-white transition-all"
                 :class="{'text-tiger-500': isFavoriteSong(currentSong.id)}"
               >
                 <IconHeart :size="22" :filled="isFavoriteSong(currentSong.id)" />
@@ -230,7 +230,7 @@
               <button
                 v-if="currentSong.lyrics"
                 @click="toggleLyrics"
-                class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-white transition-all"
+                class="flex flex-col items-center gap-1 p-2 text-secondary hover:text-white transition-all"
                 :class="{'text-tiger-500': showLyrics}"
               >
                 <span class="text-xl">🎵</span>
@@ -249,19 +249,19 @@
           enter-to-class="max-h-80 md:max-h-96 opacity-100"
           leave-from-class="max-h-80 md:max-h-96 opacity-100"
         >
-          <div v-if="showLyrics && currentSong.lyrics" class="border-t border-gray-800 mt-4">
-            <div class="px-4 md:px-6 py-4 md:py-6 max-h-80 md:max-h-96 overflow-y-auto custom-scrollbar bg-gradient-to-b from-gray-900/50 to-transparent">
+          <div v-if="showLyrics && currentSong.lyrics" class="border-t border-dark-card mt-4">
+            <div class="px-4 md:px-6 py-4 md:py-6 max-h-80 md:max-h-96 overflow-y-auto custom-scrollbar bg-dark-elevated/50">
               <div class="flex items-center justify-between mb-4">
                 <div>
                   <h3 class="text-base md:text-xl font-bold text-white flex items-center gap-2">
                     <span class="text-2xl">🎵</span>
                     Letra
                   </h3>
-                  <p class="text-xs md:text-sm text-gray-400 mt-1">{{ currentSong.title }}</p>
+                  <p class="text-xs md:text-sm text-secondary mt-1">{{ currentSong.title }}</p>
                 </div>
                 <button 
                   @click="toggleLyrics" 
-                  class="text-gray-400 hover:text-white hover:bg-gray-800 p-2 rounded-full transition-all"
+                  class="text-secondary hover:text-white hover:bg-dark-card p-2 rounded-full transition-all"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -270,7 +270,7 @@
                 </button>
               </div>
               <div class="prose prose-invert max-w-none">
-                <p class="text-gray-300 whitespace-pre-line text-sm md:text-base leading-relaxed md:leading-loose">
+                <p class="text-secondary whitespace-pre-line text-sm md:text-base leading-relaxed md:leading-loose">
                   {{ currentSong.lyrics }}
                 </p>
               </div>
