@@ -34,7 +34,7 @@
       "cover": "/covers/tigres-2025.png",
       "releaseDate": "2025-01-01",
       "totalTracks": 5,
-      "duration": 990,
+      "duration": 931,
       "genres": ["Party", "Electronic", "Urban", "Festival"]
     },
     {
@@ -89,7 +89,7 @@
       "cover": "/covers/tigres-en-ibiza.png",
       "releaseDate": "2025-11-25",
       "totalTracks": 1,
-      "duration": 240,
+      "duration": 159,
       "genres": ["Electronic", "Party"]
     }
   ],
