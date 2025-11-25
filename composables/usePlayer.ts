@@ -13,6 +13,7 @@ export const usePlayer = () => {
   const queue = useState<any[]>('queue', () => [])
   const queueIndex = useState('queueIndex', () => 0)
   const showLyrics = useState('showLyrics', () => false)
+  const showNowPlaying = useState('showNowPlaying', () => false)
 
   const initAudio = () => {
     if (typeof window === 'undefined') return
@@ -209,6 +210,10 @@ export const usePlayer = () => {
     showLyrics.value = !showLyrics.value
   }
 
+  const toggleNowPlaying = () => {
+    showNowPlaying.value = !showNowPlaying.value
+  }
+
   const formatTime = (seconds: number) => {
     if (!seconds || isNaN(seconds)) return '0:00'
     const mins = Math.floor(seconds / 60)
@@ -228,6 +233,7 @@ export const usePlayer = () => {
     queue,
     queueIndex,
     showLyrics,
+    showNowPlaying,
     playSong,
     togglePlay,
     pause,
@@ -240,6 +246,7 @@ export const usePlayer = () => {
     toggleShuffle,
     toggleRepeat,
     toggleLyrics,
+    toggleNowPlaying,
     formatTime
   }
 }

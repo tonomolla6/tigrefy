@@ -131,7 +131,7 @@
               </button>
               <div class="relative w-24 lg:w-32">
                 <div class="h-1 bg-dark-card rounded-full overflow-hidden">
-                  <div 
+                  <div
                     class="h-full bg-white group-hover:bg-tiger-500 transition-colors"
                     :style="{ width: (volume * 100) + '%' }"
                   ></div>
@@ -147,6 +147,19 @@
                 />
               </div>
             </div>
+            <!-- Botón Now Playing Sidebar -->
+            <button
+              @click="toggleNowPlaying"
+              class="text-secondary hover:text-white transition-all hover:scale-110 p-2 rounded-lg"
+              :class="{'text-tiger-500 bg-tiger-500/20': showNowPlaying}"
+              title="Ver detalles de la canción"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="18" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+              </svg>
+            </button>
           </div>
 
           <!-- Botón menú móvil -->
@@ -236,6 +249,18 @@
                 <span class="text-xl">🎵</span>
                 <span class="text-[10px] font-medium">Letras</span>
               </button>
+              <button
+                @click="toggleNowPlaying"
+                class="flex flex-col items-center gap-1 p-2 text-secondary hover:text-white transition-all"
+                :class="{'text-tiger-500': showNowPlaying}"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1"/>
+                  <rect x="14" y="3" width="7" height="18" rx="1"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                <span class="text-[10px] font-medium">Info</span>
+              </button>
             </div>
           </div>
         </transition>
@@ -302,6 +327,7 @@ const {
   isShuffled,
   repeatMode,
   showLyrics,
+  showNowPlaying,
   togglePlay,
   previousSong,
   nextSong,
@@ -311,6 +337,7 @@ const {
   toggleShuffle,
   toggleRepeat,
   toggleLyrics,
+  toggleNowPlaying,
   formatTime
 } = usePlayer()
 
