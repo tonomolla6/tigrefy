@@ -34,17 +34,19 @@ npm run generate
 **Global Audio Singleton**: The player uses a single `HTMLAudioElement` instance (`globalAudioElement` in `composables/usePlayer.ts:2`) shared across the entire app to prevent multiple audio instances from playing simultaneously.
 
 **State Management**: Uses Nuxt's `useState` for global reactive state. Key composables:
-- `useData.ts` - Loads and queries `db.json` data
+- `useData.ts` - Loads and queries `db.json` data with search and filter functions
 - `usePlayer.ts` - Manages audio playback, queue, and player controls
 - `useFavorites.ts` - Manages favorites persisted to localStorage with `tigrefy_favorite_*` keys
-- `useModal.ts` - Controls modal visibility
-- `useUserPlaylists.ts` - Manages user-created playlists
+- `useModal.ts` - Controls modal visibility (alert, confirm, prompt)
+- `useUserPlaylists.ts` - Manages user-created playlists stored in localStorage
+- `useSearchHistory.ts` - Manages search history with `tigrefy_search_history` localStorage key
+- `useToast.ts` - Toast notification system for user feedback
 
 ### Component Structure
 
 - `components/player/` - Music player UI and controls
 - `components/sidebar/` - Navigation sidebar
-- `components/cards/` - Album/song card components
+- `components/cards/` - Album/song/artist/playlist card components
 - `components/ui/` - Reusable UI elements (icons, modals)
 
 ### Pages
@@ -52,8 +54,11 @@ npm run generate
 - `pages/index.vue` - Home page with featured content
 - `pages/albums.vue` - Album grid view
 - `pages/songs.vue` - Song list with search
-- `pages/liked-songs.vue` - Favorite songs
+- `pages/search.vue` - Advanced search with genre filtering and search history
+- `pages/library.vue` - User library with playlists, favorite albums and artists tabs
 - `pages/album/[id].vue` - Individual album view with track list
+- `pages/artist/[id].vue` - Artist profile with albums and songs
+- `pages/playlist/[id].vue` - Playlist view with editable songs
 
 ### Styling
 
@@ -102,6 +107,13 @@ Favorites are stored in localStorage with these keys:
 - `tigrefy_favorite_playlists`
 
 Load favorites on app mount using `useFavorites().loadFavorites()`.
+
+### User Playlists
+
+User-created playlists are stored separately from `db.json` in localStorage:
+- Key: `tigrefy_user_playlists`
+- IDs are prefixed with `user_` followed by timestamp (e.g., `user_1699123456789`)
+- Have `isUserCreated: true` flag to distinguish from predefined playlists
 
 ### Deployment Configuration
 
