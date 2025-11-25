@@ -8,8 +8,8 @@
       leave-to-class="opacity-0"
     >
       <div
-        v-if="showNowPlaying && currentSong && isMobile"
-        class="fixed inset-0 z-[60] bg-dark-base flex flex-col"
+        v-if="showNowPlaying && currentSong"
+        class="md:hidden fixed inset-0 z-[60] bg-dark-base flex flex-col"
       >
         <!-- Header -->
         <div class="flex items-center justify-between p-4 border-b border-gray-800">
@@ -70,7 +70,7 @@
     leave-from-class="w-80 opacity-100"
   >
     <aside
-      v-if="showNowPlaying && currentSong && !isMobile"
+      v-if="showNowPlaying && currentSong"
       class="hidden md:flex w-80 bg-dark-lighter flex-col h-full border-l border-gray-800 overflow-hidden"
     >
       <!-- Header -->
@@ -126,26 +126,6 @@
 
 <script setup lang="ts">
 const { currentSong, showNowPlaying, toggleNowPlaying } = usePlayer()
-
-// Detectar si es móvil
-const isMobile = ref(false)
-
-const checkMobile = () => {
-  if (typeof window !== 'undefined') {
-    isMobile.value = window.innerWidth < 768
-  }
-}
-
-onMounted(() => {
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
-})
-
-onUnmounted(() => {
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('resize', checkMobile)
-  }
-})
 </script>
 
 <style scoped>
