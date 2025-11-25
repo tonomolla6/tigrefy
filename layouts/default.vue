@@ -5,7 +5,7 @@
       <MainSidebar />
 
       <!-- Contenido principal -->
-      <main class="flex-1 overflow-y-auto pb-36 md:pb-28">
+      <main class="flex-1 min-w-0 overflow-y-auto pb-36 md:pb-28">
         <slot />
       </main>
 
