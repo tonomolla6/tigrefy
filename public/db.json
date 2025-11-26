@@ -83,7 +83,7 @@
     },
     {
       "id": "single-ibiza",
-      "title": "Tigres en Ibiza - Single",
+      "title": "Ibiza Vibra - Single",
       "artistId": "1",
       "artistName": "Tigre Number One",
       "cover": "/covers/ibiza-vibra.png",
@@ -174,11 +174,11 @@
     },
     {
       "id": "5",
-      "title": "Tigres en Ibiza",
+      "title": "Ibiza Vibra",
       "artistId": "1",
       "artistName": "Tigre Number One",
       "albumId": "single-ibiza",
-      "albumName": "Tigres en Ibiza - Single",
+      "albumName": "Ibiza Vibra - Single",
       "duration": 159,
       "cover": "/covers/ibiza-vibra.png",
       "audioUrl": "/audio/ibiza-vibra.mp3",
