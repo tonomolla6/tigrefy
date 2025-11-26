@@ -33,8 +33,8 @@
       "artistName": "Los Tigres",
       "cover": "/covers/tigres-2025.png",
       "releaseDate": "2025-01-01",
-      "totalTracks": 5,
-      "duration": 931,
+      "totalTracks": 6,
+      "duration": 1111,
       "genres": ["Party", "Electronic", "Urban", "Festival"]
     },
     {
@@ -91,6 +91,17 @@
       "totalTracks": 1,
       "duration": 159,
       "genres": ["Electronic", "Party"]
+    },
+    {
+      "id": "single-operacion-calzoncillo",
+      "title": "Operación Calzoncillo - Single",
+      "artistId": "2",
+      "artistName": "Tigre Number Two",
+      "cover": "/covers/operacion-calzoncillo.png",
+      "releaseDate": "2025-11-26",
+      "totalTracks": 1,
+      "duration": 180,
+      "genres": ["Party", "Electronic", "Urban"]
     }
   ],
   "songs": [
@@ -165,6 +176,20 @@
       "releaseDate": "2025-11-25"
     },
     {
+      "id": "6",
+      "title": "Operación Calzoncillo",
+      "artistId": "2",
+      "artistName": "Tigre Number Two",
+      "albumId": "single-operacion-calzoncillo",
+      "albumName": "Operación Calzoncillo - Single",
+      "duration": 180,
+      "cover": "/covers/operacion-calzoncillo.png",
+      "audioUrl": "/audio/operacion-calzoncillo.mp3",
+      "lyrics": "",
+      "plays": 0,
+      "releaseDate": "2025-11-26"
+    },
+    {
       "id": "1-album",
       "title": "Omar Está Soltero (Versión 1)",
       "artistId": "3",
@@ -232,6 +257,20 @@
       "audioUrl": "/audio/tigres-en-ibiza.mp3",
       "lyrics": "[INTRO]\nCinco panas rumbo a Ibiza, los tigres han llegado…\n\n[VERSE 1]\nSalimos de Alicante, Tono al volante…\nAndoni con sangría de cuarenta pavos…\nLluvia, cuesta, coche patinando, flexiones en los charcos…\n\n[HOOK]\nIbiza vibra, los tigres rugiendo,\nvino y póker, el sol naciendo.\nDel ferry al Hï, seguimos bebiendo,\nsi suena la música, nunca volvemos.\n\n[VERSE 2]\nTantra, Omar bailando con un guiri,\npóker en la mesa, risas y brillo.\nWesley trabajando, la noche divina,\nlos tigres rugen, pura gasolina.\n\n[DROP]\nLos tigres rugen, rugen, rugen,\nsangría, póker, vino y luces.\nLos tigres rugen, rugen, rugen,\nHigh Ibiza, nadie los cruce.\n\n[VERSE 3]\nExploran montaña, GoPro encendida,\ndiscoteca en ruinas, playa escondida.\nCangrejos en cala, Tono asustado,\nRafa grabando, Omar sumergido.\n\n[BRIDGE]\n\"¿Cuánto vale tu outfit?\" — vacile total,\nrelojes de Omar, brillos falsos, real.\nLos tigres preparados para brillar,\nla isla retumba, van a quemar.\n\n[HOOK - FINAL]\nIbiza vibra, los tigres rugiendo,\ncinco panas, verano perfecto.\nDel ferry al Hï, seguimos riendo,\nsi suena la música, nunca volvemos.\n\n[OUTRO]\nDe vuelta al ferry, póker y viento,\nWesley en el curro, final perfecto.\nLos tigres rugen, rugen eterno.",
       "plays": 999999,
+      "releaseDate": "2025-01-01"
+    },
+    {
+      "id": "6-album",
+      "title": "Operación Calzoncillo",
+      "artistId": "2",
+      "artistName": "Tigre Number Two",
+      "albumId": "1",
+      "albumName": "Tigres 2025",
+      "duration": 180,
+      "cover": "/covers/tigres-2025.png",
+      "audioUrl": "/audio/operacion-calzoncillo.mp3",
+      "lyrics": "",
+      "plays": 0,
       "releaseDate": "2025-01-01"
     }
   ],
