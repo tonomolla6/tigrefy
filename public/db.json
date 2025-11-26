@@ -34,7 +34,7 @@
       "cover": "/covers/tigres-2025.png",
       "releaseDate": "2025-01-01",
       "totalTracks": 6,
-      "duration": 1111,
+      "duration": 1106,
       "genres": ["Party", "Electronic", "Urban", "Festival"]
     },
     {
@@ -100,7 +100,7 @@
       "cover": "/covers/operacion-calzoncillo.png",
       "releaseDate": "2025-11-26",
       "totalTracks": 1,
-      "duration": 180,
+      "duration": 175,
       "genres": ["Party", "Electronic", "Urban"]
     }
   ],
@@ -182,7 +182,7 @@
       "artistName": "Tigre Number Two",
       "albumId": "single-operacion-calzoncillo",
       "albumName": "Operación Calzoncillo - Single",
-      "duration": 180,
+      "duration": 175,
       "cover": "/covers/operacion-calzoncillo.png",
       "audioUrl": "/audio/operacion-calzoncillo.mp3",
       "lyrics": "",
@@ -266,7 +266,7 @@
       "artistName": "Tigre Number Two",
       "albumId": "1",
       "albumName": "Tigres 2025",
-      "duration": 180,
+      "duration": 175,
       "cover": "/covers/tigres-2025.png",
       "audioUrl": "/audio/operacion-calzoncillo.mp3",
       "lyrics": "",
