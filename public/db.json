@@ -33,8 +33,8 @@
       "artistName": "Los Tigres",
       "cover": "/covers/tigres-2025.png",
       "releaseDate": "2025-01-01",
-      "totalTracks": 6,
-      "duration": 1106,
+      "totalTracks": 7,
+      "duration": 1307,
       "genres": ["Party", "Electronic", "Urban", "Festival"]
     },
     {
@@ -102,6 +102,17 @@
       "totalTracks": 1,
       "duration": 175,
       "genres": ["Party", "Electronic", "Urban"]
+    },
+    {
+      "id": "single-corazon-de-tigre",
+      "title": "Corazón de Tigre - Single",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "cover": "/covers/corazon-de-tigre.png",
+      "releaseDate": "2025-11-27",
+      "totalTracks": 1,
+      "duration": 201,
+      "genres": ["Party", "Urban", "Sports"]
     }
   ],
   "songs": [
@@ -190,6 +201,20 @@
       "releaseDate": "2025-11-26"
     },
     {
+      "id": "7",
+      "title": "Corazón de Tigre",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "albumId": "single-corazon-de-tigre",
+      "albumName": "Corazón de Tigre - Single",
+      "duration": 201,
+      "cover": "/covers/corazon-de-tigre.png",
+      "audioUrl": "/audio/corazon-de-tigre.mp3",
+      "lyrics": "Veinticuatro horas, sudor y gloria,\nen Dolores nace nuestra historia.\nOcho fieras bajo el sol ardiente,\nsomos los Tigres… ¡la ley de la gente!\n\nAndoni armó la tropa pa' jugar en el pueblo,\ncamisetas Beply, nos sobraba el celo.\nPrimer partido tarde, diez y media la noche,\nnos cae un vendaval… pero dimos buen broche.\n\nEllos quince cracks venidos casi de Catar,\ny nosotros resistiendo sin dejar de pelear.\nHasta que Andoni metió el pase legendario,\nel balón se fue a Cuenca… ¡momento milenario!\n\nNos clavan caño y gol —\"¡Cambio ya!\" gritó el jefe—,\nal banquillo trotandito, pero el alma nunca cede.\nPorque somos Tigres, fuertes y valientes…\nno perdimos por tanto, ¡y lo gritamos sonrientes!\n\nSomos los Tigres, rugiendo en Dolores,\ncon ampollas, risas y sudores.\nSi caemos, siempre es hacia adelante,\nque el corazón del Tigre nunca se rompe.\nTono delantero tanque, Omar regate elegante…\ny si perdemos hoy, ¡mañana más gigantes!\n\nA las cuatro y veinte llegó el desmadre,\ncontra la peña del barrio, con todo el pueblo de madre.\nLa grada encendida, fiesta alrededor,\ny nosotros metiendo goles con sabor.\n\nColombianos brindando, puro ritmo en la grada,\nmientras otros dormían regados por la sala.\nLa madre de Omar, santa entre los santos,\npaella pa' los Tigres… y se nos fueron los llantos.\n\nOnce de la mañana, sol cayendo a plomo,\nOmar con el pie roto, pero dándolo todo.\nTono con costilla rota, firme en la batalla,\ny aún así los Tigres… ¡nadie nos falla!\n\nPasamos de fase con honor de guerrero,\na las cinco otra vez, luchando en el calor severo.\nSe nos fue por un pelo, la copa en un suspiro,\npero no perdimos cielo… ¡ni el rugido del destino!\n\nAndoni cabreado porque el rival se tiraba,\npero el espíritu Tigre jamás se apagaba.\nSangre, sudor, familia en cada choque,\ny juramos regresar… ¡el año que viene a por el trofeote!\n\nSomos los Tigres, rugiendo en Dolores,\ncon ampollas, risas y sudores.\nSi caemos, siempre es hacia adelante,\nque el corazón del Tigre nunca se rompe.\nTono delantero tanque, Omar regate elegante…\ny si perdemos hoy, ¡mañana más gigantes!\n\nCuando cae la noche y se apaga el ruido,\nqueda el orgullo Tigre, siempre encendido.\nDolores fue testigo de nuestra entrega sincera,\nde cómo un equipo pequeño se vuelve leyenda entera.\n\nBrindamos por el sueño, por cada gol y caída,\npor la hermandad que nos dio nueva vida.\nY aunque el torneo termine, jamás muere la fiera…\nporque los Tigres vuelven, más fuertes que cualquiera.",
+      "plays": 0,
+      "releaseDate": "2025-11-27"
+    },
+    {
       "id": "1-album",
       "title": "Omar Está Soltero (Versión 1)",
       "artistId": "3",
@@ -272,6 +297,20 @@
       "lyrics": "[INTRO]\n¡Y esto es El equipo tigrinho y las mamitas!\n¡Tono, Omar, Andoni, Paula, Vicky!\n¡Venga esa rumba acelerá!\n¡Ria-pitinga-y a!\n\n[VERSE 1]\nLlegamos al pisito con la moral muy alta\nPara quemar la noche, que el ritmo no falta.\nTodos juntos decimos \"¡Paula, saca la magia!\",\nPero está en Alicante y a esta hay que matarla.\n\nY aquí Tono y Andoni salvaron la jugada\nSacaron la cachimba y se acabó la bajada.\n¡Que ruele ese humo, aunque no haya mamada!\nTosiendo como perros, menuda humareada.\n\n[PRE-CHORUS]\nFuimos a comprar al súper, cargaditos de ilusión,\nPensando que había bebida para todo el batallón.\nPero aquí en Benidorm, el tiempo corre deprisa...\n¡Y con lo que vino luego, me quitó hasta la camisa!\n\n[CHORUS]\n¡AYYYY BENIDORM! ¡TERRITORIO COMANCHE!\nDonde la noche lía y aquí no hay quien nos enganche.\nRompimos hasta el piso, aquí no hubo chance\n¡El equipo completo! ¡Menudo cachibache!\n\n[VERSE 2]\nAquí el problema fue Andoni, que él no bebe, ¡él absorbe!\nTraga como un camello, ¡se bajó todo el orbe!\nA las doce sin aviso, ¡alerta roja general!\nMe tocó la misión chunga, la gran bajada fatal.\n\nBajando al pakistaní en calzoncillos y chancletas,\nAndo me tiró la ropa, casi le meto hasta su vieja\n¡Tigre dame bebida, rapidito por favor!\nY nos fuimos pa'rriba cargaditos de licor\n\n[CHORUS]\n¡AYYYY BENIDORM! ¡TERRITORIO COMANCHE!\nDonde la noche lía y aquí no hay quien nos enganche.\nRompimos hasta el piso, aquí no hubo chance\n¡El equipo completo! ¡Menudo cachibache!\n\n[BRIDGE] [¡Sube la trompeta! ¡Que nos vamos de la casa al bar!]\nEn el bar de españoles, ¡cantando los temones!\nDándolo todo a gritos, con nuestros dos cojones\nLo malo fue los guiris, ¡menudos maricones!\nSon unos gilipollas, vaya panda de cabrones\n\nEl suelo bien pegao ¡bien!, como esta canción,\nLos guiris to' borrachos, ¡tiraos tos por el rincón!\nCaminando de lao y como gambas al sol,\n¡Nos vamos ya de aquí o perdemos el control!\n\n[CHORUS - FINAL]\n¡AYYYY BENIDORM! ¡TERRITORIO COMANCHE!\nDonde la noche lía y aquí no hay quien nos enganche.\nRompimos hasta el piso, aquí no hubo chance\n¡El equipo completo! ¡Menudo cachibache!\n\n[OUTRO]\n¡Vaya cuadro! ¡Andoni, suelta la botella!\n¡Omar, ponte los pantalones! ¡Paula, la próxima vez apunta!\n¡Benidorm... VOLVEREMOS!\n(Trompetazo final y risas)",
       "plays": 0,
       "releaseDate": "2025-01-01"
+    },
+    {
+      "id": "7-album",
+      "title": "Corazón de Tigre",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "albumId": "1",
+      "albumName": "Tigres 2025",
+      "duration": 201,
+      "cover": "/covers/tigres-2025.png",
+      "audioUrl": "/audio/corazon-de-tigre.mp3",
+      "lyrics": "Veinticuatro horas, sudor y gloria,\nen Dolores nace nuestra historia.\nOcho fieras bajo el sol ardiente,\nsomos los Tigres… ¡la ley de la gente!\n\nAndoni armó la tropa pa' jugar en el pueblo,\ncamisetas Beply, nos sobraba el celo.\nPrimer partido tarde, diez y media la noche,\nnos cae un vendaval… pero dimos buen broche.\n\nEllos quince cracks venidos casi de Catar,\ny nosotros resistiendo sin dejar de pelear.\nHasta que Andoni metió el pase legendario,\nel balón se fue a Cuenca… ¡momento milenario!\n\nNos clavan caño y gol —\"¡Cambio ya!\" gritó el jefe—,\nal banquillo trotandito, pero el alma nunca cede.\nPorque somos Tigres, fuertes y valientes…\nno perdimos por tanto, ¡y lo gritamos sonrientes!\n\nSomos los Tigres, rugiendo en Dolores,\ncon ampollas, risas y sudores.\nSi caemos, siempre es hacia adelante,\nque el corazón del Tigre nunca se rompe.\nTono delantero tanque, Omar regate elegante…\ny si perdemos hoy, ¡mañana más gigantes!\n\nA las cuatro y veinte llegó el desmadre,\ncontra la peña del barrio, con todo el pueblo de madre.\nLa grada encendida, fiesta alrededor,\ny nosotros metiendo goles con sabor.\n\nColombianos brindando, puro ritmo en la grada,\nmientras otros dormían regados por la sala.\nLa madre de Omar, santa entre los santos,\npaella pa' los Tigres… y se nos fueron los llantos.\n\nOnce de la mañana, sol cayendo a plomo,\nOmar con el pie roto, pero dándolo todo.\nTono con costilla rota, firme en la batalla,\ny aún así los Tigres… ¡nadie nos falla!\n\nPasamos de fase con honor de guerrero,\na las cinco otra vez, luchando en el calor severo.\nSe nos fue por un pelo, la copa en un suspiro,\npero no perdimos cielo… ¡ni el rugido del destino!\n\nAndoni cabreado porque el rival se tiraba,\npero el espíritu Tigre jamás se apagaba.\nSangre, sudor, familia en cada choque,\ny juramos regresar… ¡el año que viene a por el trofeote!\n\nSomos los Tigres, rugiendo en Dolores,\ncon ampollas, risas y sudores.\nSi caemos, siempre es hacia adelante,\nque el corazón del Tigre nunca se rompe.\nTono delantero tanque, Omar regate elegante…\ny si perdemos hoy, ¡mañana más gigantes!\n\nCuando cae la noche y se apaga el ruido,\nqueda el orgullo Tigre, siempre encendido.\nDolores fue testigo de nuestra entrega sincera,\nde cómo un equipo pequeño se vuelve leyenda entera.\n\nBrindamos por el sueño, por cada gol y caída,\npor la hermandad que nos dio nueva vida.\nY aunque el torneo termine, jamás muere la fiera…\nporque los Tigres vuelven, más fuertes que cualquiera.",
+      "plays": 0,
+      "releaseDate": "2025-01-01"
     }
   ],
   "playlists": [
@@ -280,7 +319,7 @@
       "name": "Top Tigres",
       "description": "Las mejores canciones de Los Tigres",
       "cover": "/covers/tigres-2025.png",
-      "songIds": ["2", "1", "3", "4", "5"],
+      "songIds": ["2", "1", "3", "4", "5", "6", "7"],
       "public": true,
       "collaborative": false,
       "createdAt": "2025-01-01"
