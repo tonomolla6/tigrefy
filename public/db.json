@@ -23,6 +23,14 @@
       "followers": 999999,
       "genres": ["Party", "Electronic", "Urban"],
       "bio": "El tercer tigre, el que siempre sorprende con sus colaboraciones épicas."
+    },
+    {
+      "id": "4",
+      "name": "El Equipo Tigrinho",
+      "image": "/artists/equipo_tigrinho.jpg",
+      "followers": 999999,
+      "genres": ["Techno", "Electronic", "Minimal", "Hard Techno"],
+      "bio": "Ando, Tono, Omar. El sonido más primitivo y poderoso. Solo existe un lenguaje: BOF."
     }
   ],
   "albums": [
@@ -102,6 +110,17 @@
       "totalTracks": 1,
       "duration": 175,
       "genres": ["Party", "Electronic", "Urban"]
+    },
+    {
+      "id": "album-bof",
+      "title": "BOF",
+      "artistId": "4",
+      "artistName": "El Equipo Tigrinho",
+      "cover": "/covers/bof-album.png",
+      "releaseDate": "2025-11-28",
+      "totalTracks": 1,
+      "duration": 240,
+      "genres": ["Techno", "Hard Techno", "Minimal", "Industrial"]
     }
   ],
   "songs": [
@@ -272,6 +291,20 @@
       "lyrics": "[INTRO]\n¡Y esto es El equipo tigrinho y las mamitas!\n¡Tono, Omar, Andoni, Paula, Vicky!\n¡Venga esa rumba acelerá!\n¡Ria-pitinga-y a!\n\n[VERSE 1]\nLlegamos al pisito con la moral muy alta\nPara quemar la noche, que el ritmo no falta.\nTodos juntos decimos \"¡Paula, saca la magia!\",\nPero está en Alicante y a esta hay que matarla.\n\nY aquí Tono y Andoni salvaron la jugada\nSacaron la cachimba y se acabó la bajada.\n¡Que ruele ese humo, aunque no haya mamada!\nTosiendo como perros, menuda humareada.\n\n[PRE-CHORUS]\nFuimos a comprar al súper, cargaditos de ilusión,\nPensando que había bebida para todo el batallón.\nPero aquí en Benidorm, el tiempo corre deprisa...\n¡Y con lo que vino luego, me quitó hasta la camisa!\n\n[CHORUS]\n¡AYYYY BENIDORM! ¡TERRITORIO COMANCHE!\nDonde la noche lía y aquí no hay quien nos enganche.\nRompimos hasta el piso, aquí no hubo chance\n¡El equipo completo! ¡Menudo cachibache!\n\n[VERSE 2]\nAquí el problema fue Andoni, que él no bebe, ¡él absorbe!\nTraga como un camello, ¡se bajó todo el orbe!\nA las doce sin aviso, ¡alerta roja general!\nMe tocó la misión chunga, la gran bajada fatal.\n\nBajando al pakistaní en calzoncillos y chancletas,\nAndo me tiró la ropa, casi le meto hasta su vieja\n¡Tigre dame bebida, rapidito por favor!\nY nos fuimos pa'rriba cargaditos de licor\n\n[CHORUS]\n¡AYYYY BENIDORM! ¡TERRITORIO COMANCHE!\nDonde la noche lía y aquí no hay quien nos enganche.\nRompimos hasta el piso, aquí no hubo chance\n¡El equipo completo! ¡Menudo cachibache!\n\n[BRIDGE] [¡Sube la trompeta! ¡Que nos vamos de la casa al bar!]\nEn el bar de españoles, ¡cantando los temones!\nDándolo todo a gritos, con nuestros dos cojones\nLo malo fue los guiris, ¡menudos maricones!\nSon unos gilipollas, vaya panda de cabrones\n\nEl suelo bien pegao ¡bien!, como esta canción,\nLos guiris to' borrachos, ¡tiraos tos por el rincón!\nCaminando de lao y como gambas al sol,\n¡Nos vamos ya de aquí o perdemos el control!\n\n[CHORUS - FINAL]\n¡AYYYY BENIDORM! ¡TERRITORIO COMANCHE!\nDonde la noche lía y aquí no hay quien nos enganche.\nRompimos hasta el piso, aquí no hubo chance\n¡El equipo completo! ¡Menudo cachibache!\n\n[OUTRO]\n¡Vaya cuadro! ¡Andoni, suelta la botella!\n¡Omar, ponte los pantalones! ¡Paula, la próxima vez apunta!\n¡Benidorm... VOLVEREMOS!\n(Trompetazo final y risas)",
       "plays": 0,
       "releaseDate": "2025-01-01"
+    },
+    {
+      "id": "7",
+      "title": "BOF",
+      "artistId": "4",
+      "artistName": "El Equipo Tigrinho",
+      "albumId": "album-bof",
+      "albumName": "BOF",
+      "duration": 240,
+      "cover": "/covers/bof-album.png",
+      "audioUrl": "/audio/BOF.mp3",
+      "lyrics": "[VERSO 1 - La Invocación]\n¿Cómo suena la noche? BOF.\n¿Cómo suena el dinero? BOF.\n¿Cómo suenan los Tigres? BOF.\n\nAndo dice... BOF.\nTono dice... BOF.\nOmar dice... BOF.\n\nTodo es BOF. Todo es BOF.\n\n[BUILD UP - La Aceleración]\n(El ritmo empieza a subir, la palabra BOF se repite cada vez más rápido)\nSi te gusta: BOF.\nSi te rentan las cañas: BOF.\nSi vamos al lío: BOF.\n\nBof. Bof. Bof. Bof.\nBof-bof-bof-bof.\n(La voz se vuelve mecánica)\nBOF-BOF-BOF-BOF-BOF-BOF-BOF...\n\n(Grito seco y autoritario)\n¿LE METEMOS GUESO?\n\n[DROP 1 - EL MARTILLO]\n(El bajo retumba brutalmente)\n¡BOOOOOOOOOOOOOF!\n\n[TECHNO LOOP SECTION]\n(Aquí el BOF es constante, marcando el ritmo como un platillo)\nBof. (bum) Bof. (bum) Bof. (bum) Bof.\nBof. (bum) Bof. (bum) Bof. (bum) Bof.\n\nDame BOF.\nToma BOF.\nQuiero BOF.\nSiente el BOF.\n\n[PUENTE]\n(Se corta el bombo. Silencio tenso)\nSin pensar.\nSolo sentir.\nInstinto animal.\n\n¿Lo tienes claro? BOF.\n\n[BUILD UP 2 - La Locura Final]\n¿Tono? BOF.\n¿Ando? BOF.\n¿Omar? BOF.\n¿La gente? ¡¡BOF!!\n\nBof, bof, bof, bof...\n¡GUESO!\n\n[DROP FINAL]\n¡BOOOOOOOOOOOOOF!\n(Distorsión máxima)\n\n[OUTRO]\nBof... Bof... Bof...\n(Se desvanece)",
+      "plays": 999999,
+      "releaseDate": "2025-11-28"
     }
   ],
   "playlists": [
