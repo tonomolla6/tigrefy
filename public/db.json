@@ -33,8 +33,8 @@
       "artistName": "Los Tigres",
       "cover": "/covers/tigres-2025.png",
       "releaseDate": "2025-01-01",
-      "totalTracks": 7,
-      "duration": 1307,
+      "totalTracks": 8,
+      "duration": 1534,
       "genres": ["Party", "Electronic", "Urban", "Festival"]
     },
     {
@@ -135,6 +135,17 @@
       "totalTracks": 1,
       "duration": 163,
       "genres": ["Corridos Tumbados", "Latin Trap"]
+    },
+    {
+      "id": "single-peniscola-paradise",
+      "title": "Peñíscola Paradise - Single",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "cover": "/covers/peniscola-paradise.png",
+      "releaseDate": "2025-12-01",
+      "totalTracks": 1,
+      "duration": 227,
+      "genres": ["Party", "Electronic", "Urban"]
     }
   ],
   "songs": [
@@ -349,6 +360,20 @@
       "releaseDate": "2025-11-29"
     },
     {
+      "id": "9",
+      "title": "Peñíscola Paradise",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "albumId": "single-peniscola-paradise",
+      "albumName": "Peñíscola Paradise - Single",
+      "duration": 227,
+      "cover": "/covers/peniscola-paradise.png",
+      "audioUrl": "/audio/peniscola-paradise.mp3",
+      "lyrics": "Ey, ey, llegaron los tigres… Tono, Omar y Andoni…\nPeñíscola no estaba lista pa' esto… ¡JAJAJA!\n\nNos fuimos pa' la costa, pillamos tremendo chollo,\nhotel con espá incluido, y buffet pa' comer a lo loco.\nApenas llegamos Andoni comprando bañador,\npero más que el espá, lo que le rayaba era su pelooooo.\n\nSe fue con Omar andando veinte minutos al sol,\na una pelu perdida por ahí, a ver si le dan control.\nEl peluquero era majo, le habló del PH neutro…\npero el corte quedó raro y el pelo… quedó en negativo, perro.\n\nSomos los tigres en Peñíscola, arrasando el buffet como un terremoto.\nOmar con seis platos de gambas, no es broma,\nTono con costillas pa' desayunar si le da la gana.\nY por la mañana churros con chocolate,\nlos camareros temblando: \"¡otra vez estos, madre mía, qué desastre!\"\n\nEntra Andoni al buffet con la camiseta verde,\ndel Atlético Nacional, pero la gente no lo entiende.\nDe repente uno grita fuerte: \"¡¡PUUUTO BETIS!!\"\nY otro detrás corrige: \"¡QUE NOOOO, QUE ES DE COLOMBIA, GENIUS!\"\n\nToda la sala llorando de risa, ni pa' comer servía.\nDespués bajamos a la piscina, mojitos everywhere,\npiña colada, chill total, quemándonos sin querer.\nOmar termina jugando con las animadoras del hotel,\nTono tan relajao que se fue a dormir otra vez.\n\nY mientras él roncaba con estilo y sin pudor,\nAndoni y Omar en el gym, levantando… lo que el cuerpo dejó.\n\nLos tigres en Peñíscola, versión espá,\nAndoni tirándose un cubo frío sin saber lo que pasará.\nPor la noche buffet, luego bingo con el inserso,\ndominó con cóctel en mano… ritmo lento pero perverso.\n\nA las dos de la mañana Andoni y Omar se van al mar,\ndescalzos, aventureros, existenciales total.\nSe bañan, comen chuches de la máquina, hablan de la vida,\nmientras Tono en la habitación roncando a mil por hora, sin medida.\n\nFuimos al castillo, vistas que flipas, cerveza y brisa,\ncolombianos saludando a Andoni: \"qué buena esa camisa\".\nLuego el Clásico en un bar, Barça-Madrid relajao,\ngin-tonic en mano, todo chill, nada forzao'.\n\nY pa' rematar la tarde, sin mucha prisa,\nuna cachimba calentita en terraza con brisita.\n\nY al volver pa' casa, España se apagó,\npero entre tanta oscuridad… la amistad brilló.\nSin móviles, sin ruido, sin nada que mirar,\nsolo tres tigres hablando sin prisa, sin pensar.\n\nSacamos un balón, volvimos a ser críos,\njugando en el parque como viejos amigos.\nRisas que iluminaban más que cualquier farola,\nmomentos tan simples que el alma descontrola.\n\nDespués Monopoly, con peleas de mentira,\ny cada carcajada valía más que la partida.\nUn día sin pantallas, sin correr, sin obligación…\nsolo nosotros tres, latiendo al mismo son.\n\nY entonces entendimos —sin querer, sin buscar—\nque a veces el mejor viaje… es volver juntos a casa,\ny seguir siendo tigres, aunque se vaya la luz y el mundo se haga pausa.",
+      "plays": 0,
+      "releaseDate": "2025-12-01"
+    },
+    {
       "id": "7-album",
       "title": "Corazón de Tigre",
       "artistId": "1",
@@ -358,7 +383,21 @@
       "duration": 201,
       "cover": "/covers/tigres-2025.png",
       "audioUrl": "/audio/corazon-de-tigre.mp3",
-      "lyrics": "Veinticuatro horas, sudor y gloria,\nen Dolores nace nuestra historia.\nOcho fieras bajo el sol ardiente,\nsomos los Tigres… ¡la ley de la gente!\n\nAndoni reunió a la manada,\nTono puso Beply en la camiseta bordada,\nOmar llamó al Borjica y dijo:\n\"Venid pa’l pueblo, que esto es gloria\".\n\nPrimer partido tarde, diez y media la noche,\nnos pegan un baile… pero dimos buen broche.\nEllos quince cracks venidos casi de Catar,\ny nosotros resistiendo sin dejar de pelear.\n\nHasta que Andoni metió el pase legendario,\nel balón se fue a Cuenca… ¡momento milenario!\n\nNos clavan caño y gol —\"¡Cambio ya!\" gritó el jefe—,\nal banquillo trotandito, pero el alma nunca cede.\nPorque somos Tigres, fuertes y valientes…\nno perdimos por tanto, ¡y lo gritamos sonrientes!\n\nSomos los Tigres, rugiendo en Dolores,\ncon ampollas, risas y sudores.\nSi caemos, siempre es hacia adelante,\nque el corazón del Tigre nunca se rompe.\nTono delantero tanque, Omar regate elegante…\ny si perdemos hoy, ¡mañana más gigantes!\n\nA las cuatro y veinte llegó el desmadre,\ncontra los gitanos del barrio, con todo el pueblo que arde.\nLa grada encendida, fiesta alrededor,\ny nosotros metiendo goles con sabor.\n\nColombianos brindando, puro ritmo en la grada,\nmientras otros dormían regados por la sala.\nLa madre de Omar, santa entre los santos,\npaella pa’ los Tigres… y se nos fueron los llantos.\n\nOnce de la mañana, sol cayendo a plomo,\nOmar con el pie roto, pero dándolo todo.\nTono con costilla rota, firme en la batalla,\ny aún así los Tigres… ¡nadie nos falla!\n\nPasamos de fase con honor de guerrero,\na las cinco otra vez, luchando en el calor severo.\nSe nos fue por un pelo, la copa en un suspiro,\npero no perdimos cielo… ¡ni el rugido del destino! \n\nAndoni cabreado porque el rival se tiraba,\npero el espíritu Tigre jamás se apagaba.\nSangre, sudor, familia en cada choque,\ny juramos regresar… ¡el año que viene a por el trofeote!\n\nSomos los Tigres, rugiendo en Dolores,\ncon ampollas, risas y sudores.\nSi caemos, siempre es hacia adelante,\nque el corazón del Tigre nunca se rompe.\nTono delantero tanque, Omar regate elegante…\ny si perdemos hoy, ¡mañana más gigantes!\n\nSe apagó la pista y volvió la calma,\npero los Tigres seguimos con la llama.\nDolores nos dejó rotos pero contentos,\ny el año que viene volvemos…\nsi Omar y Tono llegan vivos a los entrenamientos.",
+      "lyrics": "Veinticuatro horas, sudor y gloria,\nen Dolores nace nuestra historia.\nOcho fieras bajo el sol ardiente,\nsomos los Tigres… ¡la ley de la gente!\n\nAndoni reunió a la manada,\nTono puso Beply en la camiseta bordada,\nOmar llamó al Borjica y dijo:\n\"Venid pa'l pueblo, que esto es gloria\".\n\nPrimer partido tarde, diez y media la noche,\nnos pegan un baile… pero dimos buen broche.\nEllos quince cracks venidos casi de Catar,\ny nosotros resistiendo sin dejar de pelear.\n\nHasta que Andoni metió el pase legendario,\nel balón se fue a Cuenca… ¡momento milenario!\n\nNos clavan caño y gol —\"¡Cambio ya!\" gritó el jefe—,\nal banquillo trotandito, pero el alma nunca cede.\nPorque somos Tigres, fuertes y valientes…\nno perdimos por tanto, ¡y lo gritamos sonrientes!\n\nSomos los Tigres, rugiendo en Dolores,\ncon ampollas, risas y sudores.\nSi caemos, siempre es hacia adelante,\nque el corazón del Tigre nunca se rompe.\nTono delantero tanque, Omar regate elegante…\ny si perdemos hoy, ¡mañana más gigantes!\n\nA las cuatro y veinte llegó el desmadre,\ncontra los gitanos del barrio, con todo el pueblo que arde.\nLa grada encendida, fiesta alrededor,\ny nosotros metiendo goles con sabor.\n\nColombianos brindando, puro ritmo en la grada,\nmientras otros dormían regados por la sala.\nLa madre de Omar, santa entre los santos,\npaella pa' los Tigres… y se nos fueron los llantos.\n\nOnce de la mañana, sol cayendo a plomo,\nOmar con el pie roto, pero dándolo todo.\nTono con costilla rota, firme en la batalla,\ny aún así los Tigres… ¡nadie nos falla!\n\nPasamos de fase con honor de guerrero,\na las cinco otra vez, luchando en el calor severo.\nSe nos fue por un pelo, la copa en un suspiro,\npero no perdimos cielo… ¡ni el rugido del destino! \n\nAndoni cabreado porque el rival se tiraba,\npero el espíritu Tigre jamás se apagaba.\nSangre, sudor, familia en cada choque,\ny juramos regresar… ¡el año que viene a por el trofeote!\n\nSomos los Tigres, rugiendo en Dolores,\ncon ampollas, risas y sudores.\nSi caemos, siempre es hacia adelante,\nque el corazón del Tigre nunca se rompe.\nTono delantero tanque, Omar regate elegante…\ny si perdemos hoy, ¡mañana más gigantes!\n\nSe apagó la pista y volvió la calma,\npero los Tigres seguimos con la llama.\nDolores nos dejó rotos pero contentos,\ny el año que viene volvemos…\nsi Omar y Tono llegan vivos a los entrenamientos.",
+      "plays": 0,
+      "releaseDate": "2025-01-01"
+    },
+    {
+      "id": "8-album",
+      "title": "Peñíscola Paradise",
+      "artistId": "1",
+      "artistName": "Tigre Number One",
+      "albumId": "1",
+      "albumName": "Tigres 2025",
+      "duration": 227,
+      "cover": "/covers/tigres-2025.png",
+      "audioUrl": "/audio/peniscola-paradise.mp3",
+      "lyrics": "Ey, ey, llegaron los tigres… Tono, Omar y Andoni…\nPeñíscola no estaba lista pa' esto… ¡JAJAJA!\n\nNos fuimos pa' la costa, pillamos tremendo chollo,\nhotel con espá incluido, y buffet pa' comer a lo loco.\nApenas llegamos Andoni comprando bañador,\npero más que el espá, lo que le rayaba era su pelooooo.\n\nSe fue con Omar andando veinte minutos al sol,\na una pelu perdida por ahí, a ver si le dan control.\nEl peluquero era majo, le habló del PH neutro…\npero el corte quedó raro y el pelo… quedó en negativo, perro.\n\nSomos los tigres en Peñíscola, arrasando el buffet como un terremoto.\nOmar con seis platos de gambas, no es broma,\nTono con costillas pa' desayunar si le da la gana.\nY por la mañana churros con chocolate,\nlos camareros temblando: \"¡otra vez estos, madre mía, qué desastre!\"\n\nEntra Andoni al buffet con la camiseta verde,\ndel Atlético Nacional, pero la gente no lo entiende.\nDe repente uno grita fuerte: \"¡¡PUUUTO BETIS!!\"\nY otro detrás corrige: \"¡QUE NOOOO, QUE ES DE COLOMBIA, GENIUS!\"\n\nToda la sala llorando de risa, ni pa' comer servía.\nDespués bajamos a la piscina, mojitos everywhere,\npiña colada, chill total, quemándonos sin querer.\nOmar termina jugando con las animadoras del hotel,\nTono tan relajao que se fue a dormir otra vez.\n\nY mientras él roncaba con estilo y sin pudor,\nAndoni y Omar en el gym, levantando… lo que el cuerpo dejó.\n\nLos tigres en Peñíscola, versión espá,\nAndoni tirándose un cubo frío sin saber lo que pasará.\nPor la noche buffet, luego bingo con el inserso,\ndominó con cóctel en mano… ritmo lento pero perverso.\n\nA las dos de la mañana Andoni y Omar se van al mar,\ndescalzos, aventureros, existenciales total.\nSe bañan, comen chuches de la máquina, hablan de la vida,\nmientras Tono en la habitación roncando a mil por hora, sin medida.\n\nFuimos al castillo, vistas que flipas, cerveza y brisa,\ncolombianos saludando a Andoni: \"qué buena esa camisa\".\nLuego el Clásico en un bar, Barça-Madrid relajao,\ngin-tonic en mano, todo chill, nada forzao'.\n\nY pa' rematar la tarde, sin mucha prisa,\nuna cachimba calentita en terraza con brisita.\n\nY al volver pa' casa, España se apagó,\npero entre tanta oscuridad… la amistad brilló.\nSin móviles, sin ruido, sin nada que mirar,\nsolo tres tigres hablando sin prisa, sin pensar.\n\nSacamos un balón, volvimos a ser críos,\njugando en el parque como viejos amigos.\nRisas que iluminaban más que cualquier farola,\nmomentos tan simples que el alma descontrola.\n\nDespués Monopoly, con peleas de mentira,\ny cada carcajada valía más que la partida.\nUn día sin pantallas, sin correr, sin obligación…\nsolo nosotros tres, latiendo al mismo son.\n\nY entonces entendimos —sin querer, sin buscar—\nque a veces el mejor viaje… es volver juntos a casa,\ny seguir siendo tigres, aunque se vaya la luz y el mundo se haga pausa.",
       "plays": 0,
       "releaseDate": "2025-01-01"
     }
@@ -369,7 +408,7 @@
       "name": "Top Tigres",
       "description": "Las mejores canciones de Los Tigres",
       "cover": "/covers/tigres-2025.png",
-      "songIds": ["2", "1", "3", "4", "5", "6", "7"],
+      "songIds": ["2", "1", "3", "4", "5", "6", "7", "9"],
       "public": true,
       "collaborative": false,
       "createdAt": "2025-01-01"
