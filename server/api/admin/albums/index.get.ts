@@ -2,7 +2,7 @@ import { useDB } from '~/server/db'
 import { requireTigre } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  requireTigre(event)
+  await requireTigre(event)
 
   const db = useDB()
 

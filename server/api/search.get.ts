@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDB()
-  const authUser = getAuthUser(event)
+  const authUser = await getAuthUser(event)
 
   // Si es tigre o user, mostrar todo; si es guest o no autenticado, solo público
   const showAll = canSeeAllContent(authUser?.role)

@@ -2,7 +2,7 @@ import { useDB, albums } from '~/server/db'
 import { requireTigre } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  requireTigre(event)
+  await requireTigre(event)
 
   const body = await readBody(event)
   const { title, artistId, cover, releaseDate, genres, isPublic } = body

@@ -3,7 +3,7 @@ import { getAuthUser } from '~/server/utils/auth'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const authUser = getAuthUser(event)
+  const authUser = await getAuthUser(event)
 
   if (!authUser) {
     throw createError({

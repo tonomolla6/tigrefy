@@ -4,7 +4,7 @@ import { getAuthUser } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
-  const user = getAuthUser(event)
+  const user = await getAuthUser(event)
 
   if (!id) {
     throw createError({

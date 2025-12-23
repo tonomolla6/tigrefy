@@ -3,7 +3,7 @@ import { requireTigre } from '~/server/utils/auth'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  requireTigre(event)
+  await requireTigre(event)
 
   const id = getRouterParam(event, 'id')
   if (!id) {

@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   const db = useDB()
-  const authUser = getAuthUser(event)
+  const authUser = await getAuthUser(event)
 
   // Si es tigre o user, mostrar todos los álbumes
   // Si es guest o no autenticado, solo públicos

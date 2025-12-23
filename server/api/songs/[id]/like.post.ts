@@ -3,7 +3,7 @@ import { eq, and } from 'drizzle-orm'
 import { requireAuth } from '~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
-  const user = requireAuth(event)
+  const user = await requireAuth(event)
   const songId = getRouterParam(event, 'id')
 
   if (!songId) {

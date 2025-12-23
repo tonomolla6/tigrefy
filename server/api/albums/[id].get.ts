@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = useDB()
-  const authUser = getAuthUser(event)
+  const authUser = await getAuthUser(event)
 
   const result = await db.query.albums.findFirst({
     where: eq(albums.id, id),

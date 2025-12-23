@@ -3,7 +3,7 @@ import { requireTigre } from '~/server/utils/auth'
 import { eq, sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  requireTigre(event)
+  await requireTigre(event)
 
   const body = await readBody(event)
   const { title, artistId, albumId, trackNumber, duration, audioUrl, lyrics, isPublic } = body

@@ -1,6 +1,6 @@
 import { getAuthUser } from '~/server/utils/auth'
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
   const path = getRequestURL(event).pathname
 
   // Solo proteger rutas /api/user/*
@@ -8,7 +8,7 @@ export default defineEventHandler((event) => {
     return
   }
 
-  const user = getAuthUser(event)
+  const user = await getAuthUser(event)
 
   if (!user) {
     throw createError({

@@ -1,13 +1,13 @@
 import { getAuthUser, canManageContent } from '~/server/utils/auth'
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
   // Solo aplicar a rutas /api/admin/*
   const path = getRequestURL(event).pathname
   if (!path.startsWith('/api/admin')) {
     return
   }
 
-  const user = getAuthUser(event)
+  const user = await getAuthUser(event)
 
   if (!user) {
     throw createError({
