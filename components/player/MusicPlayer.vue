@@ -1,91 +1,95 @@
 <template>
-  <div v-if="currentSong" class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-dark-base border-t border-dark-card z-50 shadow-2xl">
-    <div class="px-3 md:px-6 py-3 md:py-4">
+  <div v-if="currentSong" class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-black border-t border-gray-900 z-50">
+    <div class="px-3 md:px-4 py-2 md:py-3">
       <div class="flex items-center justify-between gap-3 md:gap-6">
-        <!-- Info de la canción (izquierda) -->
-        <div class="flex items-center gap-3 md:gap-4 flex-1 min-w-0 md:w-[30%]">
+        <!-- Info de la canción (izquierda) - clickable en móvil para abrir fullscreen -->
+        <div
+          class="flex items-center gap-3 min-w-0 md:w-[30%] md:max-w-[30%] cursor-pointer md:cursor-default"
+          @click="openFullscreen"
+        >
             <img
               v-if="currentSong.cover"
               :src="currentSong.cover"
               :alt="currentSong.title"
-              class="w-14 h-14 md:w-16 md:h-16 rounded-lg shadow-xl object-cover flex-shrink-0 border border-dark-card"
+              class="w-14 h-14 rounded object-cover flex-shrink-0"
               @error="handleImageError"
             />
-            <div class="flex-1 min-w-0">
-              <h4 class="text-sm md:text-base font-bold text-white truncate hover:underline cursor-pointer">
-                {{ currentSong.title }}
+            <div class="min-w-0 max-w-[180px]">
+              <h4 class="text-sm font-medium text-white truncate">
+                <span class="hover:underline cursor-pointer">{{ currentSong.title }}</span>
               </h4>
-              <p class="text-xs md:text-sm text-secondary truncate hover:text-white hover:underline cursor-pointer transition-colors">
-                {{ currentSong.artistName }}
+              <p class="text-xs text-gray-400 truncate">
+                <span class="hover:text-white hover:underline cursor-pointer transition-colors">{{ currentSong.artistName }}</span>
               </p>
             </div>
             <button
-              @click="toggleFavoriteSong(currentSong.id)"
-              class="hidden md:block text-secondary hover:text-tiger-500 transition-all flex-shrink-0 hover:scale-110"
+              @click.stop="toggleFavoriteSong(currentSong.id)"
+              class="hidden md:block text-gray-400 hover:text-white transition-all flex-shrink-0"
+              :class="{'text-tiger-500 hover:text-tiger-400': isFavoriteSong(currentSong.id)}"
             >
-              <IconHeart :size="22" :filled="isFavoriteSong(currentSong.id)" :class="{'text-tiger-500': isFavoriteSong(currentSong.id)}" />
+              <IconHeart :size="18" :filled="isFavoriteSong(currentSong.id)" />
             </button>
           </div>
 
           <!-- Controles centrales -->
-          <div class="flex flex-col items-center gap-2 md:gap-3 md:w-[40%]">
-            <div class="flex items-center gap-3 md:gap-6">
+          <div class="flex flex-col items-center gap-1 md:w-[40%]">
+            <div class="flex items-center gap-4 md:gap-5">
               <button
                 @click="toggleShuffle"
-                class="hidden md:block text-secondary hover:text-white transition-all hover:scale-110"
+                class="hidden md:block text-gray-400 hover:text-white transition-colors"
                 :class="{'text-tiger-500 hover:text-tiger-400': isShuffled}"
                 title="Aleatorio"
               >
-                <IconShuffle :size="20" />
+                <IconShuffle :size="18" />
               </button>
               <button
                 @click="previousSong"
-                class="text-secondary hover:text-white transition-all hover:scale-110"
+                class="text-gray-400 hover:text-white transition-colors"
                 title="Anterior"
               >
-                <IconSkipBack :size="22" class="md:hidden" />
-                <IconSkipBack :size="26" class="hidden md:block" />
+                <IconSkipBack :size="20" class="md:hidden" />
+                <IconSkipBack :size="22" class="hidden md:block" />
               </button>
               <button
                 @click="togglePlay"
-                class="bg-white hover:bg-gray-100 hover:scale-110 text-black rounded-full p-2.5 md:p-3.5 transition-all shadow-2xl"
+                class="bg-white hover:scale-105 text-black rounded-full p-2 transition-transform"
                 :title="isPlaying ? 'Pausar' : 'Reproducir'"
               >
                 <template v-if="!isPlaying">
-                  <IconPlay :size="22" class="md:hidden" />
-                  <IconPlay :size="26" class="hidden md:block" />
+                  <IconPlay :size="18" class="md:hidden" />
+                  <IconPlay :size="20" class="hidden md:block" />
                 </template>
                 <template v-else>
-                  <IconPause :size="22" class="md:hidden" />
-                  <IconPause :size="26" class="hidden md:block" />
+                  <IconPause :size="18" class="md:hidden" />
+                  <IconPause :size="20" class="hidden md:block" />
                 </template>
               </button>
               <button
                 @click="nextSong"
-                class="text-secondary hover:text-white transition-all hover:scale-110"
+                class="text-gray-400 hover:text-white transition-colors"
                 title="Siguiente"
               >
-                <IconSkipForward :size="22" class="md:hidden" />
-                <IconSkipForward :size="26" class="hidden md:block" />
+                <IconSkipForward :size="20" class="md:hidden" />
+                <IconSkipForward :size="22" class="hidden md:block" />
               </button>
               <button
                 @click="toggleRepeat"
-                class="hidden md:block text-secondary hover:text-white transition-all hover:scale-110"
+                class="hidden md:block text-gray-400 hover:text-white transition-colors"
                 :class="{'text-tiger-500 hover:text-tiger-400': repeatMode !== 'off'}"
                 :title="repeatMode === 'off' ? 'Repetir' : repeatMode === 'all' ? 'Repetir todo' : 'Repetir una'"
               >
-                <IconRepeat :size="20" :mode="repeatMode" />
+                <IconRepeat :size="18" :mode="repeatMode" />
               </button>
             </div>
 
             <!-- Barra de progreso -->
-            <div class="hidden md:flex items-center gap-2 w-full max-w-2xl">
-              <span class="text-xs text-secondary font-medium min-w-[40px] text-right">
+            <div class="hidden md:flex items-center gap-2 w-full max-w-xl">
+              <span class="text-[11px] text-gray-400 min-w-[35px] text-right">
                 {{ formatTime(currentTime) }}
               </span>
-              <div class="relative flex-1 group">
-                <div class="h-1 bg-dark-card rounded-full overflow-hidden">
-                  <div 
+              <div class="relative flex-1 group h-3 flex items-center">
+                <div class="h-1 w-full bg-gray-600 rounded-full overflow-hidden">
+                  <div
                     class="h-full bg-white group-hover:bg-tiger-500 transition-colors"
                     :style="{ width: progressPercentage + '%' }"
                   ></div>
@@ -98,39 +102,43 @@
                   class="absolute inset-0 w-full opacity-0 cursor-pointer"
                 />
               </div>
-              <span class="text-xs text-secondary font-medium min-w-[40px]">
+              <span class="text-[11px] text-gray-400 min-w-[35px]">
                 {{ formatTime(duration) }}
               </span>
             </div>
           </div>
 
           <!-- Controles de volumen y extras (derecha) -->
-          <div class="hidden md:flex items-center gap-4 flex-1 justify-end md:w-[30%]">
+          <div class="hidden md:flex items-center gap-3 flex-1 justify-end md:w-[30%]">
             <button
               @click="showAddToPlaylistModal = true"
-              class="text-secondary hover:text-white transition-all hover:scale-110"
+              class="text-gray-400 hover:text-white transition-colors"
               title="Añadir a playlist"
             >
-              <IconPlus :size="22" />
+              <IconPlus :size="18" />
             </button>
             <button
               v-if="currentSong.lyrics"
               @click="toggleLyrics"
-              class="text-secondary hover:text-white transition-all text-sm font-semibold whitespace-nowrap hover:scale-105 px-3 py-1.5 rounded-full border border-dark-card hover:border-tiger-500"
-              :class="{'text-white border-tiger-500 bg-tiger-500/20': showLyrics}"
+              class="text-gray-400 hover:text-white transition-colors"
+              :class="{'text-tiger-500': showLyrics}"
+              title="Ver letra"
             >
-              <span class="hidden lg:inline">Letras</span>
-              <span class="lg:hidden">🎵</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="18" cy="16" r="3"/>
+              </svg>
             </button>
             <div class="flex items-center gap-2 group">
               <button
                 @click="toggleMute"
-                class="text-secondary hover:text-white transition-all hover:scale-110"
+                class="text-gray-400 hover:text-white transition-colors"
               >
-                <IconVolume :size="22" :level="volumeLevel" />
+                <IconVolume :size="18" :level="volumeLevel" />
               </button>
-              <div class="relative w-24 lg:w-32">
-                <div class="h-1 bg-dark-card rounded-full overflow-hidden">
+              <div class="relative w-24 h-3 flex items-center">
+                <div class="h-1 w-full bg-gray-600 rounded-full overflow-hidden">
                   <div
                     class="h-full bg-white group-hover:bg-tiger-500 transition-colors"
                     :style="{ width: (volume * 100) + '%' }"
@@ -150,11 +158,11 @@
             <!-- Botón Now Playing Sidebar -->
             <button
               @click="toggleNowPlaying"
-              class="text-secondary hover:text-white transition-all hover:scale-110 p-2 rounded-lg"
-              :class="{'text-tiger-500 bg-tiger-500/20': showNowPlaying}"
+              class="text-gray-400 hover:text-white transition-colors"
+              :class="{'text-tiger-500': showNowPlaying}"
               title="Ver detalles de la canción"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1"/>
                 <rect x="14" y="3" width="7" height="18" rx="1"/>
                 <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -313,6 +321,12 @@
       @close="showAddToPlaylistModal = false"
       @createNew="handleCreateNewPlaylist"
     />
+
+    <!-- Fullscreen Player (móvil) -->
+    <FullscreenPlayer
+      :isOpen="showFullscreenPlayer"
+      @close="showFullscreenPlayer = false"
+    />
   </div>
 </template>
 
@@ -344,10 +358,26 @@ const {
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 const showMobileMenu = ref(false)
 const showAddToPlaylistModal = ref(false)
+const showFullscreenPlayer = ref(false)
+
+// Detectar si es móvil
+const isMobile = ref(false)
+onMounted(() => {
+  isMobile.value = window.innerWidth < 768
+  window.addEventListener('resize', () => {
+    isMobile.value = window.innerWidth < 768
+  })
+})
+
+const openFullscreen = () => {
+  if (isMobile.value) {
+    showFullscreenPlayer.value = true
+  }
+}
 
 const handleCreateNewPlaylist = () => {
-  // Navigate to library page which has create playlist functionality
-  navigateTo('/library')
+  // TODO: Implement create playlist modal
+  console.log('Create playlist')
 }
 
 const volumeLevel = computed(() => {

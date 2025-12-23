@@ -1,8 +1,7 @@
 <template>
   <div
-    class="relative overflow-hidden rounded-xl cursor-pointer group
+    class="relative overflow-hidden rounded-xl group
            bg-gradient-to-r from-tiger-900 via-tiger-950 to-dark-base"
-    @click="handlePlay"
   >
     <!-- Overlay -->
     <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40" />
@@ -42,8 +41,9 @@
                    py-3 px-6 md:px-8 rounded-full flex items-center gap-2
                    transition-colors duration-200 shadow-lg"
           >
-            <IconPlay :size="20" />
-            <span class="hidden sm:inline">Reproducir</span>
+            <IconPause v-if="isCurrentlyPlaying" :size="20" />
+            <IconPlay v-else :size="20" />
+            <span class="hidden sm:inline">{{ isCurrentlyPlaying ? 'Pausar' : 'Reproducir' }}</span>
           </button>
           <button
             @click.stop="toggleFavorite"
@@ -61,6 +61,8 @@
 </template>
 
 <script setup lang="ts">
+import type { PlaybackContext } from '~/composables/usePlayer'
+
 const props = defineProps({
   song: {
     type: Object,
@@ -69,17 +71,29 @@ const props = defineProps({
   queue: {
     type: Array,
     default: () => []
+  },
+  context: {
+    type: Object as () => PlaybackContext,
+    default: undefined
   }
 })
 
-const { playSong } = usePlayer()
+const { playSong, currentSong, isPlaying, togglePlay } = usePlayer()
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 const { addToRecent } = useRecentlyPlayed()
 
 const isFavorite = computed(() => isFavoriteSong(props.song.id))
+const isCurrent = computed(() => currentSong.value?.id === props.song.id)
+const isCurrentlyPlaying = computed(() => isCurrent.value && isPlaying.value)
 
 const handlePlay = () => {
-  playSong(props.song, props.queue.length > 0 ? props.queue : [props.song])
+  // If this is the current song, toggle play/pause
+  if (isCurrent.value) {
+    togglePlay()
+    return
+  }
+
+  playSong(props.song, props.queue.length > 0 ? props.queue : [props.song], props.context)
   addToRecent({
     type: 'song',
     id: props.song.id,

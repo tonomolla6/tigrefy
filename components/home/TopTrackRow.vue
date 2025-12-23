@@ -59,6 +59,8 @@
 </template>
 
 <script setup lang="ts">
+import type { PlaybackContext } from '~/composables/usePlayer'
+
 const props = defineProps({
   song: {
     type: Object,
@@ -71,10 +73,14 @@ const props = defineProps({
   queue: {
     type: Array,
     default: () => []
+  },
+  context: {
+    type: Object as () => PlaybackContext,
+    default: undefined
   }
 })
 
-const { playSong, currentSong, isPlaying, formatTime } = usePlayer()
+const { playSong, currentSong, isPlaying, formatTime, togglePlay } = usePlayer()
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 const { addToRecent } = useRecentlyPlayed()
 
@@ -89,7 +95,13 @@ const formatDuration = (seconds: number) => {
 }
 
 const handlePlay = () => {
-  playSong(props.song, props.queue.length > 0 ? props.queue : [props.song])
+  // If this is the current song, toggle play/pause
+  if (isCurrent.value) {
+    togglePlay()
+    return
+  }
+
+  playSong(props.song, props.queue.length > 0 ? props.queue : [props.song], props.context)
   addToRecent({
     type: 'song',
     id: props.song.id,

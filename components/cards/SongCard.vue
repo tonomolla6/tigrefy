@@ -1,18 +1,20 @@
 <template>
   <div
-    class="flex items-center gap-4 p-2 rounded hover:bg-dark-hover transition-colors group cursor-pointer"
+    class="flex items-center gap-3 md:gap-4 p-2 rounded hover:bg-dark-hover transition-colors group cursor-pointer"
     @click="handlePlay"
   >
-    <div class="relative">
+    <div class="relative flex-shrink-0">
       <img
         :src="song.cover"
         :alt="song.title"
-        class="w-12 h-12 rounded object-cover"
+        class="w-10 h-10 md:w-12 md:h-12 rounded object-cover"
         @error="handleImageError"
       />
       <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded">
-        <IconPlay v-if="!isCurrentAndPlaying" :size="20" class="text-white" />
-        <IconPause v-else :size="20" class="text-white" />
+        <IconPlay v-if="!isCurrentAndPlaying" :size="16" class="text-white md:hidden" />
+        <IconPlay v-if="!isCurrentAndPlaying" :size="20" class="text-white hidden md:block" />
+        <IconPause v-if="isCurrentAndPlaying" :size="16" class="text-white md:hidden" />
+        <IconPause v-if="isCurrentAndPlaying" :size="20" class="text-white hidden md:block" />
       </div>
     </div>
     <div class="flex-1 min-w-0">
@@ -21,10 +23,12 @@
       </h4>
       <p class="text-xs text-secondary truncate">{{ song.artistName }}</p>
     </div>
-    <div class="text-xs text-secondary">{{ formatTime(song.duration) }}</div>
 
-    <!-- Actions Container -->
-    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+    <!-- Duración (visible siempre) -->
+    <div class="text-xs text-secondary flex-shrink-0">{{ formatTime(song.duration) }}</div>
+
+    <!-- Actions Container (solo desktop) -->
+    <div class="hidden md:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
       <!-- Add to Playlist Button -->
       <button
         @click.stop="showAddToPlaylist"
@@ -66,18 +70,21 @@
 </template>
 
 <script setup lang="ts">
+import type { PlaybackContext } from '~/composables/usePlayer'
+
 const props = defineProps<{
   song: any
   playlist?: any[]
   showRemoveOption?: boolean
   playlistId?: string
+  context?: PlaybackContext
 }>()
 
 const emit = defineEmits<{
   removeFromPlaylist?: [songId: string]
 }>()
 
-const { playSong, currentSong, isPlaying, formatTime } = usePlayer()
+const { playSong, currentSong, isPlaying, formatTime, togglePlay } = usePlayer()
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 
 const isCurrentSong = computed(() => currentSong.value?.id === props.song.id)
@@ -86,7 +93,12 @@ const isCurrentAndPlaying = computed(() => isCurrentSong.value && isPlaying.valu
 const isAddToPlaylistModalOpen = ref(false)
 
 const handlePlay = () => {
-  playSong(props.song, props.playlist)
+  // Si es la canción actual, toggle play/pause
+  if (isCurrentSong.value) {
+    togglePlay()
+  } else {
+    playSong(props.song, props.playlist, props.context)
+  }
 }
 
 const handleImageError = (e: Event) => {
@@ -99,8 +111,8 @@ const showAddToPlaylist = () => {
 }
 
 const handleCreateNewPlaylist = () => {
-  // Navigate to library page which has create playlist functionality
-  navigateTo('/library')
+  // TODO: Implement create playlist modal
+  console.log('Create playlist')
 }
 
 const handleRemoveFromPlaylist = () => {

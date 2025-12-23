@@ -35,7 +35,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  middleware: 'auth'
 })
 
 const { data, getSongsByArtistId } = useData()
@@ -46,7 +47,7 @@ const artists = computed(() => data.value.artists || [])
 const handlePlayArtist = (artist: any) => {
   const songs = getSongsByArtistId(artist.id)
   if (songs.length > 0) {
-    playSong(songs[0], songs)
+    playSong(songs[0], songs, { type: 'artist', id: artist.id })
   }
 }
 

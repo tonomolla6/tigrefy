@@ -7,19 +7,35 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate:prod": "dotenv -e .env.production -- drizzle-kit migrate"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-regular-svg-icons": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/vue-fontawesome": "^3.1.2",
+    "@libsql/client": "^0.15.15",
+    "@pinia/nuxt": "^0.11.3",
+    "bcryptjs": "^3.0.3",
+    "drizzle-orm": "^0.45.1",
+    "jsonwebtoken": "^9.0.3",
     "nuxt": "^3.19.3",
+    "pinia": "^3.0.4",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
-    "@tailwindcss/forms": "^0.5.10"
+    "@tailwindcss/forms": "^0.5.10",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "dotenv": "^17.2.3",
+    "dotenv-cli": "^11.0.0",
+    "drizzle-kit": "^0.31.8"
   }
 }

@@ -1,91 +1,31 @@
+import { useUserStore } from '~/stores/user'
+
 export const useUserPlaylists = () => {
-  const userPlaylists = useState<any[]>('userPlaylists', () => [])
+  const store = useUserStore()
+  const { isAuthenticated } = useAuth()
 
-  const loadUserPlaylists = () => {
-    if (typeof window === 'undefined') return
+  const loadUserPlaylists = () => store.loadPlaylists()
 
-    const stored = localStorage.getItem('tigrefy_user_playlists')
-    if (stored) {
-      userPlaylists.value = JSON.parse(stored)
-    }
+  const savePlaylist = async (playlistId: string) => {
+    if (!isAuthenticated.value) return false
+    return store.savePlaylist(playlistId)
   }
 
-  const saveUserPlaylists = () => {
-    if (typeof window === 'undefined') return
-    localStorage.setItem('tigrefy_user_playlists', JSON.stringify(userPlaylists.value))
-  }
-
-  const createPlaylist = (name: string, description: string = '', cover: string = '/covers/airbeat-cecot.png') => {
-    const newPlaylist = {
-      id: `user_${Date.now()}`,
-      name,
-      description,
-      cover,
-      songIds: [],
-      public: false,
-      collaborative: false,
-      createdAt: new Date().toISOString(),
-      isUserCreated: true
-    }
-
-    userPlaylists.value.push(newPlaylist)
-    saveUserPlaylists()
-    return newPlaylist
-  }
-
-  const deletePlaylist = (playlistId: string) => {
-    const index = userPlaylists.value.findIndex(p => p.id === playlistId)
-    if (index > -1) {
-      userPlaylists.value.splice(index, 1)
-      saveUserPlaylists()
-    }
-  }
-
-  const addSongToPlaylist = (playlistId: string, songId: string): boolean => {
-    const playlist = userPlaylists.value.find(p => p.id === playlistId)
-    if (playlist && !playlist.songIds.includes(songId)) {
-      playlist.songIds.push(songId)
-      saveUserPlaylists()
-      return true
-    }
-    return false
-  }
-
-  const removeSongFromPlaylist = (playlistId: string, songId: string) => {
-    const playlist = userPlaylists.value.find(p => p.id === playlistId)
-    if (playlist) {
-      const index = playlist.songIds.indexOf(songId)
-      if (index > -1) {
-        playlist.songIds.splice(index, 1)
-        saveUserPlaylists()
-      }
-    }
-  }
-
-  const updatePlaylist = (playlistId: string, updates: any) => {
-    const playlist = userPlaylists.value.find(p => p.id === playlistId)
-    if (playlist) {
-      Object.assign(playlist, updates)
-      saveUserPlaylists()
-    }
-  }
-
-  const reorderPlaylistSongs = (playlistId: string, newSongIds: string[]) => {
-    const playlist = userPlaylists.value.find(p => p.id === playlistId)
-    if (playlist) {
-      playlist.songIds = newSongIds
-      saveUserPlaylists()
-    }
-  }
+  const getPlaylistById = (id: string) => store.getPlaylistById(id)
 
   return {
-    userPlaylists,
+    // Todas las playlists del usuario (creadas + guardadas)
+    userPlaylists: computed(() => store.playlists),
+    // Solo playlists creadas por el usuario
+    ownedPlaylists: computed(() => store.ownedPlaylists),
+    // Solo playlists guardadas (de otros)
+    savedPlaylists: computed(() => store.savedPlaylists),
+    isLoadingPlaylists: computed(() => store.isLoadingPlaylists),
+    playlistsCount: computed(() => store.playlistsCount),
+
+    // Actions
     loadUserPlaylists,
-    createPlaylist,
-    deletePlaylist,
-    addSongToPlaylist,
-    removeSongFromPlaylist,
-    updatePlaylist,
-    reorderPlaylistSongs
+    savePlaylist,
+    getPlaylistById
   }
 }

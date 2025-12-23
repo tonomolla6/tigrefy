@@ -3,10 +3,15 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  // Configuración para Cloudflare Pages
-  ssr: false,
+  // SSR híbrido: páginas como SPA, API con SSR
+  ssr: true,
 
-  modules: ['@nuxtjs/tailwindcss'],
+  routeRules: {
+    '/**': { ssr: false },
+    '/api/**': { ssr: true }
+  },
+
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
 
   components: [
     {
@@ -33,6 +38,13 @@ export default defineNuxtConfig({
         { rel: 'apple-touch-icon', href: '/favicon.png' }
       ]
     }
+  },
+
+  // Variables de entorno para el servidor
+  runtimeConfig: {
+    tursoUrl: process.env.TURSO_DATABASE_URL,
+    tursoToken: process.env.TURSO_AUTH_TOKEN,
+    jwtSecret: process.env.JWT_SECRET,
   },
 
   nitro: {

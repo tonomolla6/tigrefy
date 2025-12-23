@@ -1,5 +1,33 @@
 // Variable global para el elemento de audio (singleton)
 let globalAudioElement: HTMLAudioElement | null = null
+const DEFAULT_TITLE = 'Tigrefy'
+
+// Variables para tracking de tiempo real de reproducción
+let accumulatedPlayTime = 0
+let lastTimeUpdate = 0
+
+// Variable para detectar doble pulsación en previousSong
+let lastPreviousPressTime = 0
+
+// Función para actualizar el título de la pestaña
+const updateDocumentTitle = (song: any | null, playing: boolean) => {
+  if (typeof document === 'undefined') return
+
+  if (song && playing) {
+    document.title = `${song.title} - ${song.artistName} | ${DEFAULT_TITLE}`
+  } else if (song) {
+    document.title = `${song.title} - ${song.artistName} | ${DEFAULT_TITLE}`
+  } else {
+    document.title = DEFAULT_TITLE
+  }
+}
+
+// Tipo para el contexto de reproducción
+export type PlaybackContextType = 'album' | 'playlist' | 'liked-songs' | 'artist' | 'search' | 'unknown'
+export interface PlaybackContext {
+  type: PlaybackContextType
+  id?: string // ID del álbum, playlist, artista, etc.
+}
 
 export const usePlayer = () => {
   const currentSong = useState<any>('currentSong', () => null)
@@ -7,6 +35,7 @@ export const usePlayer = () => {
   const currentTime = useState('currentTime', () => 0)
   const duration = useState('duration', () => 0)
   const volume = useState('volume', () => 0.7)
+  const volumeBeforeMute = useState('volumeBeforeMute', () => 0.7)
   const isMuted = useState('isMuted', () => false)
   const isShuffled = useState('isShuffled', () => false)
   const repeatMode = useState<'off' | 'all' | 'one'>('repeatMode', () => 'off')
@@ -14,17 +43,54 @@ export const usePlayer = () => {
   const queueIndex = useState('queueIndex', () => 0)
   const showLyrics = useState('showLyrics', () => false)
   const showNowPlaying = useState('showNowPlaying', () => false)
+  const playbackContext = useState<PlaybackContext>('playbackContext', () => ({ type: 'unknown' }))
+
+  // Flag para saber si ya se contó la reproducción de la canción actual
+  const playCountedForCurrentSong = useState('playCountedForCurrentSong', () => false)
+
+  // Función para registrar una reproducción después de 30 segundos reales
+  const registerPlay = (songId: string) => {
+    if (playCountedForCurrentSong.value) return
+    playCountedForCurrentSong.value = true
+
+    $fetch(`/api/songs/${songId}/play`, { method: 'POST' })
+      .then((res: any) => {
+        // Actualizar contador local si la respuesta incluye plays
+        if (res?.plays !== undefined && currentSong.value?.id === songId) {
+          currentSong.value.plays = res.plays
+        }
+      })
+      .catch(() => {
+        // Ignorar errores de tracking
+      })
+  }
 
   const initAudio = () => {
     if (typeof window === 'undefined') return
-    
+
     // Si ya existe un audio global, usarlo
     if (!globalAudioElement) {
       globalAudioElement = new Audio()
       globalAudioElement.volume = volume.value
 
       globalAudioElement.addEventListener('timeupdate', () => {
-        currentTime.value = globalAudioElement?.currentTime || 0
+        const current = globalAudioElement?.currentTime || 0
+        currentTime.value = current
+
+        // Calcular tiempo real transcurrido desde el último update
+        // Solo sumar si estamos reproduciendo y el salto es pequeño (< 2 segundos = reproducción normal)
+        if (isPlaying.value && lastTimeUpdate > 0) {
+          const delta = current - lastTimeUpdate
+          if (delta > 0 && delta < 2) {
+            accumulatedPlayTime += delta
+          }
+        }
+        lastTimeUpdate = current
+
+        // Contar reproducción si llegamos a 30 segundos reales
+        if (!playCountedForCurrentSong.value && currentSong.value && accumulatedPlayTime >= 30) {
+          registerPlay(currentSong.value.id)
+        }
       })
 
       globalAudioElement.addEventListener('loadedmetadata', () => {
@@ -34,12 +100,48 @@ export const usePlayer = () => {
       globalAudioElement.addEventListener('ended', () => {
         handleSongEnd()
       })
+
+      // Sincronizar estado cuando se usan teclas multimedia del teclado
+      globalAudioElement.addEventListener('play', () => {
+        if (!isPlaying.value) {
+          isPlaying.value = true
+          updateDocumentTitle(currentSong.value, true)
+        }
+      })
+
+      globalAudioElement.addEventListener('pause', () => {
+        if (isPlaying.value) {
+          isPlaying.value = false
+          updateDocumentTitle(currentSong.value, false)
+        }
+      })
+
+      // Configurar MediaSession para teclas multimedia del teclado
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', () => {
+          play()
+        })
+        navigator.mediaSession.setActionHandler('pause', () => {
+          pause()
+        })
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+          previousSong()
+        })
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+          nextSong()
+        })
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          if (details.seekTime !== undefined) {
+            seek(details.seekTime)
+          }
+        })
+      }
     }
   }
 
-  const playSong = async (song: any, playlistQueue?: any[]) => {
+  const playSong = async (song: any, playlistQueue?: any[], context?: PlaybackContext) => {
     initAudio()
-    
+
     if (!globalAudioElement) {
       console.error('❌ No se pudo inicializar audioElement')
       return
@@ -54,7 +156,19 @@ export const usePlayer = () => {
       // No había audio previo
     }
 
+    // Resetear contadores de tiempo de reproducción real
+    playCountedForCurrentSong.value = false
+    accumulatedPlayTime = 0
+    lastTimeUpdate = 0
+
     currentSong.value = song
+
+    // Guardar el contexto de reproducción
+    if (context) {
+      playbackContext.value = context
+    } else {
+      playbackContext.value = { type: 'unknown' }
+    }
 
     if (playlistQueue && playlistQueue.length > 0) {
       queue.value = playlistQueue
@@ -70,6 +184,18 @@ export const usePlayer = () => {
     try {
       await globalAudioElement.play()
       isPlaying.value = true
+      updateDocumentTitle(song, true)
+
+      // Actualizar MediaSession metadata
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: song.title,
+          artist: song.artistName,
+          album: song.albumName || '',
+          artwork: song.cover ? [{ src: song.cover, sizes: '512x512', type: 'image/jpeg' }] : []
+        })
+      }
+      // La reproducción se registra después de 30 segundos reales de escucha
     } catch (error) {
       console.error('Error al reproducir:', error)
       isPlaying.value = false
@@ -82,9 +208,11 @@ export const usePlayer = () => {
     if (isPlaying.value) {
       globalAudioElement.pause()
       isPlaying.value = false
+      updateDocumentTitle(currentSong.value, false)
     } else {
       globalAudioElement.play()
       isPlaying.value = true
+      updateDocumentTitle(currentSong.value, true)
     }
   }
 
@@ -92,6 +220,7 @@ export const usePlayer = () => {
     if (!globalAudioElement) return
     globalAudioElement.pause()
     isPlaying.value = false
+    updateDocumentTitle(currentSong.value, false)
   }
 
   const play = async () => {
@@ -99,6 +228,7 @@ export const usePlayer = () => {
     try {
       await globalAudioElement.play()
       isPlaying.value = true
+      updateDocumentTitle(currentSong.value, true)
     } catch (error) {
       console.error('Error al reproducir:', error)
       isPlaying.value = false
@@ -127,14 +257,18 @@ export const usePlayer = () => {
     }
 
     queueIndex.value = nextIndex
-    playSong(queue.value[nextIndex], queue.value)
+    playSong(queue.value[nextIndex], queue.value, playbackContext.value)
   }
 
   const previousSong = () => {
     if (queue.value.length === 0) return
 
-    // Si han pasado más de 3 segundos, reinicia la canción
-    if (currentTime.value > 3) {
+    const now = Date.now()
+    const timeSinceLastPress = now - lastPreviousPressTime
+    lastPreviousPressTime = now
+
+    // Si ha pasado más de 1 segundo en la canción Y no es doble pulsación (< 500ms), reinicia
+    if (currentTime.value > 1 && timeSinceLastPress > 500) {
       seek(0)
       return
     }
@@ -151,7 +285,7 @@ export const usePlayer = () => {
     }
 
     queueIndex.value = prevIndex
-    playSong(queue.value[prevIndex], queue.value)
+    playSong(queue.value[prevIndex], queue.value, playbackContext.value)
   }
 
   const seek = (time: number) => {
@@ -164,15 +298,34 @@ export const usePlayer = () => {
     if (!globalAudioElement) return
     volume.value = value
     globalAudioElement.volume = value
+
+    // Si el usuario mueve la barra manualmente, desmutear
     if (value > 0) {
       isMuted.value = false
+      globalAudioElement.muted = false
+      volumeBeforeMute.value = value
+    } else {
+      isMuted.value = true
+      globalAudioElement.muted = true
     }
   }
 
   const toggleMute = () => {
     if (!globalAudioElement) return
-    isMuted.value = !isMuted.value
-    globalAudioElement.muted = isMuted.value
+
+    if (isMuted.value) {
+      // Desmutear: restaurar el volumen anterior
+      isMuted.value = false
+      globalAudioElement.muted = false
+      volume.value = volumeBeforeMute.value
+      globalAudioElement.volume = volumeBeforeMute.value
+    } else {
+      // Mutear: guardar el volumen actual y poner a 0
+      volumeBeforeMute.value = volume.value
+      isMuted.value = true
+      globalAudioElement.muted = true
+      volume.value = 0
+    }
   }
 
   const toggleShuffle = () => {
@@ -203,6 +356,11 @@ export const usePlayer = () => {
   }
 
   const handleSongEnd = () => {
+    // Contar reproducción si la canción terminó y no se había contado
+    // (para canciones menores de 30 segundos)
+    if (!playCountedForCurrentSong.value && currentSong.value) {
+      registerPlay(currentSong.value.id)
+    }
     nextSong()
   }
 
@@ -214,11 +372,49 @@ export const usePlayer = () => {
     showNowPlaying.value = !showNowPlaying.value
   }
 
+  // Detener y resetear todo el estado del reproductor
+  const stopAndReset = () => {
+    if (globalAudioElement) {
+      globalAudioElement.pause()
+      globalAudioElement.currentTime = 0
+      globalAudioElement.src = ''
+    }
+
+    currentSong.value = null
+    isPlaying.value = false
+    currentTime.value = 0
+    duration.value = 0
+    queue.value = []
+    queueIndex.value = 0
+    showLyrics.value = false
+    showNowPlaying.value = false
+    playbackContext.value = { type: 'unknown' }
+
+    // Restaurar título de la pestaña
+    updateDocumentTitle(null, false)
+  }
+
   const formatTime = (seconds: number) => {
     if (!seconds || isNaN(seconds)) return '0:00'
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
     return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  // Añadir canción a la cola (después de la canción actual)
+  const addToQueue = (song: any) => {
+    if (!song) return
+
+    // Si no hay cola, crear una con solo esta canción
+    if (queue.value.length === 0) {
+      queue.value = [song]
+      queueIndex.value = 0
+      return
+    }
+
+    // Insertar después de la canción actual
+    const insertIndex = queueIndex.value + 1
+    queue.value.splice(insertIndex, 0, song)
   }
 
   return {
@@ -231,9 +427,10 @@ export const usePlayer = () => {
     isShuffled,
     repeatMode,
     queue,
-    queueIndex,
+    currentIndex: queueIndex,
     showLyrics,
     showNowPlaying,
+    playbackContext,
     playSong,
     togglePlay,
     pause,
@@ -247,6 +444,8 @@ export const usePlayer = () => {
     toggleRepeat,
     toggleLyrics,
     toggleNowPlaying,
+    stopAndReset,
+    addToQueue,
     formatTime
   }
 }

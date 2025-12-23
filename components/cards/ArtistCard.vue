@@ -10,9 +10,11 @@
         />
         <button
           @click.prevent="handlePlayArtist"
-          class="absolute bottom-2 right-2 bg-tiger-500 rounded-full p-3 shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
+          class="absolute bottom-2 right-2 bg-tiger-500 rounded-full p-3 shadow-lg transform translate-y-2 transition-all duration-300"
+          :class="isCurrentContext ? 'opacity-100 translate-y-0' : 'opacity-0 group-hover:opacity-100 group-hover:translate-y-0'"
         >
-          <IconPlay :size="24" class="text-white" />
+          <IconPause v-if="isCurrentlyPlaying" :size="24" class="text-white" />
+          <IconPlay v-else :size="24" class="text-white" />
         </button>
       </div>
       <h3 class="font-bold text-primary truncate mb-1">{{ artist.name }}</h3>
@@ -32,12 +34,29 @@ const props = defineProps<{
 }>()
 
 const { getSongsByArtistId } = useData()
-const { playSong } = usePlayer()
+const { playSong, playbackContext, isPlaying, togglePlay } = usePlayer()
+
+// Check if this artist is the current playback context
+const isCurrentContext = computed(() =>
+  playbackContext.value.type === 'artist' && playbackContext.value.id === props.artist.id
+)
+
+// Check if currently playing from this artist
+const isCurrentlyPlaying = computed(() =>
+  isCurrentContext.value && isPlaying.value
+)
 
 const handlePlayArtist = () => {
+  // If this is the current context, toggle play/pause
+  if (isCurrentContext.value) {
+    togglePlay()
+    return
+  }
+
+  // Otherwise, start playing this artist's songs
   const songs = getSongsByArtistId(props.artist.id)
   if (songs.length > 0) {
-    playSong(songs[0], songs)
+    playSong(songs[0], songs, { type: 'artist', id: props.artist.id })
   }
 }
 

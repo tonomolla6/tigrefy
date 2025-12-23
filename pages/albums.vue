@@ -1,7 +1,10 @@
 <template>
-  <div class="min-h-full bg-dark-base">
+  <div class="min-h-full bg-dark-base pb-20 md:pb-0">
+    <!-- Mobile Header con perfil -->
+    <MobileHeader title="Álbumes" />
+
     <div class="px-4 md:px-8 py-6">
-      <h1 class="text-4xl md:text-5xl font-bold mb-8">Todos los Álbumes</h1>
+      <h1 class="text-2xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8">Todos los Álbumes</h1>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
         <div
@@ -44,7 +47,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  middleware: 'auth'
 })
 
 const { data, getSongsByAlbumId } = useData()
@@ -55,7 +59,7 @@ const albums = computed(() => data.value.albums || [])
 const handlePlayAlbum = (album: any) => {
   const songs = getSongsByAlbumId(album.id)
   if (songs.length > 0) {
-    playSong(songs[0], songs)
+    playSong(songs[0], songs, { type: 'album', id: album.id })
   }
 }
 

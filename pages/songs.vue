@@ -101,7 +101,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  middleware: 'auth'
 })
 
 const { data, searchAll } = useData()
@@ -133,7 +134,7 @@ const isCurrentSong = (song: any) => currentSong.value?.id === song.id
 const isCurrentAndPlaying = (song: any) => isCurrentSong(song) && isPlaying.value
 
 const handlePlaySong = (song: any) => {
-  playSong(song, filteredSongs.value)
+  playSong(song, filteredSongs.value, { type: 'search' })
 }
 
 const formatPlays = (plays: number) => {

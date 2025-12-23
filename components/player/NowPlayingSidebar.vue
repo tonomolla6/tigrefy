@@ -1,15 +1,15 @@
 <template>
   <aside
     v-if="showNowPlaying && currentSong"
-    class="shrink-0 bg-dark-lighter flex flex-col h-full border-l border-gray-800 overflow-hidden overflow-y-auto"
-    style="width: 320px;"
+    class="hidden md:flex shrink-0 bg-dark-card flex-col h-full overflow-hidden m-2 ml-2 rounded-lg"
+    style="width: 340px;"
   >
     <!-- Header -->
-    <div class="flex items-center justify-between p-4 border-b border-gray-800 shrink-0">
-      <h2 class="text-sm font-bold uppercase tracking-wider text-gray-400">Reproduciendo</h2>
+    <div class="flex items-center justify-between p-4">
+      <h2 class="text-base font-bold">{{ currentSong.albumName || currentSong.title }}</h2>
       <button
         @click="toggleNowPlaying"
-        class="p-1 text-gray-400 hover:text-white transition-colors rounded"
+        class="p-1.5 text-gray-400 hover:text-white hover:bg-dark-hover transition-colors rounded-full"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -18,9 +18,9 @@
     </div>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto custom-scrollbar">
+    <div class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4">
       <!-- Cover -->
-      <div class="p-4">
+      <div class="mb-4">
         <img
           :src="currentSong.cover"
           :alt="currentSong.title"
@@ -29,38 +29,82 @@
       </div>
 
       <!-- Song Info -->
-      <div class="px-4 pb-4">
-        <h3 class="text-lg font-bold truncate">{{ currentSong.title }}</h3>
+      <div class="mb-6">
+        <h3 class="text-xl font-bold truncate">{{ currentSong.title }}</h3>
         <NuxtLink
           :to="`/artist/${currentSong.artistId}`"
-          class="text-tiger-500 hover:text-tiger-400 transition-colors text-sm"
+          class="text-gray-400 hover:text-white hover:underline transition-colors text-sm"
         >
           {{ currentSong.artistName }}
         </NuxtLink>
       </div>
 
-      <!-- Lyrics -->
-      <div class="px-4 pb-6">
-        <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Letra</h4>
-        <div
-          v-if="currentSong.lyrics"
-          class="text-gray-300 whitespace-pre-line text-sm leading-relaxed"
+      <!-- About the Artist -->
+      <div v-if="currentArtist" class="mb-6">
+        <h4 class="text-sm font-bold mb-3">Información sobre el artista</h4>
+        <NuxtLink
+          :to="`/artist/${currentArtist.id}`"
+          class="block bg-dark-hover rounded-lg overflow-hidden hover:bg-gray-700/50 transition-colors"
         >
-          {{ currentSong.lyrics }}
+          <div class="relative">
+            <img
+              :src="currentArtist.image"
+              :alt="currentArtist.name"
+              class="w-full h-48 object-cover"
+            />
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+              <p class="font-bold text-lg">{{ currentArtist.name }}</p>
+              <p class="text-xs text-gray-300">{{ formatFollowers(currentArtist.followers) }} oyentes mensuales</p>
+            </div>
+          </div>
+          <div v-if="currentArtist.bio" class="p-4">
+            <p class="text-sm text-gray-400 line-clamp-3">{{ currentArtist.bio }}</p>
+          </div>
+        </NuxtLink>
+      </div>
+
+      <!-- Lyrics -->
+      <div v-if="currentSong.lyrics" class="mb-6">
+        <h4 class="text-sm font-bold mb-3">Letra</h4>
+        <div class="bg-gradient-to-b from-indigo-900/30 to-purple-900/30 rounded-lg p-4">
+          <p class="text-gray-300 whitespace-pre-line text-sm leading-relaxed line-clamp-[12]">
+            {{ currentSong.lyrics }}
+          </p>
+          <button
+            @click="toggleLyrics"
+            class="mt-3 text-xs font-semibold text-white hover:underline"
+          >
+            Mostrar más
+          </button>
         </div>
-        <p v-else class="text-gray-500 italic text-sm">Sin letra disponible</p>
       </div>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-const { currentSong, showNowPlaying, toggleNowPlaying } = usePlayer()
+const { currentSong, showNowPlaying, toggleNowPlaying, toggleLyrics } = usePlayer()
+const { artists } = useData()
+
+const currentArtist = computed(() => {
+  if (!currentSong.value) return null
+  return artists.value.find(a => a.id === currentSong.value?.artistId)
+})
+
+const formatFollowers = (num: number) => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + ' M'
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(0) + ' mil'
+  }
+  return num.toString()
+}
 </script>
 
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -68,11 +112,25 @@ const { currentSong, showNowPlaying, toggleNowPlaying } = usePlayer()
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 3px;
+  background: transparent;
+  border-radius: 4px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-\[12\] {
+  display: -webkit-box;
+  -webkit-line-clamp: 12;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
