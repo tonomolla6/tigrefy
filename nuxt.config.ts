@@ -48,6 +48,13 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: 'cloudflare-pages'
+    preset: 'cloudflare-pages',
+    unenv: {
+      alias: {
+        'node:crypto': 'unenv/runtime/node/crypto/index',
+        'node:buffer': 'unenv/runtime/node/buffer/index',
+        'node:util': 'unenv/runtime/node/util/index'
+      }
+    }
   }
 })
