@@ -1,13 +1,3 @@
-CREATE TABLE `album_likes` (
-	`user_id` text NOT NULL,
-	`album_id` text NOT NULL,
-	`liked_at` text DEFAULT (current_timestamp) NOT NULL,
-	PRIMARY KEY(`user_id`, `album_id`),
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`album_id`) REFERENCES `albums`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE INDEX `idx_album_likes_album` ON `album_likes` (`album_id`);--> statement-breakpoint
 CREATE TABLE `albums` (
 	`id` text PRIMARY KEY DEFAULT (lower(hex(randomblob(11)))) NOT NULL,
 	`artist_id` text NOT NULL,
@@ -70,6 +60,16 @@ CREATE TABLE `playlists` (
 );
 --> statement-breakpoint
 CREATE INDEX `idx_playlists_owner` ON `playlists` (`owner_id`);--> statement-breakpoint
+CREATE TABLE `saved_albums` (
+	`user_id` text NOT NULL,
+	`album_id` text NOT NULL,
+	`saved_at` text DEFAULT (current_timestamp) NOT NULL,
+	PRIMARY KEY(`user_id`, `album_id`),
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`album_id`) REFERENCES `albums`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX `idx_saved_albums_user` ON `saved_albums` (`user_id`);--> statement-breakpoint
 CREATE TABLE `saved_playlists` (
 	`user_id` text NOT NULL,
 	`playlist_id` text NOT NULL,
