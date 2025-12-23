@@ -1,8 +1,6 @@
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import { SignJWT, jwtVerify } from 'jose'
 import type { H3Event } from 'h3'
 
-const SALT_ROUNDS = 10
 const TOKEN_EXPIRY = '7d'
 
 export interface TokenPayload {
@@ -18,27 +16,107 @@ export interface User {
   createdAt: string
 }
 
-// Hash password con bcrypt
+// ============================================
+// Password Hashing con Web Crypto API (PBKDF2)
+// ============================================
+
+// Genera un salt aleatorio
+function generateSalt(): Uint8Array {
+  return crypto.getRandomValues(new Uint8Array(16))
+}
+
+// Deriva una key usando PBKDF2
+async function deriveKey(password: string, salt: Uint8Array): Promise<ArrayBuffer> {
+  const encoder = new TextEncoder()
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  )
+
+  return crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      salt: new Uint8Array(salt),
+      iterations: 100000,
+      hash: 'SHA-256'
+    },
+    keyMaterial,
+    256
+  )
+}
+
+// Convierte ArrayBuffer a hex string
+function bufferToHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+// Convierte hex string a Uint8Array
+function hexToBuffer(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2)
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16)
+  }
+  return bytes
+}
+
+// Hash password con PBKDF2 (formato: salt$hash)
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, SALT_ROUNDS)
+  const salt = generateSalt()
+  const derivedKey = await deriveKey(password, salt)
+  const saltHex = bufferToHex(salt.buffer as ArrayBuffer)
+  const hashHex = bufferToHex(derivedKey)
+  return `${saltHex}$${hashHex}`
 }
 
 // Verificar password contra hash
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash)
+export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+  const [saltHex, hashHex] = storedHash.split('$')
+  if (!saltHex || !hashHex) return false
+
+  const salt = hexToBuffer(saltHex)
+  const derivedKey = await deriveKey(password, salt)
+  const newHashHex = bufferToHex(derivedKey)
+
+  return hashHex === newHashHex
+}
+
+// ============================================
+// JWT con jose (Edge-compatible)
+// ============================================
+
+// Obtiene la secret key como Uint8Array
+function getSecretKey(): Uint8Array {
+  const config = useRuntimeConfig()
+  return new TextEncoder().encode(config.jwtSecret)
 }
 
 // Generar JWT
-export function generateToken(payload: TokenPayload): string {
-  const config = useRuntimeConfig()
-  return jwt.sign(payload, config.jwtSecret, { expiresIn: TOKEN_EXPIRY })
+export async function generateToken(payload: TokenPayload): Promise<string> {
+  const secret = getSecretKey()
+
+  return new SignJWT({ ...payload })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(TOKEN_EXPIRY)
+    .sign(secret)
 }
 
 // Verificar JWT
-export function verifyToken(token: string): TokenPayload | null {
-  const config = useRuntimeConfig()
+export async function verifyToken(token: string): Promise<TokenPayload | null> {
+  const secret = getSecretKey()
+
   try {
-    return jwt.verify(token, config.jwtSecret) as TokenPayload
+    const { payload } = await jwtVerify(token, secret)
+    return {
+      userId: payload.userId as string,
+      username: payload.username as string,
+      role: payload.role as string
+    }
   } catch {
     return null
   }
@@ -58,15 +136,15 @@ export function getTokenFromEvent(event: H3Event): string | null {
 }
 
 // Obtener usuario autenticado del evento
-export function getAuthUser(event: H3Event): TokenPayload | null {
+export async function getAuthUser(event: H3Event): Promise<TokenPayload | null> {
   const token = getTokenFromEvent(event)
   if (!token) return null
   return verifyToken(token)
 }
 
 // Requerir autenticación (lanza error si no está autenticado)
-export function requireAuth(event: H3Event): TokenPayload {
-  const user = getAuthUser(event)
+export async function requireAuth(event: H3Event): Promise<TokenPayload> {
+  const user = await getAuthUser(event)
   if (!user) {
     throw createError({
       statusCode: 401,
@@ -87,8 +165,8 @@ export function canManageContent(role: string | undefined): boolean {
 }
 
 // Requerir rol tigre (admin)
-export function requireTigre(event: H3Event): TokenPayload {
-  const user = getAuthUser(event)
+export async function requireTigre(event: H3Event): Promise<TokenPayload> {
+  const user = await getAuthUser(event)
   if (!user || !canManageContent(user.role)) {
     throw createError({
       statusCode: 403,

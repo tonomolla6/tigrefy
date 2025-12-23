@@ -77,9 +77,9 @@ export default defineEventHandler(async (event) => {
         statusMessage: 'La contraseña debe tener al menos 6 caracteres'
       })
     }
-    // Hash de la contraseña
-    const bcrypt = await import('bcryptjs')
-    updates.passwordHash = await bcrypt.hash(password, 10)
+    // Hash de la contraseña con Web Crypto API
+    const { hashPassword } = await import('~/server/utils/auth')
+    updates.passwordHash = await hashPassword(password)
   }
 
   if (Object.keys(updates).length === 0) {

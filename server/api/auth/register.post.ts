@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
   const userId = result[0].id
 
   // Generar token
-  const token = generateToken({ userId, username, role: userRole })
+  const token = await generateToken({ userId, username, role: userRole })
 
   // Establecer cookie httpOnly para el servidor
   setCookie(event, 'tigrefy_token', token, {

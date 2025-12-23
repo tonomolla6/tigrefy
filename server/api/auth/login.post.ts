@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Generar token con rol
-  const token = generateToken({
+  const token = await generateToken({
     userId: user.id,
     username: user.username,
     role: user.role || 'user'
