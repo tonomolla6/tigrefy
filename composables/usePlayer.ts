@@ -43,6 +43,7 @@ export const usePlayer = () => {
   const queueIndex = useState('queueIndex', () => 0)
   const showLyrics = useState('showLyrics', () => false)
   const showNowPlaying = useState('showNowPlaying', () => false)
+  const showQueue = useState('showQueue', () => true)
   const playbackContext = useState<PlaybackContext>('playbackContext', () => ({ type: 'unknown' }))
 
   // Flag para saber si ya se contó la reproducción de la canción actual
@@ -370,6 +371,18 @@ export const usePlayer = () => {
 
   const toggleNowPlaying = () => {
     showNowPlaying.value = !showNowPlaying.value
+    // Cerrar cola si se abre Now Playing
+    if (showNowPlaying.value) {
+      showQueue.value = false
+    }
+  }
+
+  const toggleQueue = () => {
+    showQueue.value = !showQueue.value
+    // Cerrar Now Playing si se abre cola
+    if (showQueue.value) {
+      showNowPlaying.value = false
+    }
   }
 
   // Detener y resetear todo el estado del reproductor
@@ -430,6 +443,7 @@ export const usePlayer = () => {
     currentIndex: queueIndex,
     showLyrics,
     showNowPlaying,
+    showQueue,
     playbackContext,
     playSong,
     togglePlay,
@@ -444,6 +458,7 @@ export const usePlayer = () => {
     toggleRepeat,
     toggleLyrics,
     toggleNowPlaying,
+    toggleQueue,
     stopAndReset,
     addToQueue,
     formatTime

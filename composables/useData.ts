@@ -20,6 +20,7 @@ export const useData = () => {
   }))
 
   const isLoaded = computed(() => dataStore.isLoaded)
+  const isLoading = computed(() => dataStore.isLoading)
 
   const loadData = async (forceReload = false) => {
     await dataStore.loadAllData(forceReload)
@@ -29,6 +30,7 @@ export const useData = () => {
     // Backward compat
     data,
     isLoaded,
+    isLoading,
     loadData,
 
     // Getter functions

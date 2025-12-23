@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-[340px] bg-black flex flex-col h-full hidden md:flex p-2 pt-0 gap-2">
+  <aside class="w-[340px] bg-black flex flex-col h-full hidden md:flex p-2 pt-0 pr-0 gap-2">
     <!-- Tu Biblioteca -->
     <div class="bg-dark rounded-lg flex-1 flex flex-col min-h-0">
       <!-- Header biblioteca -->
@@ -34,6 +34,23 @@
 
       <!-- Lista de biblioteca -->
       <div class="flex-1 overflow-y-auto custom-scrollbar px-2 pb-2">
+        <!-- Skeleton mientras carga -->
+        <template v-if="!isLoaded">
+          <div
+            v-for="i in 8"
+            :key="i"
+            class="flex items-center gap-3 p-2 rounded-md"
+          >
+            <div class="w-12 h-12 rounded bg-white/10 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 bg-white/10 rounded animate-pulse" :style="{ width: `${50 + Math.random() * 40}%` }"></div>
+              <div class="h-3 w-24 bg-white/10 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Contenido real cuando ya cargó -->
+        <template v-else>
         <!-- Canciones que te gustan -->
         <NuxtLink
           v-if="filterType === null"
@@ -141,6 +158,7 @@
             <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
           </svg>
         </NuxtLink>
+        </template>
       </div>
     </div>
   </aside>
@@ -148,7 +166,7 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { data } = useData()
+const { data, isLoaded } = useData()
 const { userPlaylists } = useUserPlaylists()
 const { favoriteSongs, favoriteArtists, savedPlaylistIds, savedAlbumIds } = useFavorites()
 const { isPlaying, playbackContext } = usePlayer()
@@ -250,5 +268,9 @@ const filteredSavedAlbums = computed(() => {
 
 .custom-scrollbar:hover::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
+}
+
+.custom-scrollbar::-webkit-scrollbar-button {
+  display: none;
 }
 </style>

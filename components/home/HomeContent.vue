@@ -1,6 +1,12 @@
 <template>
   <NuxtLayout name="default">
-    <div class="min-h-full pb-20 md:pb-0">
+    <!-- Loading dots mientras carga -->
+    <div v-if="!isLoaded" class="min-h-full flex items-center justify-center py-20">
+      <LoadingDots />
+    </div>
+
+    <!-- Contenido real cuando está cargado -->
+    <div v-else class="min-h-full pb-20 md:pb-0">
       <!-- Mobile Header con perfil -->
       <MobileHeader />
 
@@ -72,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-const { data, getSongsByAlbumId } = useData()
+const { data, getSongsByAlbumId, isLoaded } = useData()
 const { playSong } = usePlayer()
 const { favoriteSongs } = useFavorites()
 const { user, isGuest } = useAuth()

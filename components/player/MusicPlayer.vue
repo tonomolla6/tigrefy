@@ -36,11 +36,12 @@
             <div class="flex items-center gap-4 md:gap-5">
               <button
                 @click="toggleShuffle"
-                class="hidden md:block text-gray-400 hover:text-white transition-colors"
+                class="hidden md:flex flex-col items-center relative text-gray-400 hover:text-white transition-colors"
                 :class="{'text-tiger-500 hover:text-tiger-400': isShuffled}"
                 title="Aleatorio"
               >
                 <IconShuffle :size="18" />
+                <span v-if="isShuffled" class="absolute -bottom-2 w-1 h-1 bg-tiger-500 rounded-full"></span>
               </button>
               <button
                 @click="previousSong"
@@ -74,11 +75,12 @@
               </button>
               <button
                 @click="toggleRepeat"
-                class="hidden md:block text-gray-400 hover:text-white transition-colors"
+                class="hidden md:flex flex-col items-center relative text-gray-400 hover:text-white transition-colors"
                 :class="{'text-tiger-500 hover:text-tiger-400': repeatMode !== 'off'}"
                 :title="repeatMode === 'off' ? 'Repetir' : repeatMode === 'all' ? 'Repetir todo' : 'Repetir una'"
               >
                 <IconRepeat :size="18" :mode="repeatMode" />
+                <span v-if="repeatMode !== 'off'" class="absolute -bottom-2 w-1 h-1 bg-tiger-500 rounded-full"></span>
               </button>
             </div>
 
@@ -110,26 +112,32 @@
 
           <!-- Controles de volumen y extras (derecha) -->
           <div class="hidden md:flex items-center gap-3 flex-1 justify-end md:w-[30%]">
-            <button
-              @click="showAddToPlaylistModal = true"
-              class="text-gray-400 hover:text-white transition-colors"
-              title="Añadir a playlist"
-            >
-              <IconPlus :size="18" />
-            </button>
+            <!-- Botón Letra (icono micrófono estilo Spotify) -->
             <button
               v-if="currentSong.lyrics"
-              @click="toggleLyrics"
-              class="text-gray-400 hover:text-white transition-colors"
-              :class="{'text-tiger-500': showLyrics}"
+              @click="goToLyrics"
+              class="flex flex-col items-center relative text-gray-400 hover:text-white transition-colors"
+              :class="{'text-tiger-500 hover:text-tiger-400': isLyricsPage}"
               title="Ver letra"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18V5l12-2v13"/>
-                <circle cx="6" cy="18" r="3"/>
-                <circle cx="18" cy="16" r="3"/>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797zM10.5 8.118l-2.619-2.62A63303.13 63303.13 0 0 0 4.74 9.075L2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045 3.505-3.99z"/>
               </svg>
+              <span v-if="isLyricsPage" class="absolute -bottom-2 w-1 h-1 bg-tiger-500 rounded-full"></span>
             </button>
+            <!-- Botón Cola (icono estilo Spotify) -->
+            <button
+              @click="toggleQueue"
+              class="flex flex-col items-center relative text-gray-400 hover:text-white transition-colors"
+              :class="{'text-tiger-500 hover:text-tiger-400': showQueue}"
+              title="Ver cola de reproducción"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M15 15H1v-1.5h14V15zm0-4.5H1V9h14v1.5zm-14-7A2.5 2.5 0 0 1 3.5 1H11v1.5H3.5a1 1 0 1 0 0 2H11V6H3.5A2.5 2.5 0 0 1 1 3.5z"/>
+              </svg>
+              <span v-if="showQueue" class="absolute -bottom-2 w-1 h-1 bg-tiger-500 rounded-full"></span>
+            </button>
+            <!-- Volumen -->
             <div class="flex items-center gap-2 group">
               <button
                 @click="toggleMute"
@@ -155,19 +163,6 @@
                 />
               </div>
             </div>
-            <!-- Botón Now Playing Sidebar -->
-            <button
-              @click="toggleNowPlaying"
-              class="text-gray-400 hover:text-white transition-colors"
-              :class="{'text-tiger-500': showNowPlaying}"
-              title="Ver detalles de la canción"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7" rx="1"/>
-                <rect x="14" y="3" width="7" height="18" rx="1"/>
-                <rect x="3" y="14" width="7" height="7" rx="1"/>
-              </svg>
-            </button>
           </div>
 
           <!-- Botón menú móvil -->
@@ -273,43 +268,6 @@
           </div>
         </transition>
 
-        <!-- Panel de letras -->
-        <transition
-          enter-active-class="transition-all duration-300 ease-out"
-          leave-active-class="transition-all duration-300 ease-in"
-          enter-from-class="max-h-0 opacity-0"
-          leave-to-class="max-h-0 opacity-0"
-          enter-to-class="max-h-80 md:max-h-96 opacity-100"
-          leave-from-class="max-h-80 md:max-h-96 opacity-100"
-        >
-          <div v-if="showLyrics && currentSong.lyrics" class="border-t border-dark-card mt-4">
-            <div class="px-4 md:px-6 py-4 md:py-6 max-h-80 md:max-h-96 overflow-y-auto custom-scrollbar bg-dark-elevated/50">
-              <div class="flex items-center justify-between mb-4">
-                <div>
-                  <h3 class="text-base md:text-xl font-bold text-white flex items-center gap-2">
-                    <span class="text-2xl">🎵</span>
-                    Letra
-                  </h3>
-                  <p class="text-xs md:text-sm text-secondary mt-1">{{ currentSong.title }}</p>
-                </div>
-                <button 
-                  @click="toggleLyrics" 
-                  class="text-secondary hover:text-white hover:bg-dark-card p-2 rounded-full transition-all"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-              <div class="prose prose-invert max-w-none">
-                <p class="text-secondary whitespace-pre-line text-sm md:text-base leading-relaxed md:leading-loose">
-                  {{ currentSong.lyrics }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </transition>
     </div>
 
     <!-- Add to Playlist Modal -->
@@ -331,6 +289,9 @@
 </template>
 
 <script setup lang="ts">
+const router = useRouter()
+const route = useRoute()
+
 const {
   currentSong,
   isPlaying,
@@ -340,8 +301,7 @@ const {
   isMuted,
   isShuffled,
   repeatMode,
-  showLyrics,
-  showNowPlaying,
+  showQueue,
   togglePlay,
   previousSong,
   nextSong,
@@ -350,13 +310,24 @@ const {
   toggleMute,
   toggleShuffle,
   toggleRepeat,
-  toggleLyrics,
-  toggleNowPlaying,
+  toggleQueue,
   formatTime
 } = usePlayer()
 
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 const showMobileMenu = ref(false)
+
+// Detectar si estamos en la página de letras
+const isLyricsPage = computed(() => route.path === '/lyrics')
+
+// Navegar a la página de letras o volver si ya estamos ahí
+const goToLyrics = () => {
+  if (isLyricsPage.value) {
+    router.back()
+  } else {
+    router.push('/lyrics')
+  }
+}
 const showAddToPlaylistModal = ref(false)
 const showFullscreenPlayer = ref(false)
 
@@ -412,23 +383,3 @@ watch(currentSong, () => {
   showMobileMenu.value = false
 })
 </script>
-
-<style scoped>
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-</style>
