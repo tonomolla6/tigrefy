@@ -4,16 +4,23 @@
     leave-active-class="transition-all duration-200 ease-in"
     enter-from-class="w-0 opacity-0"
     leave-to-class="w-0 opacity-0"
-    enter-to-class="w-[380px] opacity-100"
-    leave-from-class="w-[380px] opacity-100"
+    :enter-to-class="`opacity-100`"
+    :leave-from-class="`opacity-100`"
   >
+    <!-- Solo mostrar si hay canción reproduciéndose Y showQueue está activo -->
     <aside
-      v-if="showQueue"
-      class="hidden md:flex flex-col bg-dark rounded-lg m-2 mt-0 ml-0 overflow-hidden flex-shrink-0 w-[380px]"
+      v-if="showQueue && currentSong"
+      class="hidden md:flex flex-col bg-dark rounded-lg m-2 mt-0 ml-0 overflow-hidden flex-shrink-0 relative"
+      :style="{ width: `${rightSidebarWidth}px` }"
     >
+      <!-- Resize handle (left edge) -->
+      <div
+        class="absolute top-0 left-0 w-1 h-full cursor-col-resize hover:bg-white/20 transition-colors z-10"
+        @mousedown="startResize"
+      ></div>
       <!-- Header -->
       <div class="flex items-center justify-between px-4 py-4">
-        <h3 class="text-base font-bold text-white">Cola</h3>
+        <h3 class="text-base font-bold text-white">{{ currentSongArtist?.name || currentSong.artistName }}</h3>
         <button
           @click="toggleQueue"
           class="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-full transition-colors"
@@ -26,98 +33,92 @@
 
       <!-- Contenido scrolleable -->
       <div class="flex-1 overflow-y-auto custom-scrollbar px-2">
-        <!-- Skeleton cuando no hay canción -->
-        <template v-if="!currentSong">
-          <!-- Skeleton Sonando -->
-          <div class="px-2 pb-4">
-            <div class="h-3 w-16 bg-white/10 rounded mb-3 mx-2 animate-pulse"></div>
-            <div class="flex items-center gap-3 p-2 rounded-md bg-white/5">
-              <div class="w-12 h-12 rounded bg-white/10 animate-pulse"></div>
-              <div class="flex-1 space-y-2">
-                <div class="h-4 w-32 bg-white/10 rounded animate-pulse"></div>
-                <div class="h-3 w-24 bg-white/10 rounded animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-          <!-- Skeleton Siguiente -->
-          <div class="px-2 pb-4">
-            <div class="h-3 w-40 bg-white/10 rounded mb-3 mx-2 animate-pulse"></div>
-            <div class="space-y-2">
-              <div v-for="i in 5" :key="i" class="flex items-center gap-3 p-2 rounded-md">
-                <div class="w-5 h-4 bg-white/10 rounded animate-pulse"></div>
-                <div class="w-10 h-10 rounded bg-white/10 animate-pulse"></div>
-                <div class="flex-1 space-y-2">
-                  <div class="h-4 bg-white/10 rounded animate-pulse" :style="{ width: `${60 + Math.random() * 40}%` }"></div>
-                  <div class="h-3 w-20 bg-white/10 rounded animate-pulse"></div>
-                </div>
-                <div class="h-3 w-8 bg-white/10 rounded animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-        </template>
+        <!-- Imagen grande de la canción actual -->
+        <div class="px-2 pb-4">
+          <img
+            :src="currentSong.cover || '/covers/default.png'"
+            :alt="currentSong.title"
+            class="w-full aspect-square rounded-lg object-cover shadow-xl"
+          />
+        </div>
 
-        <!-- Contenido real cuando hay canción -->
-        <template v-else>
-          <!-- Reproduciendo ahora -->
-          <div class="px-2 pb-4">
-            <p class="text-[11px] text-white/50 uppercase tracking-wider mb-2 font-bold px-2">Sonando</p>
-            <div class="flex items-center gap-3 p-2 rounded-md bg-white/5">
+        <!-- Info de la canción -->
+        <div class="px-4 pb-4">
+          <div class="flex items-center justify-between">
+            <div class="min-w-0 flex-1">
+              <h2 class="text-xl font-bold text-white truncate">{{ currentSong.title }}</h2>
+              <NuxtLink
+                v-if="currentSong.artistId"
+                :to="`/artist/${currentSong.artistId}`"
+                class="text-white/60 text-sm hover:text-white hover:underline transition-colors"
+              >
+                {{ currentSong.artistName }}
+              </NuxtLink>
+              <p v-else class="text-white/60 text-sm">{{ currentSong.artistName }}</p>
+            </div>
+            <!-- Icono de check verde como Spotify -->
+            <div class="w-6 h-6 bg-tiger-500 rounded-full flex items-center justify-center flex-shrink-0 ml-3">
+              <svg class="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info del artista -->
+        <div v-if="currentSongArtist" class="px-2 pb-4">
+          <NuxtLink
+            :to="`/artist/${currentSongArtist.id}`"
+            class="block rounded-lg overflow-hidden hover:bg-white/5 transition-colors"
+          >
+            <div class="p-3">
+              <p class="text-[11px] text-white/50 uppercase tracking-wider mb-3 font-bold">Información sobre el artista</p>
+              <div class="relative">
+                <img
+                  :src="currentSongArtist.image || '/covers/default-artist.png'"
+                  :alt="currentSongArtist.name"
+                  class="w-full h-40 object-cover rounded-lg"
+                />
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent rounded-b-lg">
+                  <p class="text-white font-bold">{{ currentSongArtist.name }}</p>
+                  <p v-if="currentSongArtist.followers" class="text-white/60 text-sm">
+                    {{ formatFollowers(currentSongArtist.followers) }} seguidores
+                  </p>
+                </div>
+              </div>
+            </div>
+          </NuxtLink>
+        </div>
+
+        <!-- Siguiente en la cola (si hay) -->
+        <div v-if="upcomingSongs.length > 0" class="px-2 pb-4">
+          <p class="text-[11px] text-white/50 uppercase tracking-wider mb-2 font-bold px-2">
+            Siguiente de: {{ contextLabel }}
+          </p>
+          <div class="space-y-0.5">
+            <div
+              v-for="(song, index) in upcomingSongs.slice(0, 5)"
+              :key="`${song.id}-${index}`"
+              @click="playFromQueue(index)"
+              class="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors cursor-pointer group"
+            >
+              <div class="w-5 flex items-center justify-center">
+                <span class="text-white/40 text-sm group-hover:hidden">{{ index + 1 }}</span>
+                <IconPlay :size="12" class="text-white hidden group-hover:block" />
+              </div>
               <img
-                :src="currentSong.cover || '/covers/default.png'"
-                :alt="currentSong.title"
-                class="w-12 h-12 rounded object-cover"
+                :src="song.cover || '/covers/default.png'"
+                :alt="song.title"
+                class="w-10 h-10 rounded object-cover"
               />
               <div class="min-w-0 flex-1">
-                <p class="text-tiger-500 text-sm font-medium truncate">{{ currentSong.title }}</p>
-                <p class="text-white/60 text-xs truncate">{{ currentSong.artistName }}</p>
+                <p class="text-white text-sm truncate group-hover:text-white transition-colors">{{ song.title }}</p>
+                <p class="text-white/60 text-xs truncate">{{ song.artistName }}</p>
               </div>
-              <!-- Playing indicator -->
-              <div v-if="isPlaying" class="flex items-end gap-[3px] h-3 mr-1">
-                <span class="w-[3px] bg-tiger-500 rounded-sm animate-eq1"></span>
-                <span class="w-[3px] bg-tiger-500 rounded-sm animate-eq2"></span>
-                <span class="w-[3px] bg-tiger-500 rounded-sm animate-eq3"></span>
-              </div>
+              <span class="text-white/40 text-xs">{{ formatTime(song.duration) }}</span>
             </div>
           </div>
-
-          <!-- Siguiente en la cola -->
-          <div v-if="upcomingSongs.length > 0" class="px-2 pb-4">
-            <p class="text-[11px] text-white/50 uppercase tracking-wider mb-2 font-bold px-2">
-              Siguiente de: {{ contextLabel }}
-            </p>
-            <div class="space-y-0.5">
-              <div
-                v-for="(song, index) in upcomingSongs"
-                :key="`${song.id}-${index}`"
-                @click="playFromQueue(index)"
-                class="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors cursor-pointer group"
-              >
-                <div class="w-5 flex items-center justify-center">
-                  <span class="text-white/40 text-sm group-hover:hidden">{{ index + 1 }}</span>
-                  <IconPlay :size="12" class="text-white hidden group-hover:block" />
-                </div>
-                <img
-                  :src="song.cover || '/covers/default.png'"
-                  :alt="song.title"
-                  class="w-10 h-10 rounded object-cover"
-                />
-                <div class="min-w-0 flex-1">
-                  <p class="text-white text-sm truncate group-hover:text-white transition-colors">{{ song.title }}</p>
-                  <p class="text-white/60 text-xs truncate">{{ song.artistName }}</p>
-                </div>
-                <span class="text-white/40 text-xs">{{ formatTime(song.duration) }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Estado vacío -->
-          <div v-else class="flex flex-col items-center justify-center py-12 px-6">
-            <svg class="w-12 h-12 text-white/20 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-            </svg>
-            <p class="text-white/50 text-sm text-center">No hay más canciones en la cola</p>
-          </div>
-        </template>
+        </div>
       </div>
     </aside>
   </transition>
@@ -136,7 +137,43 @@ const {
   formatTime
 } = usePlayer()
 
-const { data } = useData()
+const { data, getArtistById } = useData()
+
+const { rightSidebarWidth, resizeRightSidebar } = useSidebarResize()
+
+// Resize handling
+const isResizing = ref(false)
+const startX = ref(0)
+
+const startResize = (e: MouseEvent) => {
+  isResizing.value = true
+  startX.value = e.clientX
+  document.addEventListener('mousemove', onResize)
+  document.addEventListener('mouseup', stopResize)
+  document.body.style.cursor = 'col-resize'
+  document.body.style.userSelect = 'none'
+}
+
+const onResize = (e: MouseEvent) => {
+  if (!isResizing.value) return
+  const delta = e.clientX - startX.value
+  startX.value = e.clientX
+  resizeRightSidebar(delta)
+}
+
+const stopResize = () => {
+  isResizing.value = false
+  document.removeEventListener('mousemove', onResize)
+  document.removeEventListener('mouseup', stopResize)
+  document.body.style.cursor = ''
+  document.body.style.userSelect = ''
+}
+
+// Obtener info del artista de la canción actual
+const currentSongArtist = computed(() => {
+  if (!currentSong.value?.artistId) return null
+  return getArtistById(currentSong.value.artistId)
+})
 
 const upcomingSongs = computed(() => {
   if (!queue.value || currentIndex.value === undefined) return []
@@ -161,6 +198,12 @@ const contextLabel = computed(() => {
   if (ctx.type === 'search') return 'BÚSQUEDA'
   return 'TU BIBLIOTECA'
 })
+
+const formatFollowers = (num: number) => {
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
+  if (num >= 1000) return `${(num / 1000).toFixed(0)}K`
+  return num.toString()
+}
 
 const playFromQueue = (relativeIndex: number) => {
   const absoluteIndex = currentIndex.value + 1 + relativeIndex
