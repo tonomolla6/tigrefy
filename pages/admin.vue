@@ -166,6 +166,7 @@
           <tr>
             <th class="text-left text-xs font-medium text-gray-400 p-3">Artista</th>
             <th class="text-left text-xs font-medium text-gray-400 p-3 hidden md:table-cell">ID</th>
+            <th class="text-center text-xs font-medium text-gray-400 p-3">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -187,6 +188,30 @@
             <td class="p-3 hidden md:table-cell">
               <span class="text-gray-500 text-xs font-mono">{{ artist.id }}</span>
             </td>
+            <td class="p-3 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button
+                  @click="openEditArtistModal(artist)"
+                  class="p-2 rounded-full bg-tiger-500/20 text-tiger-400 hover:bg-tiger-500/30 transition-colors"
+                  title="Editar artista"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  @click="confirmDeleteArtist(artist)"
+                  :disabled="isUpdating === artist.id"
+                  class="p-2 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+                  title="Eliminar artista"
+                >
+                  <span v-if="isUpdating === artist.id" class="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -199,6 +224,7 @@
             <th class="text-left text-xs font-medium text-gray-400 p-3 hidden md:table-cell">Artista</th>
             <th class="text-left text-xs font-medium text-gray-400 p-3 hidden md:table-cell">Pistas</th>
             <th class="text-center text-xs font-medium text-gray-400 p-3">Visible</th>
+            <th class="text-center text-xs font-medium text-gray-400 p-3">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -237,6 +263,29 @@
                 <span v-else>{{ album.isPublic ? '🔓' : '🔒' }}</span>
               </button>
             </td>
+            <td class="p-3 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button
+                  @click="openEditAlbumModal(album)"
+                  class="p-2 rounded-full bg-tiger-500/20 text-tiger-400 hover:bg-tiger-500/30 transition-colors"
+                  title="Editar álbum"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  @click="confirmDeleteAlbum(album)"
+                  :disabled="isUpdating === album.id"
+                  class="p-2 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+                  title="Eliminar álbum"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -249,6 +298,7 @@
             <th class="text-left text-xs font-medium text-gray-400 p-3 hidden md:table-cell">Artista</th>
             <th class="text-left text-xs font-medium text-gray-400 p-3 hidden md:table-cell">Álbum</th>
             <th class="text-center text-xs font-medium text-gray-400 p-3">Visible</th>
+            <th class="text-center text-xs font-medium text-gray-400 p-3">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -286,6 +336,29 @@
                 <span v-if="isUpdating === song.id" class="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
                 <span v-else>{{ song.isPublic ? '🔓' : '🔒' }}</span>
               </button>
+            </td>
+            <td class="p-3 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button
+                  @click="openEditSongModal(song)"
+                  class="p-2 rounded-full bg-tiger-500/20 text-tiger-400 hover:bg-tiger-500/30 transition-colors"
+                  title="Editar canción"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  @click="confirmDeleteSong(song)"
+                  :disabled="isUpdating === song.id"
+                  class="p-2 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+                  title="Eliminar canción"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -339,13 +412,27 @@
               </button>
             </td>
             <td class="p-3 text-center">
-              <button
-                @click="openEditPlaylistModal(playlist)"
-                class="p-2 rounded-full bg-tiger-500/20 text-tiger-400 hover:bg-tiger-500/30 transition-colors"
-                title="Editar playlist"
-              >
-                ✏️
-              </button>
+              <div class="flex items-center justify-center gap-2">
+                <button
+                  @click="openEditPlaylistModal(playlist)"
+                  class="p-2 rounded-full bg-tiger-500/20 text-tiger-400 hover:bg-tiger-500/30 transition-colors"
+                  title="Editar playlist"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  @click="confirmDeletePlaylist(playlist)"
+                  :disabled="isUpdating === playlist.id"
+                  class="p-2 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+                  title="Eliminar playlist"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -449,12 +536,13 @@
             </div>
 
             <div>
-              <label class="block text-sm text-gray-400 mb-1">Imagen (URL)</label>
-              <input
+              <FileUpload
+                ref="artistImageUpload"
                 v-model="newArtist.image"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                type="artist"
+                label="Imagen del artista"
                 placeholder="/artists/nombre.jpg"
+                allow-manual-url
               />
             </div>
 
@@ -493,6 +581,106 @@
       </div>
     </Teleport>
 
+    <!-- Modal Editar Artista -->
+    <Teleport to="body">
+      <div v-if="showEditArtistModal && editingArtist" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <h2 class="text-xl font-bold text-white mb-4">Editar artista</h2>
+
+          <form @submit.prevent="saveArtistChanges" class="space-y-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Nombre *</label>
+              <input
+                v-model="editArtistForm.name"
+                type="text"
+                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                placeholder="Nombre del artista"
+                required
+              />
+            </div>
+
+            <div>
+              <FileUpload
+                ref="editArtistImageUpload"
+                v-model="editArtistForm.image"
+                type="artist"
+                label="Imagen del artista"
+                placeholder="/artists/nombre.jpg"
+                allow-manual-url
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Biografía</label>
+              <textarea
+                v-model="editArtistForm.bio"
+                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-24 resize-none"
+                placeholder="Descripción del artista..."
+              ></textarea>
+            </div>
+
+            <div v-if="editArtistError" class="text-red-400 text-sm">
+              {{ editArtistError }}
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button
+                type="button"
+                @click="closeEditArtistModal"
+                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                :disabled="isEditingArtist"
+                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
+              >
+                <span v-if="isEditingArtist">Guardando...</span>
+                <span v-else>Guardar cambios</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Modal Confirmar Eliminación Artista -->
+    <Teleport to="body">
+      <div v-if="artistToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
+          <h2 class="text-xl font-bold text-white mb-2">Eliminar artista</h2>
+          <p class="text-gray-400 mb-4">
+            ¿Estás seguro de que quieres eliminar a <span class="text-white font-medium">{{ artistToDelete.name }}</span>?
+          </p>
+          <p class="text-yellow-400 text-sm mb-4">
+            Solo se puede eliminar si no tiene álbumes ni canciones asociadas.
+          </p>
+
+          <div v-if="deleteArtistError" class="text-red-400 text-sm mb-4">
+            {{ deleteArtistError }}
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              @click="artistToDelete = null; deleteArtistError = ''"
+              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              @click="deleteArtist"
+              :disabled="isUpdating === artistToDelete?.id"
+              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+            >
+              <span v-if="isUpdating === artistToDelete?.id">Eliminando...</span>
+              <span v-else>Eliminar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Modal Crear Álbum -->
     <Teleport to="body">
       <div v-if="showCreateAlbumModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -526,12 +714,13 @@
             </div>
 
             <div>
-              <label class="block text-sm text-gray-400 mb-1">Portada (URL)</label>
-              <input
+              <FileUpload
+                ref="albumCoverUpload"
                 v-model="newAlbum.cover"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                type="cover"
+                label="Portada del álbum"
                 placeholder="/covers/nombre-album.jpg"
+                allow-manual-url
               />
             </div>
 
@@ -630,13 +819,14 @@
             </div>
 
             <div>
-              <label class="block text-sm text-gray-400 mb-1">URL del audio *</label>
-              <input
+              <FileUpload
+                ref="songAudioUpload"
                 v-model="newSong.audioUrl"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                type="audio"
+                label="Archivo de audio *"
                 placeholder="/audio/nombre-cancion.mp3"
-                required
+                allow-manual-url
+                @duration-detected="newSong.duration = $event"
               />
             </div>
 
@@ -709,6 +899,263 @@
       </div>
     </Teleport>
 
+    <!-- Modal Editar Álbum -->
+    <Teleport to="body">
+      <div v-if="showEditAlbumModal && editingAlbum" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <h2 class="text-xl font-bold text-white mb-4">Editar álbum</h2>
+
+          <form @submit.prevent="saveAlbumChanges" class="space-y-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Título *</label>
+              <input
+                v-model="editAlbumForm.title"
+                type="text"
+                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                placeholder="Título del álbum"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Artista *</label>
+              <select
+                v-model="editAlbumForm.artistId"
+                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                required
+              >
+                <option v-for="artist in artistsList" :key="artist.id" :value="artist.id">
+                  {{ artist.name }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <FileUpload
+                ref="editAlbumCoverUpload"
+                v-model="editAlbumForm.cover"
+                type="cover"
+                label="Portada del álbum"
+                placeholder="/covers/nombre-album.jpg"
+                allow-manual-url
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Fecha de lanzamiento</label>
+              <input
+                v-model="editAlbumForm.releaseDate"
+                type="date"
+                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+              />
+            </div>
+
+            <div>
+              <label class="flex items-center gap-2 text-sm text-gray-400">
+                <input
+                  v-model="editAlbumForm.isPublic"
+                  type="checkbox"
+                  class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+                />
+                Visible para todos (público)
+              </label>
+            </div>
+
+            <div v-if="editAlbumError" class="text-red-400 text-sm">
+              {{ editAlbumError }}
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button
+                type="button"
+                @click="closeEditAlbumModal"
+                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                :disabled="isEditingAlbum"
+                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
+              >
+                <span v-if="isEditingAlbum">Guardando...</span>
+                <span v-else>Guardar cambios</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Modal Confirmar Eliminación Álbum -->
+    <Teleport to="body">
+      <div v-if="albumToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
+          <h2 class="text-xl font-bold text-white mb-2">Eliminar álbum</h2>
+          <p class="text-gray-400 mb-4">
+            ¿Estás seguro de que quieres eliminar <span class="text-white font-medium">{{ albumToDelete.title }}</span>?
+          </p>
+          <p class="text-yellow-400 text-sm mb-4">
+            Solo se puede eliminar si no tiene canciones asociadas.
+          </p>
+
+          <div v-if="deleteAlbumError" class="text-red-400 text-sm mb-4">
+            {{ deleteAlbumError }}
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              @click="albumToDelete = null; deleteAlbumError = ''"
+              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              @click="deleteAlbum"
+              :disabled="isUpdating === albumToDelete?.id"
+              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+            >
+              <span v-if="isUpdating === albumToDelete?.id">Eliminando...</span>
+              <span v-else>Eliminar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Modal Editar Canción -->
+    <Teleport to="body">
+      <div v-if="showEditSongModal && editingSong" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <h2 class="text-xl font-bold text-white mb-4">Editar canción</h2>
+
+          <form @submit.prevent="saveSongChanges" class="space-y-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Título *</label>
+              <input
+                v-model="editSongForm.title"
+                type="text"
+                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                placeholder="Título de la canción"
+                required
+              />
+            </div>
+
+            <div>
+              <FileUpload
+                ref="editSongAudioUpload"
+                v-model="editSongForm.audioUrl"
+                type="audio"
+                label="Archivo de audio"
+                placeholder="/audio/nombre-cancion.mp3"
+                allow-manual-url
+                @duration-detected="editSongForm.duration = $event"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-400 mb-1">Número de pista</label>
+                <input
+                  v-model.number="editSongForm.trackNumber"
+                  type="number"
+                  min="1"
+                  class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-400 mb-1">Duración (seg)</label>
+                <input
+                  v-model.number="editSongForm.duration"
+                  type="number"
+                  min="0"
+                  class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Letra</label>
+              <textarea
+                v-model="editSongForm.lyrics"
+                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-24 resize-none"
+                placeholder="Letra de la canción..."
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="flex items-center gap-2 text-sm text-gray-400">
+                <input
+                  v-model="editSongForm.isPublic"
+                  type="checkbox"
+                  class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+                />
+                Visible para todos (público)
+              </label>
+            </div>
+
+            <div v-if="editSongError" class="text-red-400 text-sm">
+              {{ editSongError }}
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button
+                type="button"
+                @click="closeEditSongModal"
+                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                :disabled="isEditingSong"
+                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
+              >
+                <span v-if="isEditingSong">Guardando...</span>
+                <span v-else>Guardar cambios</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Modal Confirmar Eliminación Canción -->
+    <Teleport to="body">
+      <div v-if="songToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
+          <h2 class="text-xl font-bold text-white mb-2">Eliminar canción</h2>
+          <p class="text-gray-400 mb-4">
+            ¿Estás seguro de que quieres eliminar <span class="text-white font-medium">{{ songToDelete.title }}</span>?
+          </p>
+          <p class="text-yellow-400 text-sm mb-4">
+            Esta acción también eliminará la canción de todas las playlists donde esté incluida.
+          </p>
+
+          <div v-if="deleteSongError" class="text-red-400 text-sm mb-4">
+            {{ deleteSongError }}
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              @click="songToDelete = null; deleteSongError = ''"
+              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              @click="deleteSong"
+              :disabled="isUpdating === songToDelete?.id"
+              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+            >
+              <span v-if="isUpdating === songToDelete?.id">Eliminando...</span>
+              <span v-else>Eliminar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Modal Crear Playlist -->
     <Teleport to="body">
       <div v-if="showCreatePlaylistModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -737,12 +1184,13 @@
             </div>
 
             <div>
-              <label class="block text-sm text-gray-400 mb-1">Portada (URL)</label>
-              <input
+              <FileUpload
+                ref="playlistCoverUpload"
                 v-model="newPlaylist.cover"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                type="cover"
+                label="Portada de la playlist"
                 placeholder="/covers/nombre-playlist.jpg"
+                allow-manual-url
               />
             </div>
 
@@ -891,6 +1339,39 @@
                 Cerrar
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Modal Confirmar Eliminación Playlist -->
+    <Teleport to="body">
+      <div v-if="playlistToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
+          <h2 class="text-xl font-bold text-white mb-2">Eliminar playlist</h2>
+          <p class="text-gray-400 mb-4">
+            ¿Estás seguro de que quieres eliminar <span class="text-white font-medium">{{ playlistToDelete.name }}</span>?
+          </p>
+
+          <div v-if="deletePlaylistError" class="text-red-400 text-sm mb-4">
+            {{ deletePlaylistError }}
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              @click="playlistToDelete = null; deletePlaylistError = ''"
+              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              @click="deletePlaylist"
+              :disabled="isUpdating === playlistToDelete?.id"
+              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+            >
+              <span v-if="isUpdating === playlistToDelete?.id">Eliminando...</span>
+              <span v-else>Eliminar</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1181,11 +1662,64 @@ const editUserForm = ref({
   role: 'guest' as 'tigre' | 'user' | 'guest'
 })
 
+// Estado para editar artista
+const showEditArtistModal = ref(false)
+const editingArtist = ref<Artist | null>(null)
+const isEditingArtist = ref(false)
+const editArtistError = ref('')
+const editArtistForm = ref({
+  name: '',
+  image: '',
+  bio: ''
+})
+const artistToDelete = ref<Artist | null>(null)
+const deleteArtistError = ref('')
+const editArtistImageUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+
+// Estado para editar álbum
+const showEditAlbumModal = ref(false)
+const editingAlbum = ref<Album | null>(null)
+const isEditingAlbum = ref(false)
+const editAlbumError = ref('')
+const editAlbumForm = ref({
+  title: '',
+  artistId: '',
+  cover: '',
+  releaseDate: '',
+  isPublic: false
+})
+const albumToDelete = ref<Album | null>(null)
+const deleteAlbumError = ref('')
+const editAlbumCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+
+// Estado para editar canción
+const showEditSongModal = ref(false)
+const editingSong = ref<Song | null>(null)
+const isEditingSong = ref(false)
+const editSongError = ref('')
+const editSongForm = ref({
+  title: '',
+  audioUrl: '',
+  trackNumber: null as number | null,
+  duration: 0,
+  lyrics: '',
+  isPublic: false
+})
+const songToDelete = ref<Song | null>(null)
+const deleteSongError = ref('')
+const editSongAudioUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+
 // Estado para crear contenido
 const showCreateArtistModal = ref(false)
 const showCreateAlbumModal = ref(false)
 const showCreateSongModal = ref(false)
 const showCreatePlaylistModal = ref(false)
+
+// Refs para los componentes de upload
+const artistImageUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+const albumCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+const songAudioUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+const playlistCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
 
 const newArtist = ref({
   name: '',
@@ -1226,6 +1760,8 @@ const showEditPlaylistModal = ref(false)
 const editingPlaylist = ref<Playlist | null>(null)
 const editPlaylistSongIds = ref<string[]>([])
 const editPlaylistError = ref('')
+const playlistToDelete = ref<Playlist | null>(null)
+const deletePlaylistError = ref('')
 
 const newUser = ref({
   username: '',
@@ -1377,18 +1913,311 @@ const updateStats = () => {
   }
 }
 
+// Funciones para editar artista
+const openEditArtistModal = (artist: Artist) => {
+  editingArtist.value = artist
+  editArtistForm.value = {
+    name: artist.name,
+    image: artist.image || '',
+    bio: (artist as any).bio || ''
+  }
+  editArtistError.value = ''
+  showEditArtistModal.value = true
+}
+
+const closeEditArtistModal = () => {
+  showEditArtistModal.value = false
+  editingArtist.value = null
+  editArtistForm.value = { name: '', image: '', bio: '' }
+  editArtistError.value = ''
+}
+
+const saveArtistChanges = async () => {
+  if (!editingArtist.value) return
+
+  editArtistError.value = ''
+  isEditingArtist.value = true
+
+  try {
+    // Subir imagen si hay archivo pendiente
+    let imageUrl = editArtistForm.value.image
+    if (editArtistImageUpload.value) {
+      const uploadedUrl = await editArtistImageUpload.value.uploadPendingFile()
+      if (uploadedUrl) imageUrl = uploadedUrl
+    }
+
+    const data = await $fetch<{ success: boolean, artist: Artist }>(`/api/admin/artists/${editingArtist.value.id}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      body: {
+        name: editArtistForm.value.name,
+        image: imageUrl || null,
+        bio: editArtistForm.value.bio || null
+      }
+    })
+
+    if (data.success && data.artist) {
+      // Actualizar en la lista
+      const idx = artistsList.value.findIndex(a => a.id === editingArtist.value?.id)
+      if (idx !== -1) {
+        artistsList.value[idx] = data.artist
+      }
+      closeEditArtistModal()
+    }
+  } catch (error: any) {
+    editArtistError.value = error?.data?.statusMessage || 'Error al guardar cambios'
+  } finally {
+    isEditingArtist.value = false
+  }
+}
+
+const confirmDeleteArtist = (artist: Artist) => {
+  artistToDelete.value = artist
+  deleteArtistError.value = ''
+}
+
+const deleteArtist = async () => {
+  if (!artistToDelete.value) return
+
+  isUpdating.value = artistToDelete.value.id
+  deleteArtistError.value = ''
+
+  try {
+    await $fetch(`/api/admin/artists/${artistToDelete.value.id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+    artistsList.value = artistsList.value.filter(a => a.id !== artistToDelete.value?.id)
+    artistToDelete.value = null
+  } catch (error: any) {
+    deleteArtistError.value = error?.data?.statusMessage || 'Error al eliminar artista'
+  } finally {
+    isUpdating.value = null
+  }
+}
+
+// Funciones para editar álbum
+const openEditAlbumModal = (album: Album) => {
+  editingAlbum.value = album
+  editAlbumForm.value = {
+    title: album.title,
+    artistId: album.artistId,
+    cover: album.cover || '',
+    releaseDate: (album as any).releaseDate || '',
+    isPublic: album.isPublic
+  }
+  editAlbumError.value = ''
+  showEditAlbumModal.value = true
+}
+
+const closeEditAlbumModal = () => {
+  showEditAlbumModal.value = false
+  editingAlbum.value = null
+  editAlbumForm.value = { title: '', artistId: '', cover: '', releaseDate: '', isPublic: false }
+  editAlbumError.value = ''
+}
+
+const saveAlbumChanges = async () => {
+  if (!editingAlbum.value) return
+
+  editAlbumError.value = ''
+  isEditingAlbum.value = true
+
+  try {
+    // Subir portada si hay archivo pendiente
+    let coverUrl = editAlbumForm.value.cover
+    if (editAlbumCoverUpload.value) {
+      const uploadedUrl = await editAlbumCoverUpload.value.uploadPendingFile()
+      if (uploadedUrl) coverUrl = uploadedUrl
+    }
+
+    const data = await $fetch<{ success: boolean, album: Album }>(`/api/admin/albums/${editingAlbum.value.id}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      body: {
+        title: editAlbumForm.value.title,
+        artistId: editAlbumForm.value.artistId,
+        cover: coverUrl || null,
+        releaseDate: editAlbumForm.value.releaseDate || null,
+        isPublic: editAlbumForm.value.isPublic
+      }
+    })
+
+    if (data.success && data.album) {
+      // Actualizar en la lista
+      const idx = albums.value.findIndex(a => a.id === editingAlbum.value?.id)
+      if (idx !== -1) {
+        albums.value[idx] = data.album
+      }
+      updateStats()
+      closeEditAlbumModal()
+    }
+  } catch (error: any) {
+    editAlbumError.value = error?.data?.statusMessage || 'Error al guardar cambios'
+  } finally {
+    isEditingAlbum.value = false
+  }
+}
+
+const confirmDeleteAlbum = (album: Album) => {
+  albumToDelete.value = album
+  deleteAlbumError.value = ''
+}
+
+const deleteAlbum = async () => {
+  if (!albumToDelete.value) return
+
+  isUpdating.value = albumToDelete.value.id
+  deleteAlbumError.value = ''
+
+  try {
+    await $fetch(`/api/admin/albums/${albumToDelete.value.id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+    albums.value = albums.value.filter(a => a.id !== albumToDelete.value?.id)
+    if (stats.value) {
+      stats.value.totalAlbums--
+      if (albumToDelete.value.isPublic) {
+        stats.value.publicAlbums--
+      } else {
+        stats.value.privateAlbums--
+      }
+    }
+    albumToDelete.value = null
+  } catch (error: any) {
+    deleteAlbumError.value = error?.data?.statusMessage || 'Error al eliminar álbum'
+  } finally {
+    isUpdating.value = null
+  }
+}
+
+// Funciones para editar canción
+const openEditSongModal = (song: Song) => {
+  editingSong.value = song
+  editSongForm.value = {
+    title: song.title,
+    audioUrl: (song as any).audioUrl || '',
+    trackNumber: (song as any).trackNumber || null,
+    duration: (song as any).duration || 0,
+    lyrics: (song as any).lyrics || '',
+    isPublic: song.isPublic
+  }
+  editSongError.value = ''
+  showEditSongModal.value = true
+}
+
+const closeEditSongModal = () => {
+  showEditSongModal.value = false
+  editingSong.value = null
+  editSongForm.value = { title: '', audioUrl: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false }
+  editSongError.value = ''
+}
+
+const saveSongChanges = async () => {
+  if (!editingSong.value) return
+
+  editSongError.value = ''
+  isEditingSong.value = true
+
+  try {
+    // Subir audio si hay archivo pendiente
+    let audioUrl = editSongForm.value.audioUrl
+    if (editSongAudioUpload.value) {
+      const uploadedUrl = await editSongAudioUpload.value.uploadPendingFile()
+      if (uploadedUrl) audioUrl = uploadedUrl
+    }
+
+    const data = await $fetch<{ success: boolean, song: Song }>(`/api/admin/songs/${editingSong.value.id}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      body: {
+        title: editSongForm.value.title,
+        audioUrl: audioUrl || null,
+        trackNumber: editSongForm.value.trackNumber || null,
+        duration: editSongForm.value.duration || 0,
+        lyrics: editSongForm.value.lyrics || null,
+        isPublic: editSongForm.value.isPublic
+      }
+    })
+
+    if (data.success && data.song) {
+      // Actualizar en la lista
+      const idx = songs.value.findIndex(s => s.id === editingSong.value?.id)
+      if (idx !== -1) {
+        songs.value[idx] = data.song
+      }
+      updateStats()
+      closeEditSongModal()
+    }
+  } catch (error: any) {
+    editSongError.value = error?.data?.statusMessage || 'Error al guardar cambios'
+  } finally {
+    isEditingSong.value = false
+  }
+}
+
+const confirmDeleteSong = (song: Song) => {
+  songToDelete.value = song
+  deleteSongError.value = ''
+}
+
+const deleteSong = async () => {
+  if (!songToDelete.value) return
+
+  isUpdating.value = songToDelete.value.id
+  deleteSongError.value = ''
+
+  try {
+    await $fetch(`/api/admin/songs/${songToDelete.value.id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+
+    // Actualizar el conteo del álbum
+    if (songToDelete.value.albumId) {
+      const album = albums.value.find(a => a.id === songToDelete.value?.albumId)
+      if (album) {
+        album.totalTracks--
+      }
+    }
+
+    songs.value = songs.value.filter(s => s.id !== songToDelete.value?.id)
+    if (stats.value) {
+      stats.value.totalSongs--
+      if (songToDelete.value.isPublic) {
+        stats.value.publicSongs--
+      } else {
+        stats.value.privateSongs--
+      }
+    }
+    songToDelete.value = null
+  } catch (error: any) {
+    deleteSongError.value = error?.data?.statusMessage || 'Error al eliminar canción'
+  } finally {
+    isUpdating.value = null
+  }
+}
+
 // Crear artista
 const createArtist = async () => {
   createError.value = ''
   isCreating.value = true
 
   try {
+    // Subir imagen si hay archivo pendiente
+    let imageUrl = newArtist.value.image
+    if (artistImageUpload.value) {
+      const uploadedUrl = await artistImageUpload.value.uploadPendingFile()
+      if (uploadedUrl) imageUrl = uploadedUrl
+    }
+
     const data = await $fetch<{ success: boolean, artist: Artist }>('/api/admin/artists', {
       method: 'POST',
       credentials: 'include',
       body: {
         name: newArtist.value.name,
-        image: newArtist.value.image || null,
+        image: imageUrl || null,
         bio: newArtist.value.bio || null
       }
     })
@@ -1411,13 +2240,20 @@ const createAlbum = async () => {
   isCreating.value = true
 
   try {
+    // Subir portada si hay archivo pendiente
+    let coverUrl = newAlbum.value.cover
+    if (albumCoverUpload.value) {
+      const uploadedUrl = await albumCoverUpload.value.uploadPendingFile()
+      if (uploadedUrl) coverUrl = uploadedUrl
+    }
+
     const data = await $fetch<{ success: boolean, album: Album }>('/api/admin/albums', {
       method: 'POST',
       credentials: 'include',
       body: {
         title: newAlbum.value.title,
         artistId: newAlbum.value.artistId,
-        cover: newAlbum.value.cover || null,
+        cover: coverUrl || null,
         releaseDate: newAlbum.value.releaseDate || null,
         isPublic: newAlbum.value.isPublic
       }
@@ -1449,6 +2285,19 @@ const createSong = async () => {
   isCreating.value = true
 
   try {
+    // Subir audio si hay archivo pendiente
+    let audioUrl = newSong.value.audioUrl
+    if (songAudioUpload.value) {
+      const uploadedUrl = await songAudioUpload.value.uploadPendingFile()
+      if (uploadedUrl) audioUrl = uploadedUrl
+    }
+
+    if (!audioUrl) {
+      createError.value = 'Debes seleccionar un archivo de audio'
+      isCreating.value = false
+      return
+    }
+
     const data = await $fetch<{ success: boolean, song: Song }>('/api/admin/songs', {
       method: 'POST',
       credentials: 'include',
@@ -1456,7 +2305,7 @@ const createSong = async () => {
         title: newSong.value.title,
         artistId: newSong.value.artistId,
         albumId: newSong.value.albumId,
-        audioUrl: newSong.value.audioUrl,
+        audioUrl: audioUrl,
         trackNumber: newSong.value.trackNumber || null,
         duration: newSong.value.duration || 0,
         lyrics: newSong.value.lyrics || null,
@@ -1509,13 +2358,20 @@ const createPlaylist = async () => {
   isCreating.value = true
 
   try {
+    // Subir portada si hay archivo pendiente
+    let coverUrl = newPlaylist.value.cover
+    if (playlistCoverUpload.value) {
+      const uploadedUrl = await playlistCoverUpload.value.uploadPendingFile()
+      if (uploadedUrl) coverUrl = uploadedUrl
+    }
+
     const data = await $fetch<{ success: boolean, playlist: Playlist }>('/api/admin/playlists', {
       method: 'POST',
       credentials: 'include',
       body: {
         name: newPlaylist.value.name,
         description: newPlaylist.value.description || null,
-        cover: newPlaylist.value.cover || null,
+        cover: coverUrl || null,
         isPublic: newPlaylist.value.isPublic
       }
     })
@@ -1615,6 +2471,31 @@ const removeFromEditPlaylist = async (songId: string) => {
     }
   } catch (error: any) {
     editPlaylistError.value = error?.data?.statusMessage || 'Error al quitar canción'
+  }
+}
+
+const confirmDeletePlaylist = (playlist: Playlist) => {
+  playlistToDelete.value = playlist
+  deletePlaylistError.value = ''
+}
+
+const deletePlaylist = async () => {
+  if (!playlistToDelete.value) return
+
+  isUpdating.value = playlistToDelete.value.id
+  deletePlaylistError.value = ''
+
+  try {
+    await $fetch(`/api/admin/playlists/${playlistToDelete.value.id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+    playlistsList.value = playlistsList.value.filter(p => p.id !== playlistToDelete.value?.id)
+    playlistToDelete.value = null
+  } catch (error: any) {
+    deletePlaylistError.value = error?.data?.statusMessage || 'Error al eliminar playlist'
+  } finally {
+    isUpdating.value = null
   }
 }
 

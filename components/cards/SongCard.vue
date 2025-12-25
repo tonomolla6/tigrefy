@@ -21,7 +21,13 @@
       <h4 class="text-sm font-semibold truncate" :class="isCurrentSong ? 'text-tiger-500' : 'text-primary'">
         {{ song.title }}
       </h4>
-      <p class="text-xs text-secondary truncate">{{ song.artistName }}</p>
+      <NuxtLink
+        :to="`/artist/${song.artistId}`"
+        @click.stop
+        class="text-xs text-secondary hover:text-white hover:underline truncate block transition-colors"
+      >
+        {{ song.artistName }}
+      </NuxtLink>
     </div>
 
     <!-- Duración (visible siempre) -->

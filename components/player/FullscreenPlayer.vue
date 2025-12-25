@@ -77,7 +77,13 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <h2 class="text-2xl font-bold text-white truncate">{{ currentSong.title }}</h2>
-                <p class="text-lg text-white/60 truncate mt-1">{{ currentSong.artistName }}</p>
+                <NuxtLink
+                  :to="`/artist/${currentSong.artistId}`"
+                  @click="$emit('close')"
+                  class="text-lg text-white/60 hover:text-white hover:underline truncate mt-1 block transition-colors"
+                >
+                  {{ currentSong.artistName }}
+                </NuxtLink>
               </div>
               <button
                 @click="toggleFavoriteSong(currentSong.id)"

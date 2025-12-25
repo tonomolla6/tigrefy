@@ -38,7 +38,13 @@
       >
         {{ song.title }}
       </h4>
-      <p class="text-sm text-secondary truncate">{{ song.artistName }}</p>
+      <NuxtLink
+        :to="`/artist/${song.artistId}`"
+        @click.stop
+        class="text-sm text-secondary hover:text-white hover:underline truncate block transition-colors"
+      >
+        {{ song.artistName }}
+      </NuxtLink>
     </div>
 
     <!-- Acciones (aparecen en hover) -->

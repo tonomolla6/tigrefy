@@ -120,7 +120,13 @@
               <h4 class="font-semibold truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
                 {{ song.title }}
               </h4>
-              <p class="text-sm text-secondary truncate">{{ song.artistName }}</p>
+              <NuxtLink
+                :to="`/artist/${song.artistId}`"
+                @click.stop
+                class="text-sm text-secondary hover:text-white hover:underline truncate block transition-colors"
+              >
+                {{ song.artistName }}
+              </NuxtLink>
             </div>
           </div>
           <div class="text-secondary text-sm text-right">
@@ -170,7 +176,13 @@
             <h4 class="font-semibold text-sm truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
               {{ song.title }}
             </h4>
-            <p class="text-xs text-secondary truncate">{{ song.artistName }}</p>
+            <NuxtLink
+              :to="`/artist/${song.artistId}`"
+              @click.stop
+              class="text-xs text-secondary hover:text-white hover:underline truncate block transition-colors"
+            >
+              {{ song.artistName }}
+            </NuxtLink>
           </div>
 
           <!-- Menú de acciones -->

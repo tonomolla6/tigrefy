@@ -10,20 +10,23 @@
       <!-- Header biblioteca -->
       <div class="px-4 pt-4 pb-2 flex items-center" :class="isCollapsed ? 'justify-center px-3' : ''">
         <!-- Contenedor del toggle + título -->
-        <div v-if="!isCollapsed" class="flex items-center">
-          <!-- Botón toggle (con transición de opacidad, a la izquierda) -->
+        <div v-if="!isCollapsed" class="flex items-center relative">
+          <!-- Botón toggle (aparece desde la izquierda al hacer hover, posición absoluta) -->
           <button
             @click.prevent="toggleLeftSidebar"
-            class="p-1.5 -ml-1.5 mr-1 text-white/70 hover:text-white transition-opacity duration-200 rounded-full hover:bg-white/10"
-            :class="isHovering ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+            class="absolute -left-1 p-1.5 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition-all duration-300 ease-out"
+            :class="isHovering ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-3 pointer-events-none'"
             title="Contraer biblioteca"
           >
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <!-- Título -->
-          <span class="font-bold text-white text-base">Tu biblioteca</span>
+          <!-- Título (se mueve a la derecha al hacer hover) -->
+          <span
+            class="font-bold text-white text-base whitespace-nowrap transition-all duration-300 ease-out"
+            :class="isHovering ? 'translate-x-9' : 'translate-x-0'"
+          >Tu biblioteca</span>
         </div>
 
         <!-- Botón expandir cuando está colapsado -->
@@ -40,7 +43,7 @@
       </div>
 
       <!-- Filtros (solo si no está colapsado) -->
-      <div v-if="!isCollapsed" class="px-4 pb-3 pt-1 flex gap-2 flex-wrap">
+      <div v-if="!isCollapsed" class="px-4 pb-2 pt-3 flex gap-2 flex-wrap">
         <button
           @click="filterType = null"
           class="px-3 py-1.5 text-xs font-medium rounded-full transition-colors"
@@ -62,6 +65,35 @@
         >
           Álbumes
         </button>
+      </div>
+
+      <!-- Barra de búsqueda (solo si no está colapsado) -->
+      <div v-if="!isCollapsed" class="px-4 pb-3 pt-3">
+        <!-- Input de búsqueda estilo Spotify -->
+        <div
+          class="flex items-center bg-[#242424] hover:bg-[#2a2a2a] rounded px-3 py-2 gap-2 transition-colors"
+        >
+          <svg class="w-4 h-4 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Buscar en Tu biblioteca"
+            class="search-input bg-transparent text-white text-sm placeholder-gray-400 flex-1 min-w-0"
+            ref="searchInput"
+          />
+          <button
+            v-if="searchQuery"
+            @click="searchQuery = ''"
+            class="text-gray-400 hover:text-white flex-shrink-0"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- Lista de biblioteca -->
@@ -87,18 +119,26 @@
         <!-- Contenido real cuando ya cargó -->
         <template v-else>
           <!-- Canciones que te gustan -->
-          <NuxtLink
-            v-if="filterType === null"
-            to="/liked-songs"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group"
+          <div
+            v-if="showLikedSongs"
+            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
             :class="[
               isViewingLikedSongs ? 'bg-white/10' : 'hover:bg-white/10',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? 'Canciones que te gustan' : ''"
+            @click="navigateTo('/liked-songs')"
           >
-            <div class="w-12 h-12 rounded-md bg-gradient-to-br from-indigo-800 to-blue-400 flex items-center justify-center flex-shrink-0 aspect-square">
-              <IconHeart :size="18" filled class="text-white" />
+            <div class="relative flex-shrink-0">
+              <div class="w-12 h-12 rounded-md bg-gradient-to-br from-indigo-800 to-blue-400 flex items-center justify-center aspect-square">
+                <IconHeart :size="18" filled class="text-white" />
+              </div>
+              <button
+                @click.stop="playLikedSongs"
+                class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
+              >
+                <IconPlay :size="28" class="text-white ml-0.5" />
+              </button>
             </div>
             <template v-if="!isCollapsed">
               <div class="min-w-0 flex-1">
@@ -109,25 +149,33 @@
                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
               </svg>
             </template>
-          </NuxtLink>
+          </div>
 
           <!-- User Playlists -->
-          <NuxtLink
+          <div
             v-for="playlist in filteredUserPlaylists"
             :key="playlist.id"
-            :to="`/playlist/${playlist.id}`"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group"
+            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
             :class="[
               isViewingPlaylist(playlist.id) ? 'bg-white/10' : 'hover:bg-white/10',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? playlist.name : ''"
+            @click="navigateTo(`/playlist/${playlist.id}`)"
           >
-            <img
-              :src="playlist.cover || '/covers/default-playlist.png'"
-              :alt="playlist.name"
-              class="w-12 h-12 rounded-md object-cover flex-shrink-0 aspect-square"
-            />
+            <div class="relative flex-shrink-0">
+              <img
+                :src="playlist.cover || '/covers/default-playlist.png'"
+                :alt="playlist.name"
+                class="w-12 h-12 rounded-md object-cover aspect-square"
+              />
+              <button
+                @click.stop="playUserPlaylist(playlist)"
+                class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
+              >
+                <IconPlay :size="28" class="text-white ml-0.5" />
+              </button>
+            </div>
             <template v-if="!isCollapsed">
               <div class="min-w-0 flex-1">
                 <p class="font-medium text-[15px] truncate" :class="isContextPlaylist(playlist.id) ? 'text-tiger-500' : 'text-white'">{{ playlist.name }}</p>
@@ -137,25 +185,33 @@
                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
               </svg>
             </template>
-          </NuxtLink>
+          </div>
 
           <!-- Favorite Artists -->
-          <NuxtLink
+          <div
             v-for="artist in filteredFavoriteArtists"
             :key="artist.id"
-            :to="`/artist/${artist.id}`"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group"
+            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
             :class="[
               isViewingArtist(artist.id) ? 'bg-white/10' : 'hover:bg-white/10',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? artist.name : ''"
+            @click="navigateTo(`/artist/${artist.id}`)"
           >
-            <img
-              :src="artist.image"
-              :alt="artist.name"
-              class="w-12 h-12 rounded-full object-cover flex-shrink-0 aspect-square"
-            />
+            <div class="relative flex-shrink-0">
+              <img
+                :src="artist.image"
+                :alt="artist.name"
+                class="w-12 h-12 rounded-full object-cover aspect-square"
+              />
+              <button
+                @click.stop="playArtist(artist)"
+                class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+              >
+                <IconPlay :size="28" class="text-white ml-0.5" />
+              </button>
+            </div>
             <template v-if="!isCollapsed">
               <div class="min-w-0 flex-1">
                 <p class="font-medium text-[15px] truncate" :class="isContextArtist(artist.id) ? 'text-tiger-500' : 'text-white'">{{ artist.name }}</p>
@@ -165,25 +221,33 @@
                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
               </svg>
             </template>
-          </NuxtLink>
+          </div>
 
           <!-- Playlists guardadas -->
-          <NuxtLink
+          <div
             v-for="playlist in filteredSavedPlaylists"
             :key="playlist.id"
-            :to="`/playlist/${playlist.id}`"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group"
+            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
             :class="[
               isViewingPlaylist(playlist.id) ? 'bg-white/10' : 'hover:bg-white/10',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? playlist.name : ''"
+            @click="navigateTo(`/playlist/${playlist.id}`)"
           >
-            <img
-              :src="playlist.cover"
-              :alt="playlist.name"
-              class="w-12 h-12 rounded-md object-cover flex-shrink-0 aspect-square"
-            />
+            <div class="relative flex-shrink-0">
+              <img
+                :src="playlist.cover"
+                :alt="playlist.name"
+                class="w-12 h-12 rounded-md object-cover aspect-square"
+              />
+              <button
+                @click.stop="playSavedPlaylist(playlist)"
+                class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
+              >
+                <IconPlay :size="28" class="text-white ml-0.5" />
+              </button>
+            </div>
             <template v-if="!isCollapsed">
               <div class="min-w-0 flex-1">
                 <p class="font-medium text-[15px] truncate" :class="isContextPlaylist(playlist.id) ? 'text-tiger-500' : 'text-white'">{{ playlist.name }}</p>
@@ -193,25 +257,33 @@
                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
               </svg>
             </template>
-          </NuxtLink>
+          </div>
 
           <!-- Álbumes guardados -->
-          <NuxtLink
+          <div
             v-for="album in filteredSavedAlbums"
             :key="album.id"
-            :to="`/album/${album.id}`"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group"
+            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
             :class="[
               isViewingAlbum(album.id) ? 'bg-white/10' : 'hover:bg-white/10',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? album.title : ''"
+            @click="navigateTo(`/album/${album.id}`)"
           >
-            <img
-              :src="album.cover"
-              :alt="album.title"
-              class="w-12 h-12 rounded-md object-cover flex-shrink-0 aspect-square"
-            />
+            <div class="relative flex-shrink-0">
+              <img
+                :src="album.cover"
+                :alt="album.title"
+                class="w-12 h-12 rounded-md object-cover aspect-square"
+              />
+              <button
+                @click.stop="playAlbum(album)"
+                class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
+              >
+                <IconPlay :size="28" class="text-white ml-0.5" />
+              </button>
+            </div>
             <template v-if="!isCollapsed">
               <div class="min-w-0 flex-1">
                 <p class="font-medium text-[15px] truncate" :class="isContextAlbum(album.id) ? 'text-tiger-500' : 'text-white'">{{ album.title }}</p>
@@ -221,7 +293,7 @@
                 <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
               </svg>
             </template>
-          </NuxtLink>
+          </div>
         </template>
       </div>
     </div>
@@ -239,13 +311,15 @@ const route = useRoute()
 const { data, isLoaded } = useData()
 const { userPlaylists } = useUserPlaylists()
 const { favoriteSongs, favoriteArtists, savedPlaylistIds, savedAlbumIds } = useFavorites()
-const { isPlaying, playbackContext } = usePlayer()
-const { leftSidebarWidth, leftSidebarCollapsed, toggleLeftSidebar, resizeLeftSidebar } = useSidebarResize()
+const { isPlaying, playbackContext, playSong } = usePlayer()
+const { leftSidebarWidth, leftSidebarCollapsed, toggleLeftSidebar, resizeLeftSidebar, resetCollapseThreshold } = useSidebarResize()
 
 const isCollapsed = computed(() => leftSidebarCollapsed.value)
 const isHovering = ref(false)
 
 const filterType = ref<'playlist' | 'artist' | 'album' | null>(null)
+const searchQuery = ref('')
+const searchInput = ref<HTMLInputElement | null>(null)
 
 // Resize handling
 let isResizing = false
@@ -273,6 +347,7 @@ const stopResize = () => {
   document.removeEventListener('mouseup', stopResize)
   document.body.style.cursor = ''
   document.body.style.userSelect = ''
+  resetCollapseThreshold()
 }
 
 const favoriteSongsCount = computed(() => favoriteSongs.value?.length || 0)
@@ -320,16 +395,32 @@ const isPlayingArtist = (artistId: string) => {
   return isPlaying.value && playbackContext.value.type === 'artist' && playbackContext.value.id === artistId
 }
 
+// Función para filtrar por búsqueda
+const matchesSearch = (name: string) => {
+  if (!searchQuery.value) return true
+  return name.toLowerCase().includes(searchQuery.value.toLowerCase())
+}
+
+// Mostrar "Canciones que te gustan" solo si coincide con la búsqueda
+const showLikedSongs = computed(() => {
+  if (filterType.value !== null) return false
+  return matchesSearch('Canciones que te gustan')
+})
+
 const filteredUserPlaylists = computed(() => {
   if (filterType.value === 'artist' || filterType.value === 'album') return []
-  return userPlaylists.value || []
+  const playlists = userPlaylists.value || []
+  return playlists.filter((p: any) => matchesSearch(p.name))
 })
 
 const filteredFavoriteArtists = computed(() => {
   if (filterType.value === 'playlist' || filterType.value === 'album') return []
   const artistsList = data.value?.artists || []
   const favArtistIds = favoriteArtists?.value || []
-  return favArtistIds.map(id => artistsList.find((a: any) => a.id === id)).filter(Boolean)
+  return favArtistIds
+    .map(id => artistsList.find((a: any) => a.id === id))
+    .filter(Boolean)
+    .filter((a: any) => matchesSearch(a.name))
 })
 
 const filteredSavedPlaylists = computed(() => {
@@ -341,6 +432,7 @@ const filteredSavedPlaylists = computed(() => {
     .filter((id: string) => !userPlaylistIds.includes(id))
     .map((id: string) => playlistsList.find((p: any) => p.id === id))
     .filter(Boolean)
+    .filter((p: any) => matchesSearch(p.name))
 })
 
 const filteredSavedAlbums = computed(() => {
@@ -350,7 +442,63 @@ const filteredSavedAlbums = computed(() => {
   return savedIds
     .map((id: string) => albumsList.find((a: any) => a.id === id))
     .filter(Boolean)
+    .filter((a: any) => matchesSearch(a.title))
 })
+
+// Funciones de reproducción
+const playLikedSongs = () => {
+  const songsList = data.value?.songs || []
+  const likedSongIds = favoriteSongs.value || []
+  const songs = likedSongIds
+    .map((id: string) => songsList.find((s: any) => s.id === id))
+    .filter(Boolean)
+
+  if (songs.length > 0) {
+    playSong(songs[0], songs, { type: 'liked-songs', id: 'liked-songs' })
+  }
+}
+
+const playUserPlaylist = (playlist: any) => {
+  const songsList = data.value?.songs || []
+  const playlistSongIds = playlist.songIds || []
+  const songs = playlistSongIds
+    .map((id: string) => songsList.find((s: any) => s.id === id))
+    .filter(Boolean)
+
+  if (songs.length > 0) {
+    playSong(songs[0], songs, { type: 'playlist', id: playlist.id })
+  }
+}
+
+const playSavedPlaylist = (playlist: any) => {
+  const songsList = data.value?.songs || []
+  const playlistSongIds = playlist.songIds || []
+  const songs = playlistSongIds
+    .map((id: string) => songsList.find((s: any) => s.id === id))
+    .filter(Boolean)
+
+  if (songs.length > 0) {
+    playSong(songs[0], songs, { type: 'playlist', id: playlist.id })
+  }
+}
+
+const playArtist = (artist: any) => {
+  const songsList = data.value?.songs || []
+  const artistSongs = songsList.filter((s: any) => s.artistId === artist.id)
+
+  if (artistSongs.length > 0) {
+    playSong(artistSongs[0], artistSongs, { type: 'artist', id: artist.id })
+  }
+}
+
+const playAlbum = (album: any) => {
+  const songsList = data.value?.songs || []
+  const albumSongs = songsList.filter((s: any) => s.albumId === album.id)
+
+  if (albumSongs.length > 0) {
+    playSong(albumSongs[0], albumSongs, { type: 'album', id: album.id })
+  }
+}
 </script>
 
 <style scoped>
@@ -373,5 +521,24 @@ const filteredSavedAlbums = computed(() => {
 
 .custom-scrollbar::-webkit-scrollbar-button {
   display: none;
+}
+
+/* Quitar el borde azul del focus en el input de búsqueda */
+.search-input {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.search-input:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.search-input:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 </style>

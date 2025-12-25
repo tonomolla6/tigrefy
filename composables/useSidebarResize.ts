@@ -7,32 +7,64 @@ export const useSidebarResize = () => {
   const rightSidebarWidth = useState('rightSidebarWidth', () => 380)
 
   // Límites
-  const LEFT_MIN = 80 // Mínimo con solo portadas
+  const LEFT_COLLAPSED = 80 // Mínimo colapsado (solo iconos)
+  const LEFT_MIN = 280 // Mínimo normal (con texto visible)
   const LEFT_MAX = 420
 
   const RIGHT_MIN = 280
   const RIGHT_MAX = 420
 
+  // Acumulador para detectar intención de colapsar/expandir
+  const collapseAccumulator = useState('collapseAccumulator', () => 0)
+
   // Toggle colapsar sidebar izquierdo (alterna entre mínimo y tamaño normal)
   const toggleLeftSidebar = () => {
     leftSidebarCollapsed.value = !leftSidebarCollapsed.value
     if (leftSidebarCollapsed.value) {
-      leftSidebarWidth.value = LEFT_MIN
+      leftSidebarWidth.value = LEFT_COLLAPSED
     } else {
       leftSidebarWidth.value = 340
     }
+    collapseAccumulator.value = 0
   }
 
-  // Resize del sidebar izquierdo - continuo y suave
+  // Resize del sidebar izquierdo - con dos estados
   const resizeLeftSidebar = (delta: number) => {
-    const newWidth = leftSidebarWidth.value + delta
+    if (leftSidebarCollapsed.value) {
+      // Si está colapsado, acumular movimiento hacia la derecha para expandir
+      if (delta > 0) {
+        collapseAccumulator.value += delta
+        // Expandir cuando haya arrastrado suficiente
+        if (collapseAccumulator.value > 30) {
+          leftSidebarCollapsed.value = false
+          leftSidebarWidth.value = LEFT_MIN
+          collapseAccumulator.value = 0
+        }
+      }
+    } else {
+      // Si está expandido
+      const newWidth = leftSidebarWidth.value + delta
 
-    // Limitar entre min y max, sin colapsar automáticamente
-    const clampedWidth = Math.min(LEFT_MAX, Math.max(LEFT_MIN, newWidth))
-    leftSidebarWidth.value = clampedWidth
+      if (newWidth < LEFT_MIN) {
+        // Si intenta ir por debajo del mínimo, acumular para colapsar
+        collapseAccumulator.value += Math.abs(delta)
+        // Colapsar cuando haya arrastrado suficiente más allá del mínimo
+        if (collapseAccumulator.value > 30) {
+          leftSidebarCollapsed.value = true
+          leftSidebarWidth.value = LEFT_COLLAPSED
+          collapseAccumulator.value = 0
+        }
+      } else {
+        // Resize normal entre LEFT_MIN y LEFT_MAX
+        leftSidebarWidth.value = Math.min(LEFT_MAX, newWidth)
+        collapseAccumulator.value = 0
+      }
+    }
+  }
 
-    // Actualizar estado de colapsado basado en el ancho
-    leftSidebarCollapsed.value = clampedWidth <= LEFT_MIN + 20
+  // Reset del acumulador cuando termina el drag
+  const resetCollapseThreshold = () => {
+    collapseAccumulator.value = 0
   }
 
   // Resize del sidebar derecho
@@ -51,8 +83,10 @@ export const useSidebarResize = () => {
     toggleLeftSidebar,
     resizeLeftSidebar,
     resizeRightSidebar,
+    resetCollapseThreshold,
 
     // Constantes
+    LEFT_COLLAPSED,
     LEFT_MIN,
     LEFT_MAX,
     RIGHT_MIN,

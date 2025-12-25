@@ -80,7 +80,13 @@
                   <h4 class="text-white font-medium truncate" :class="{ 'text-tiger-500': isCurrentSong(song) }">
                     {{ song.title }}
                   </h4>
-                  <p class="text-gray-400 text-sm truncate">{{ song.artistName }}</p>
+                  <NuxtLink
+                    :to="`/artist/${song.artistId}`"
+                    @click.stop
+                    class="text-gray-400 text-sm truncate block hover:text-white hover:underline transition-colors"
+                  >
+                    {{ song.artistName }}
+                  </NuxtLink>
                 </div>
                 <span class="text-gray-400 text-sm">{{ formatTime(song.duration) }}</span>
               </div>
@@ -142,7 +148,13 @@
               <h4 class="text-white font-medium truncate" :class="{ 'text-tiger-500': isCurrentSong(song) }">
                 {{ song.title }}
               </h4>
-              <p class="text-gray-400 text-sm truncate">{{ song.artistName }}</p>
+              <NuxtLink
+                :to="`/artist/${song.artistId}`"
+                @click.stop
+                class="text-gray-400 text-sm truncate block hover:text-white hover:underline transition-colors"
+              >
+                {{ song.artistName }}
+              </NuxtLink>
             </div>
             <NuxtLink
               :to="`/album/${song.albumId}`"

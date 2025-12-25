@@ -170,7 +170,7 @@
 
         <!-- Ver más -->
         <button
-          v-if="popularSongs.length > 5 && !showAllSongs"
+          v-if="popularSongs.length > 10 && !showAllSongs"
           @click="showAllSongs = true"
           class="text-secondary hover:text-primary text-sm font-semibold mt-4 transition-colors"
         >
@@ -257,7 +257,7 @@ const popularSongs = computed(() => {
 
 const showAllSongs = ref(false)
 const displayedSongs = computed(() => {
-  return showAllSongs.value ? popularSongs.value : popularSongs.value.slice(0, 5)
+  return showAllSongs.value ? popularSongs.value : popularSongs.value.slice(0, 10)
 })
 
 // Check if this artist is the current playback context
@@ -267,7 +267,7 @@ const isThisArtistContext = computed(() =>
 
 // Check if this is the current song AND playing from this artist context (for orange text)
 const isCurrentSongInContext = (song: any) => currentSong.value?.id === song.id && isThisArtistContext.value
-// Only show as playing if: same song AND this artist is the context AND actually playing (for animation)
+// Only show animation if: same song AND this artist is the context AND actually playing
 const isCurrentAndPlaying = (song: any) => isCurrentSongInContext(song) && isPlaying.value
 // Keep isCurrentSong for toggle logic (any context)
 const isCurrentSong = (song: any) => currentSong.value?.id === song.id
@@ -279,11 +279,14 @@ const isArtistPlaying = computed(() => {
 })
 
 const handlePlayArtistButton = () => {
+  // Si ya está sonando una canción de este artista desde este contexto
   if (isArtistPlaying.value) {
     togglePlay()
-  } else if (currentSong.value && popularSongs.value.some(s => s.id === currentSong.value.id)) {
+  } else if (isThisArtistContext.value && currentSong.value && !isPlaying.value) {
+    // Si está pausado pero es del contexto de este artista, reanudar
     togglePlay()
   } else if (popularSongs.value.length > 0) {
+    // Si no, empezar a reproducir las canciones populares del artista
     playSong(popularSongs.value[0], popularSongs.value, { type: 'artist', id: artistId })
   }
 }

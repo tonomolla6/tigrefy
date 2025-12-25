@@ -35,7 +35,13 @@
             />
             <div class="min-w-0 flex-1">
               <p class="text-white font-medium truncate">{{ currentSong.title }}</p>
-              <p class="text-white/60 text-sm truncate">{{ currentSong.artistName }}</p>
+              <NuxtLink
+                :to="`/artist/${currentSong.artistId}`"
+                @click.stop="$emit('close')"
+                class="text-white/60 text-sm truncate block hover:text-white hover:underline transition-colors"
+              >
+                {{ currentSong.artistName }}
+              </NuxtLink>
             </div>
             <!-- Playing indicator -->
             <div class="flex items-end gap-0.5 h-4">

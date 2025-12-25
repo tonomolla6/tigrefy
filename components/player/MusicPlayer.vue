@@ -4,7 +4,7 @@
       <div class="flex items-center justify-between gap-3 md:gap-6">
         <!-- Info de la canción (izquierda) - clickable en móvil para abrir fullscreen -->
         <div
-          class="flex items-center gap-3 min-w-0 md:w-[30%] md:max-w-[30%] cursor-pointer md:cursor-default"
+          class="flex items-center gap-3 min-w-0 w-[30%] cursor-pointer md:cursor-default"
           @click="openFullscreen"
         >
             <img
@@ -14,25 +14,33 @@
               class="w-14 h-14 rounded object-cover flex-shrink-0"
               @error="handleImageError"
             />
-            <div class="min-w-0 max-w-[180px]">
-              <h4 class="text-sm font-medium text-white truncate">
-                <span class="hover:underline cursor-pointer">{{ currentSong.title }}</span>
-              </h4>
-              <p class="text-xs text-gray-400 truncate">
-                <span class="hover:text-white hover:underline cursor-pointer transition-colors">{{ currentSong.artistName }}</span>
-              </p>
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="min-w-0">
+                <h4 class="text-sm font-medium text-white truncate">
+                  <span class="hover:underline cursor-pointer">{{ currentSong.title }}</span>
+                </h4>
+                <p class="text-xs text-gray-400 truncate">
+                  <NuxtLink
+                    :to="`/artist/${currentSong.artistId}`"
+                    class="hover:text-white hover:underline transition-colors"
+                    @click.stop
+                  >
+                    {{ currentSong.artistName }}
+                  </NuxtLink>
+                </p>
+              </div>
+              <button
+                @click.stop="toggleFavoriteSong(currentSong.id)"
+                class="hidden md:block text-gray-400 hover:text-white transition-all flex-shrink-0"
+                :class="{'text-tiger-500 hover:text-tiger-400': isFavoriteSong(currentSong.id)}"
+              >
+                <IconHeart :size="18" :filled="isFavoriteSong(currentSong.id)" />
+              </button>
             </div>
-            <button
-              @click.stop="toggleFavoriteSong(currentSong.id)"
-              class="hidden md:block text-gray-400 hover:text-white transition-all flex-shrink-0"
-              :class="{'text-tiger-500 hover:text-tiger-400': isFavoriteSong(currentSong.id)}"
-            >
-              <IconHeart :size="18" :filled="isFavoriteSong(currentSong.id)" />
-            </button>
           </div>
 
           <!-- Controles centrales -->
-          <div class="flex flex-col items-center gap-1 md:w-[40%]">
+          <div class="flex flex-col items-center gap-1 w-[40%]">
             <div class="flex items-center gap-4 md:gap-5">
               <button
                 @click="toggleShuffle"
@@ -85,7 +93,7 @@
             </div>
 
             <!-- Barra de progreso -->
-            <div class="hidden md:flex items-center gap-2 w-full max-w-xl">
+            <div class="hidden md:flex items-center gap-2 w-full">
               <span class="text-[11px] text-gray-400 min-w-[35px] text-right">
                 {{ formatTime(currentTime) }}
               </span>
@@ -111,7 +119,7 @@
           </div>
 
           <!-- Controles de volumen y extras (derecha) -->
-          <div class="hidden md:flex items-center gap-3 flex-1 justify-end md:w-[30%]">
+          <div class="hidden md:flex items-center gap-3 justify-end w-[30%]">
             <!-- Botón Letra (icono micrófono estilo Spotify) -->
             <button
               v-if="currentSong.lyrics"

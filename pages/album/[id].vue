@@ -17,7 +17,12 @@
           <p class="text-xs md:text-sm font-semibold uppercase text-tiger-300">Álbum</p>
           <h1 class="text-3xl md:text-6xl lg:text-7xl font-bold my-2 md:my-4">{{ album.title }}</h1>
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 text-sm">
-            <span class="font-semibold">{{ album.artistName }}</span>
+            <NuxtLink
+              :to="`/artist/${album.artistId}`"
+              class="font-semibold hover:underline transition-colors"
+            >
+              {{ album.artistName }}
+            </NuxtLink>
             <span class="text-secondary">•</span>
             <span class="text-secondary">{{ album.releaseDate?.substring(0, 4) }}</span>
             <span class="text-secondary">•</span>
@@ -123,7 +128,13 @@
             <h4 class="font-semibold truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
               {{ song.title }}
             </h4>
-            <p class="text-sm text-secondary truncate">{{ song.artistName }}</p>
+            <NuxtLink
+              :to="`/artist/${song.artistId}`"
+              @click.stop
+              class="text-sm text-secondary hover:text-white hover:underline truncate block transition-colors"
+            >
+              {{ song.artistName }}
+            </NuxtLink>
           </div>
 
           <!-- Acciones y duración -->
@@ -162,7 +173,13 @@
             <h4 class="font-semibold text-sm truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
               {{ song.title }}
             </h4>
-            <p class="text-xs text-secondary truncate">{{ song.artistName }}</p>
+            <NuxtLink
+              :to="`/artist/${song.artistId}`"
+              @click.stop
+              class="text-xs text-secondary hover:text-white hover:underline truncate block transition-colors"
+            >
+              {{ song.artistName }}
+            </NuxtLink>
           </div>
 
           <!-- Menú de acciones -->
