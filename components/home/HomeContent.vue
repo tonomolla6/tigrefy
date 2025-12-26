@@ -123,7 +123,7 @@ const quickAccessItems = computed(() => {
   const items: any[] = []
 
   // Añadir álbumes favoritos o los primeros álbumes
-  const albumsToShow = albums.value.slice(0, 5)
+  const albumsToShow = albums.value.slice(0, 7)
   albumsToShow.forEach((album: any) => {
     items.push({
       type: 'album',
