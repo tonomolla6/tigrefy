@@ -65,8 +65,8 @@
               @click="togglePlay"
               class="flex items-center justify-center w-8 h-8 bg-white hover:scale-105 hover:bg-white text-black rounded-full transition-transform"
             >
-              <IconPlay v-if="!isPlaying" :size="17" class="ml-0.5" />
-              <IconPause v-else :size="17" />
+              <IconPlay v-if="!isPlaying" :size="26"/>
+              <IconPause v-else :size="22" />
             </button>
           </Tooltip>
           <Tooltip text="Siguiente">
@@ -253,8 +253,8 @@
             @click.stop="togglePlay"
             class="p-1 text-white"
           >
-            <IconPlay v-if="!isPlaying" :size="32" />
-            <IconPause v-else :size="32" />
+            <IconPlay v-if="!isPlaying" :size="38" />
+            <IconPause v-else :size="38" />
           </button>
         </div>
       </div>

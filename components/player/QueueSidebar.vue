@@ -10,7 +10,7 @@
     <!-- Mostrar si hay canción reproduciéndose -->
     <aside
       v-if="currentSong"
-      class="hidden md:flex flex-col bg-dark rounded-lg m-2 mt-0 ml-0 overflow-hidden flex-shrink-0 relative transition-all duration-300 group/sidebar"
+      class="hidden md:flex flex-col bg-dark rounded-lg m-2 mt-0 ml-0 mb-0 overflow-hidden flex-shrink-0 relative transition-all duration-300 group/sidebar"
       :style="{ width: isCompact ? '52px' : `${rightSidebarWidth}px` }"
       @mouseenter="isHovering = true"
       @mouseleave="isHovering = false"
@@ -50,7 +50,7 @@
           enter-to-class="opacity-100 translate-y-0"
           leave-from-class="opacity-100 translate-y-0"
         >
-          <div v-if="showQueue" class="absolute inset-0 flex flex-col bg-dark z-20">
+          <div v-if="showQueue" class="absolute inset-0 flex flex-col bg-dark z-20 overflow-hidden">
             <!-- Header Cola -->
             <div class="flex items-center justify-between px-4 py-4">
               <h3 class="text-base font-bold text-white">Cola</h3>
@@ -67,23 +67,24 @@
             </div>
 
             <!-- Contenido Cola -->
-            <div class="flex-1 overflow-y-auto custom-scrollbar px-4">
+            <CustomScrollbar class="flex-1 min-h-0 px-2">
               <!-- Sonando ahora -->
-              <div class="mb-6">
+              <div class="mb-6 px-2">
                 <p class="text-base font-bold text-white mb-2">Sonando</p>
-                <transition
-                  enter-active-class="transition-all duration-300 ease-out"
-                  leave-active-class="transition-all duration-200 ease-in"
-                  enter-from-class="opacity-0 -translate-y-3"
-                  leave-to-class="opacity-0 translate-y-3"
-                  enter-to-class="opacity-100 translate-y-0"
-                  leave-from-class="opacity-100 translate-y-0"
-                  mode="out-in"
-                >
-                  <div
-                    :key="currentSong.id"
-                    class="flex items-center gap-3 p-2 -mx-2 rounded-md hover:bg-white/10 transition-colors group"
+                <div class="-mx-2">
+                  <transition
+                    enter-active-class="transition-all duration-300 ease-out"
+                    leave-active-class="transition-all duration-200 ease-in"
+                    enter-from-class="opacity-0 -translate-y-3"
+                    leave-to-class="opacity-0 translate-y-3"
+                    enter-to-class="opacity-100 translate-y-0"
+                    leave-from-class="opacity-100 translate-y-0"
+                    mode="out-in"
                   >
+                    <div
+                      :key="currentSong.id"
+                      class="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors group"
+                    >
                     <div class="relative flex-shrink-0">
                       <img
                         :src="currentSong.cover || '/covers/default.png'"
@@ -110,18 +111,19 @@
                       </NuxtLink>
                       <p v-else class="text-gray-400 text-[13px] truncate">{{ currentSong.artistName }}</p>
                     </div>
-                  </div>
-                </transition>
+                    </div>
+                  </transition>
+                </div>
               </div>
 
               <!-- Siguiente en la cola -->
-              <div v-if="upcomingSongs.length > 0">
+              <div v-if="upcomingSongs.length > 0" class="px-2">
                 <p class="text-base font-bold text-white mb-2">
                   Siguiente de: {{ contextLabel }}
                 </p>
                 <transition-group
                   tag="div"
-                  class="space-y-0.5"
+                  class="space-y-0.5 -mx-2"
                   enter-active-class="transition-all duration-300 ease-out"
                   leave-active-class="transition-all duration-200 ease-in absolute w-full"
                   enter-from-class="opacity-0 -translate-y-3"
@@ -134,7 +136,7 @@
                     v-for="(song, index) in upcomingSongs"
                     :key="song.id"
                     @click="playFromQueue(index)"
-                    class="flex items-center gap-3 p-2 -mx-2 rounded-md hover:bg-white/10 transition-colors cursor-pointer group"
+                    class="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors cursor-pointer group"
                   >
                     <div class="relative flex-shrink-0">
                       <img
@@ -163,12 +165,12 @@
                   </div>
                 </transition-group>
               </div>
-            </div>
+            </CustomScrollbar>
           </div>
         </transition>
 
         <!-- MODO INFO: Siempre visible debajo de la cola -->
-        <div class="flex flex-col h-full">
+        <div class="flex flex-col h-full overflow-hidden">
           <!-- Header Info con botón de compactar a la izquierda -->
           <div class="flex items-center px-4 py-4">
             <!-- Contenedor del botón + título con animación -->
@@ -194,7 +196,7 @@
           </div>
 
           <!-- Contenido Info -->
-          <div class="flex-1 overflow-y-auto custom-scrollbar px-2">
+          <CustomScrollbar class="flex-1 min-h-0 px-2">
             <!-- Card: Imagen grande + Info de la canción actual -->
             <div class="bg-[#1a1a1a] rounded-lg p-3 mx-2 mb-4">
               <img
@@ -274,7 +276,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </CustomScrollbar>
         </div>
       </template>
     </aside>
@@ -418,34 +420,3 @@ const playFromQueue = (relativeIndex: number) => {
 }
 </script>
 
-<style scoped>
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-.custom-scrollbar::-webkit-scrollbar-button {
-  display: none;
-}
-</style>

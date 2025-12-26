@@ -72,7 +72,7 @@
           </span>
 
           <!-- Título -->
-          <h2 class="text-3xl lg:text-4xl font-bold leading-tight mb-2 line-clamp-2">
+          <h2 class="text-3xl lg:text-4xl font-bold mb-2">
             {{ song.title }}
           </h2>
           <p class="text-lg text-white/70 mb-5">{{ song.artistName }}</p>

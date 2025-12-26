@@ -4,6 +4,8 @@
            rounded-md overflow-hidden cursor-pointer transition-colors duration-200
            h-12 md:h-14"
     @click="handleClick"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
   >
     <!-- Imagen cuadrada o gradiente para liked-songs -->
     <div class="h-full aspect-square">
@@ -15,9 +17,12 @@
       </div>
       <img
         v-else
+        ref="imgRef"
         :src="image"
         :alt="title"
+        crossorigin="anonymous"
         class="h-full w-full object-cover rounded-l-md"
+        @load="extractColor"
       />
     </div>
 
@@ -70,9 +75,63 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['play'])
+const emit = defineEmits(['play', 'hover-color'])
 const router = useRouter()
 const { playbackContext, isPlaying, togglePlay } = usePlayer()
+
+// Color extraction
+const imgRef = ref<HTMLImageElement | null>(null)
+const extractedColor = ref<string | null>(null)
+
+const extractColor = () => {
+  if (!imgRef.value) return
+
+  try {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = 50
+    canvas.height = 50
+    ctx.drawImage(imgRef.value, 0, 0, 50, 50)
+
+    const imageData = ctx.getImageData(0, 0, 50, 50).data
+    let r = 0, g = 0, b = 0, count = 0
+
+    for (let i = 0; i < imageData.length; i += 16) {
+      r += imageData[i]
+      g += imageData[i + 1]
+      b += imageData[i + 2]
+      count++
+    }
+
+    r = Math.round(r / count)
+    g = Math.round(g / count)
+    b = Math.round(b / count)
+
+    // Boost saturation
+    const boost = 1.3
+    r = Math.min(255, Math.round(r * boost))
+    g = Math.min(255, Math.round(g * boost))
+    b = Math.min(255, Math.round(b * boost))
+
+    extractedColor.value = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  } catch {
+    // CORS error, keep null
+  }
+}
+
+const handleMouseEnter = () => {
+  if (props.type === 'liked-songs') {
+    emit('hover-color', '#6366f1') // indigo-500
+  } else if (extractedColor.value) {
+    emit('hover-color', extractedColor.value)
+  }
+}
+
+const handleMouseLeave = () => {
+  emit('hover-color', null)
+}
 
 // Check if this item is the current playback context
 const isCurrentContext = computed(() => {

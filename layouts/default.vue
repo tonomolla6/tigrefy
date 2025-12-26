@@ -96,8 +96,13 @@
       <MainSidebar />
 
       <!-- Main content -->
-      <main class="flex-1 min-w-0 overflow-y-auto bg-dark md:rounded-lg md:m-2 md:mt-0 custom-scrollbar">
-        <slot />
+      <main class="flex-1 min-w-0 overflow-hidden bg-dark md:rounded-lg md:mx-2 md:my-0">
+        <CustomScrollbar class="hidden md:block h-full">
+          <slot />
+        </CustomScrollbar>
+        <div class="md:hidden h-full overflow-y-auto">
+          <slot />
+        </div>
       </main>
 
       <!-- Sidebar Derecho - Now Playing (Desktop) -->
@@ -162,34 +167,3 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-.custom-scrollbar::-webkit-scrollbar-button {
-  display: none;
-}
-</style>

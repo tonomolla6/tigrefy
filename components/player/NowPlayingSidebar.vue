@@ -1,7 +1,7 @@
 <template>
   <aside
     v-if="showNowPlaying && currentSong"
-    class="hidden md:flex shrink-0 bg-dark-card flex-col h-full overflow-hidden m-2 ml-2 rounded-lg"
+    class="hidden md:flex shrink-0 bg-dark-card flex-col h-full overflow-hidden m-2 ml-2 mb-0 rounded-lg"
     style="width: 340px;"
   >
     <!-- Header -->
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4">
+    <CustomScrollbar class="flex-1 min-h-0 px-4 pb-4">
       <!-- Cover -->
       <div class="mb-4">
         <img
@@ -78,7 +78,7 @@
           </button>
         </div>
       </div>
-    </div>
+    </CustomScrollbar>
   </aside>
 </template>
 
@@ -103,23 +103,6 @@ const formatFollowers = (num: number) => {
 </script>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 4px;
-}
-
-.custom-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-}
-
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;

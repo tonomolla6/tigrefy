@@ -1,6 +1,6 @@
 <template>
   <aside
-    class="bg-black flex flex-col h-full hidden md:flex p-2 pt-0 pr-0 gap-2 relative group/sidebar"
+    class="bg-black flex flex-col h-full hidden md:flex p-2 pt-0 pr-0 pb-0 gap-2 relative group/sidebar"
     :style="{ width: `${leftSidebarWidth}px` }"
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
@@ -98,7 +98,7 @@
       </div>
 
       <!-- Lista de biblioteca -->
-      <div class="flex-1 overflow-y-auto custom-scrollbar pt-2" :class="isCollapsed ? 'px-2' : 'px-2'">
+      <CustomScrollbar class="flex-1 min-h-0 pt-2" :class="isCollapsed ? 'px-2' : 'px-2'">
         <!-- Skeleton mientras carga -->
         <template v-if="!isLoaded">
           <div
@@ -301,7 +301,7 @@
             </template>
           </div>
         </template>
-      </div>
+      </CustomScrollbar>
     </div>
 
     <!-- Resize handle (siempre visible para poder expandir/contraer arrastrando) -->
@@ -549,27 +549,6 @@ const handleAlbumClick = (album: any) => {
 </script>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: transparent;
-  border-radius: 4px;
-}
-
-.custom-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.custom-scrollbar::-webkit-scrollbar-button {
-  display: none;
-}
-
 /* Quitar el borde azul del focus en el input de búsqueda */
 .search-input {
   outline: none !important;

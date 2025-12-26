@@ -23,11 +23,10 @@
       </div>
 
       <!-- Letras con scroll -->
-      <div
-        ref="lyricsContainer"
-        class="relative flex-1 overflow-y-auto px-6 md:px-12 lg:px-20 py-8 custom-scrollbar"
+      <CustomScrollbar
+        class="relative flex-1 min-h-0"
       >
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-3xl mx-auto px-6 md:px-12 lg:px-20 py-8">
           <div
             v-for="(line, index) in lyricsLines"
             :key="index"
@@ -45,7 +44,7 @@
             </p>
           </div>
         </div>
-      </div>
+      </CustomScrollbar>
     </template>
   </div>
 </template>
@@ -53,8 +52,6 @@
 <script setup lang="ts">
 const router = useRouter()
 const { currentSong, showLyrics } = usePlayer()
-
-const lyricsContainer = ref<HTMLElement | null>(null)
 
 // Marcar showLyrics como true al entrar a la página
 onMounted(() => {
@@ -80,34 +77,3 @@ watch(currentSong, (song) => {
 }, { immediate: true })
 </script>
 
-<style scoped>
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-.custom-scrollbar::-webkit-scrollbar-button {
-  display: none;
-}
-</style>
