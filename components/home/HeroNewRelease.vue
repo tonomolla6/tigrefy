@@ -1,59 +1,102 @@
 <template>
-  <div
-    class="relative overflow-hidden rounded-xl group
-           bg-gradient-to-r from-tiger-900 via-tiger-950 to-dark-base"
-  >
-    <!-- Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40" />
+  <!-- Mobile: diseño vertical compacto -->
+  <div class="md:hidden">
+    <div
+      class="relative overflow-hidden rounded-xl"
+      :style="`background: linear-gradient(135deg, ${dominantColor}cc 0%, ${dominantColor}44 60%, transparent 100%)`"
+    >
+      <div class="flex items-center gap-4 p-4">
+        <!-- Cover -->
+        <div class="flex-shrink-0">
+          <img
+            ref="coverRef"
+            :src="song.cover"
+            :alt="song.title"
+            crossorigin="anonymous"
+            class="w-24 h-24 rounded-lg shadow-lg object-cover"
+            @load="extractColor"
+          />
+        </div>
 
-    <div class="relative flex items-center gap-6 p-6 md:p-8">
-      <!-- Cover con sombra -->
-      <div class="relative flex-shrink-0">
-        <img
-          :src="song.cover"
-          :alt="song.title"
-          class="w-28 h-28 md:w-40 md:h-40 rounded-lg shadow-2xl object-cover"
-        />
-        <!-- Badge NUEVO -->
-        <span
-          class="absolute -top-2 -right-2 bg-tiger-500 text-white text-xs
-                 font-bold px-3 py-1 rounded-full shadow-lg"
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <!-- Badge -->
+          <span class="inline-flex items-center gap-1 bg-tiger-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full mb-2">
+            NUEVO
+          </span>
+
+          <!-- Título -->
+          <h2 class="text-lg font-bold leading-tight mb-1 line-clamp-2">
+            {{ song.title }}
+          </h2>
+          <p class="text-sm text-white/70">{{ song.artistName }}</p>
+        </div>
+
+        <!-- Play button -->
+        <button
+          @click.stop="handlePlay"
+          class="flex-shrink-0 w-12 h-12 bg-tiger-500 hover:bg-tiger-400 rounded-full
+                 flex items-center justify-center shadow-md transition-colors"
         >
-          NUEVO
-        </span>
+          <IconPause v-if="isCurrentlyPlaying" :size="22" class="text-white" />
+          <IconPlay v-else :size="22" class="text-white ml-0.5" />
+        </button>
       </div>
+    </div>
+  </div>
 
-      <!-- Info -->
-      <div class="flex-1 min-w-0">
-        <p class="text-tiger-400 text-xs md:text-sm font-semibold uppercase tracking-wider mb-2">
-          Nuevo Lanzamiento
-        </p>
-        <h2 class="text-2xl md:text-4xl font-bold mb-2 truncate">
-          {{ song.title }}
-        </h2>
-        <p class="text-lg text-secondary mb-4">{{ song.artistName }}</p>
+  <!-- Desktop: diseño horizontal -->
+  <div class="hidden md:block">
+    <div
+      class="relative overflow-hidden rounded-xl"
+      :style="`background: linear-gradient(135deg, ${dominantColor}cc 0%, ${dominantColor}44 60%, transparent 100%)`"
+    >
+      <div class="flex items-center gap-6 p-6">
+        <!-- Cover -->
+        <div class="flex-shrink-0">
+          <img
+            ref="coverRefDesktop"
+            :src="song.cover"
+            :alt="song.title"
+            crossorigin="anonymous"
+            class="w-48 h-48 rounded-lg shadow-lg object-cover"
+            @load="extractColorDesktop"
+          />
+        </div>
 
-        <!-- Botones de acción -->
-        <div class="flex items-center gap-4">
-          <button
-            @click.stop="handlePlay"
-            class="bg-tiger-500 hover:bg-tiger-400 text-white font-bold
-                   py-3 px-6 md:px-8 rounded-full flex items-center gap-2
-                   transition-colors duration-200 shadow-lg"
-          >
-            <IconPause v-if="isCurrentlyPlaying" :size="20" />
-            <IconPlay v-else :size="20" />
-            <span class="hidden sm:inline">{{ isCurrentlyPlaying ? 'Pausar' : 'Reproducir' }}</span>
-          </button>
-          <button
-            @click.stop="toggleFavorite"
-            class="p-3 rounded-full border-2 border-white/30 hover:border-white
-                   transition-colors duration-200"
-            :class="isFavorite ? 'border-tiger-500 text-tiger-500' : ''"
-            aria-label="Favorito"
-          >
-            <IconHeart :size="24" :filled="isFavorite" />
-          </button>
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <!-- Badge -->
+          <span class="inline-flex items-center gap-1.5 bg-tiger-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
+            NUEVO LANZAMIENTO
+          </span>
+
+          <!-- Título -->
+          <h2 class="text-3xl lg:text-4xl font-bold leading-tight mb-2 line-clamp-2">
+            {{ song.title }}
+          </h2>
+          <p class="text-lg text-white/70 mb-5">{{ song.artistName }}</p>
+
+          <!-- Botones de acción -->
+          <div class="flex items-center gap-3">
+            <button
+              @click.stop="handlePlay"
+              class="bg-tiger-500 hover:bg-tiger-400 text-white font-bold
+                     py-3 px-8 rounded-full flex items-center gap-2 transition-colors"
+            >
+              <IconPause v-if="isCurrentlyPlaying" :size="22" />
+              <IconPlay v-else :size="22" />
+              <span>{{ isCurrentlyPlaying ? 'Pausar' : 'Reproducir' }}</span>
+            </button>
+            <button
+              @click.stop="toggleFavorite"
+              class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+              :class="isFavorite ? 'text-tiger-500' : 'text-white/80'"
+              aria-label="Favorito"
+            >
+              <IconHeart :size="24" :filled="isFavorite" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -85,6 +128,61 @@ const { addToRecent } = useRecentlyPlayed()
 const isFavorite = computed(() => isFavoriteSong(props.song.id))
 const isCurrent = computed(() => currentSong.value?.id === props.song.id)
 const isCurrentlyPlaying = computed(() => isCurrent.value && isPlaying.value)
+
+// Color extraction from cover
+const coverRef = ref<HTMLImageElement | null>(null)
+const coverRefDesktop = ref<HTMLImageElement | null>(null)
+const dominantColor = ref('#ea580c') // tiger-600 as fallback
+
+const extractColorFromImage = (img: HTMLImageElement) => {
+  try {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = 50
+    canvas.height = 50
+    ctx.drawImage(img, 0, 0, 50, 50)
+
+    const imageData = ctx.getImageData(0, 0, 50, 50).data
+    let r = 0, g = 0, b = 0, count = 0
+
+    // Sample pixels to get average color
+    for (let i = 0; i < imageData.length; i += 16) {
+      r += imageData[i]
+      g += imageData[i + 1]
+      b += imageData[i + 2]
+      count++
+    }
+
+    r = Math.round(r / count)
+    g = Math.round(g / count)
+    b = Math.round(b / count)
+
+    // Make color more saturated for better visibility
+    const max = Math.max(r, g, b)
+    const boost = 1.3
+    r = Math.min(255, Math.round(r * boost))
+    g = Math.min(255, Math.round(g * boost))
+    b = Math.min(255, Math.round(b * boost))
+
+    dominantColor.value = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  } catch {
+    // Keep fallback color on error (CORS, etc.)
+  }
+}
+
+const extractColor = () => {
+  if (coverRef.value) {
+    extractColorFromImage(coverRef.value)
+  }
+}
+
+const extractColorDesktop = () => {
+  if (coverRefDesktop.value) {
+    extractColorFromImage(coverRefDesktop.value)
+  }
+}
 
 const handlePlay = () => {
   // If this is the current song, toggle play/pause

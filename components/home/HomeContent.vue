@@ -11,7 +11,7 @@
       <MobileHeader />
 
       <!-- Header con gradiente oscuro (solo desktop) -->
-      <div class="bg-dark-base md:bg-gradient-to-b md:from-tiger-900/50 md:via-tiger-950/30 md:to-dark-base pt-1 md:pt-6 pb-8 px-4 md:px-8">
+      <div class="bg-dark-base md:bg-gradient-to-b md:from-tiger-900/50 md:via-tiger-950/30 md:to-dark-base pt-1 md:pt-6 px-4 md:px-8">
         <!-- Saludo -->
         <div class="mb-4 md:mb-6">
           <h1 class="text-2xl md:text-5xl font-bold mb-1">¡Hola, {{ userName }}!</h1>
@@ -41,7 +41,7 @@
       </div>
 
       <!-- Contenido principal -->
-      <div class="px-4 md:px-8 py-6 space-y-8 bg-dark-base">
+      <div class="px-4 md:px-8 pt-6 pb-6 space-y-6 bg-dark-base">
         <!-- Hero Nueva Canción -->
         <HeroNewRelease
           v-if="latestSong"
@@ -50,29 +50,21 @@
         />
 
         <!-- Álbumes -->
-        <HorizontalScroller
+        <MediaSection
           title="Álbumes"
+          type="albums"
+          :items="albums"
           showAllLink="/section/albums"
-        >
-          <SpotifyAlbumCard
-            v-for="album in albums"
-            :key="album.id"
-            :album="album"
-          />
-        </HorizontalScroller>
+        />
 
         <!-- Listas -->
-        <HorizontalScroller
+        <MediaSection
           v-if="visiblePlaylists.length > 0"
           title="Listas"
+          type="playlists"
+          :items="visiblePlaylists"
           showAllLink="/section/playlists"
-        >
-          <SpotifyPlaylistCard
-            v-for="playlist in visiblePlaylists"
-            :key="playlist.id"
-            :playlist="playlist"
-          />
-        </HorizontalScroller>
+        />
       </div>
     </div>
   </NuxtLayout>
