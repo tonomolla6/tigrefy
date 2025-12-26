@@ -1674,7 +1674,7 @@ const editArtistForm = ref({
 })
 const artistToDelete = ref<Artist | null>(null)
 const deleteArtistError = ref('')
-const editArtistImageUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+const editArtistImageUpload = ref<{ uploadPendingFile: () => Promise<string | null>, hasPendingFile: () => boolean } | null>(null)
 
 // Estado para editar álbum
 const showEditAlbumModal = ref(false)
@@ -1690,7 +1690,7 @@ const editAlbumForm = ref({
 })
 const albumToDelete = ref<Album | null>(null)
 const deleteAlbumError = ref('')
-const editAlbumCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+const editAlbumCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null>, hasPendingFile: () => boolean } | null>(null)
 
 // Estado para editar canción
 const showEditSongModal = ref(false)
@@ -1707,7 +1707,7 @@ const editSongForm = ref({
 })
 const songToDelete = ref<Song | null>(null)
 const deleteSongError = ref('')
-const editSongAudioUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+const editSongAudioUpload = ref<{ uploadPendingFile: () => Promise<string | null>, hasPendingFile: () => boolean } | null>(null)
 
 // Estado para crear contenido
 const showCreateArtistModal = ref(false)
@@ -1716,10 +1716,10 @@ const showCreateSongModal = ref(false)
 const showCreatePlaylistModal = ref(false)
 
 // Refs para los componentes de upload
-const artistImageUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
-const albumCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
-const songAudioUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
-const playlistCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null> } | null>(null)
+const artistImageUpload = ref<{ uploadPendingFile: () => Promise<string | null>, hasPendingFile: () => boolean } | null>(null)
+const albumCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null>, hasPendingFile: () => boolean } | null>(null)
+const songAudioUpload = ref<{ uploadPendingFile: () => Promise<string | null>, hasPendingFile: () => boolean } | null>(null)
+const playlistCoverUpload = ref<{ uploadPendingFile: () => Promise<string | null>, hasPendingFile: () => boolean } | null>(null)
 
 const newArtist = ref({
   name: '',
@@ -1941,9 +1941,15 @@ const saveArtistChanges = async () => {
   try {
     // Subir imagen si hay archivo pendiente
     let imageUrl = editArtistForm.value.image
-    if (editArtistImageUpload.value) {
+    if (editArtistImageUpload.value?.hasPendingFile()) {
       const uploadedUrl = await editArtistImageUpload.value.uploadPendingFile()
-      if (uploadedUrl) imageUrl = uploadedUrl
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl
+      } else {
+        editArtistError.value = 'Error al subir la imagen. Sube el archivo manualmente a /public/artists/ y escribe la ruta.'
+        isEditingArtist.value = false
+        return
+      }
     }
 
     const data = await $fetch<{ success: boolean, artist: Artist }>(`/api/admin/artists/${editingArtist.value.id}`, {
@@ -2026,9 +2032,15 @@ const saveAlbumChanges = async () => {
   try {
     // Subir portada si hay archivo pendiente
     let coverUrl = editAlbumForm.value.cover
-    if (editAlbumCoverUpload.value) {
+    if (editAlbumCoverUpload.value?.hasPendingFile()) {
       const uploadedUrl = await editAlbumCoverUpload.value.uploadPendingFile()
-      if (uploadedUrl) coverUrl = uploadedUrl
+      if (uploadedUrl) {
+        coverUrl = uploadedUrl
+      } else {
+        editAlbumError.value = 'Error al subir la portada. Sube el archivo manualmente a /public/covers/ y escribe la ruta.'
+        isEditingAlbum.value = false
+        return
+      }
     }
 
     const data = await $fetch<{ success: boolean, album: Album }>(`/api/admin/albums/${editingAlbum.value.id}`, {
@@ -2123,9 +2135,15 @@ const saveSongChanges = async () => {
   try {
     // Subir audio si hay archivo pendiente
     let audioUrl = editSongForm.value.audioUrl
-    if (editSongAudioUpload.value) {
+    if (editSongAudioUpload.value?.hasPendingFile()) {
       const uploadedUrl = await editSongAudioUpload.value.uploadPendingFile()
-      if (uploadedUrl) audioUrl = uploadedUrl
+      if (uploadedUrl) {
+        audioUrl = uploadedUrl
+      } else {
+        editSongError.value = 'Error al subir el audio. Sube el archivo manualmente a /public/audio/ y escribe la ruta.'
+        isEditingSong.value = false
+        return
+      }
     }
 
     const data = await $fetch<{ success: boolean, song: Song }>(`/api/admin/songs/${editingSong.value.id}`, {
@@ -2207,9 +2225,15 @@ const createArtist = async () => {
   try {
     // Subir imagen si hay archivo pendiente
     let imageUrl = newArtist.value.image
-    if (artistImageUpload.value) {
+    if (artistImageUpload.value?.hasPendingFile()) {
       const uploadedUrl = await artistImageUpload.value.uploadPendingFile()
-      if (uploadedUrl) imageUrl = uploadedUrl
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl
+      } else {
+        createError.value = 'Error al subir la imagen. Sube el archivo manualmente a /public/artists/ y escribe la ruta.'
+        isCreating.value = false
+        return
+      }
     }
 
     const data = await $fetch<{ success: boolean, artist: Artist }>('/api/admin/artists', {
@@ -2242,9 +2266,15 @@ const createAlbum = async () => {
   try {
     // Subir portada si hay archivo pendiente
     let coverUrl = newAlbum.value.cover
-    if (albumCoverUpload.value) {
+    if (albumCoverUpload.value?.hasPendingFile()) {
       const uploadedUrl = await albumCoverUpload.value.uploadPendingFile()
-      if (uploadedUrl) coverUrl = uploadedUrl
+      if (uploadedUrl) {
+        coverUrl = uploadedUrl
+      } else {
+        createError.value = 'Error al subir la portada. Sube el archivo manualmente a /public/covers/ y escribe la ruta.'
+        isCreating.value = false
+        return
+      }
     }
 
     const data = await $fetch<{ success: boolean, album: Album }>('/api/admin/albums', {
@@ -2287,9 +2317,16 @@ const createSong = async () => {
   try {
     // Subir audio si hay archivo pendiente
     let audioUrl = newSong.value.audioUrl
-    if (songAudioUpload.value) {
+    if (songAudioUpload.value?.hasPendingFile()) {
       const uploadedUrl = await songAudioUpload.value.uploadPendingFile()
-      if (uploadedUrl) audioUrl = uploadedUrl
+      if (uploadedUrl) {
+        audioUrl = uploadedUrl
+      } else {
+        // Si falla la subida, mostrar error específico
+        createError.value = 'Error al subir el archivo de audio. Puedes subir el archivo manualmente a /public/audio/ y escribir la ruta (ej: /audio/cancion.mp3)'
+        isCreating.value = false
+        return
+      }
     }
 
     if (!audioUrl) {
@@ -2360,9 +2397,15 @@ const createPlaylist = async () => {
   try {
     // Subir portada si hay archivo pendiente
     let coverUrl = newPlaylist.value.cover
-    if (playlistCoverUpload.value) {
+    if (playlistCoverUpload.value?.hasPendingFile()) {
       const uploadedUrl = await playlistCoverUpload.value.uploadPendingFile()
-      if (uploadedUrl) coverUrl = uploadedUrl
+      if (uploadedUrl) {
+        coverUrl = uploadedUrl
+      } else {
+        createError.value = 'Error al subir la portada. Sube el archivo manualmente a /public/covers/ y escribe la ruta.'
+        isCreating.value = false
+        return
+      }
     }
 
     const data = await $fetch<{ success: boolean, playlist: Playlist }>('/api/admin/playlists', {
