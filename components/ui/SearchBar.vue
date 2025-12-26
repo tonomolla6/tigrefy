@@ -12,32 +12,33 @@
     <IconSearch :size="20" class="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" :class="isSearchPage ? 'text-white' : 'text-[#a7a7a7]'" />
 
     <!-- Botón explorar (navega a /search) -->
-    <button
-      v-if="!searchQuery"
-      @click="goToExplore"
-      class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center hover:text-white transition-colors"
-      :class="isSearchPage ? 'text-white' : 'text-[#a7a7a7]'"
-      title="Explorar"
-    >
-      <!-- Icono de explorar/browse como Spotify -->
-      <svg class="w-5 h-5" viewBox="0 0 24 24" :fill="isSearchPage ? 'currentColor' : 'none'" stroke="currentColor" :stroke-width="isSearchPage ? 0 : 1.5">
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
-      </svg>
-    </button>
+    <Tooltip v-if="!searchQuery" text="Explorar" position="bottom">
+      <button
+        @click="goToExplore"
+        class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center hover:text-white transition-colors"
+        :class="isSearchPage ? 'text-white' : 'text-[#a7a7a7]'"
+      >
+        <!-- Icono de explorar/browse como Spotify -->
+        <svg class="w-5 h-5" viewBox="0 0 24 24" :fill="isSearchPage ? 'currentColor' : 'none'" stroke="currentColor" :stroke-width="isSearchPage ? 0 : 1.5">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+      </button>
+    </Tooltip>
 
     <!-- Botón limpiar (cuando hay texto) -->
-    <button
-      v-else
-      @click="clearSearch"
-      class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center text-[#a7a7a7] hover:text-white transition-colors"
-    >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
+    <Tooltip v-else text="Limpiar búsqueda" position="bottom">
+      <button
+        @click="clearSearch"
+        class="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center text-[#a7a7a7] hover:text-white transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </Tooltip>
   </div>
 </template>
 

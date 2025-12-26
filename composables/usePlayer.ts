@@ -9,6 +9,9 @@ let lastTimeUpdate = 0
 // Variable para detectar doble pulsación en previousSong
 let lastPreviousPressTime = 0
 
+// Flag para saber si ya se inicializaron las preferencias
+let preferencesInitialized = false
+
 // Función para actualizar el título de la pestaña
 const updateDocumentTitle = (song: any | null, playing: boolean) => {
   if (typeof document === 'undefined') return
@@ -30,24 +33,46 @@ export interface PlaybackContext {
 }
 
 export const usePlayer = () => {
+  const { playerPreferences, uiPreferences, lastPlayedPreferences, updatePlayerPreferences, updateUIPreferences, updateLastPlayed, initPreferences } = useUserPreferences()
+
+  // Inicializar preferencias una sola vez
+  if (!preferencesInitialized && typeof window !== 'undefined') {
+    initPreferences()
+    preferencesInitialized = true
+  }
+
   const currentSong = useState<any>('currentSong', () => null)
   const isPlaying = useState('isPlaying', () => false)
   const currentTime = useState('currentTime', () => 0)
   const duration = useState('duration', () => 0)
-  const volume = useState('volume', () => 0.7)
-  const volumeBeforeMute = useState('volumeBeforeMute', () => 0.7)
-  const isMuted = useState('isMuted', () => false)
-  const isShuffled = useState('isShuffled', () => false)
-  const repeatMode = useState<'off' | 'all' | 'one'>('repeatMode', () => 'off')
+  const volume = useState('volume', () => playerPreferences.value.volume)
+  const volumeBeforeMute = useState('volumeBeforeMute', () => playerPreferences.value.volume)
+  const isMuted = useState('isMuted', () => playerPreferences.value.isMuted)
+  const isShuffled = useState('isShuffled', () => playerPreferences.value.isShuffled)
+  const repeatMode = useState<'off' | 'all' | 'one'>('repeatMode', () => playerPreferences.value.repeatMode)
   const queue = useState<any[]>('queue', () => [])
   const queueIndex = useState('queueIndex', () => 0)
-  const showLyrics = useState('showLyrics', () => false)
-  const showNowPlaying = useState('showNowPlaying', () => false)
-  const showQueue = useState('showQueue', () => true)
+  const showLyrics = useState('showLyrics', () => uiPreferences.value.showLyrics)
+  const showNowPlaying = useState('showNowPlaying', () => uiPreferences.value.showNowPlaying)
+  const showQueue = useState('showQueue', () => uiPreferences.value.showQueue)
   const playbackContext = useState<PlaybackContext>('playbackContext', () => ({ type: 'unknown' }))
 
   // Flag para saber si ya se contó la reproducción de la canción actual
   const playCountedForCurrentSong = useState('playCountedForCurrentSong', () => false)
+
+  // Guardar estado de última reproducción
+  const saveLastPlayedState = () => {
+    if (!currentSong.value) return
+
+    updateLastPlayed({
+      songId: currentSong.value.id,
+      queueIds: queue.value.map((s: any) => s.id),
+      queueIndex: queueIndex.value,
+      contextType: playbackContext.value.type,
+      contextId: playbackContext.value.id || null,
+      currentTime: currentTime.value
+    })
+  }
 
   // Función para registrar una reproducción después de 30 segundos reales
   const registerPlay = (songId: string) => {
@@ -197,6 +222,8 @@ export const usePlayer = () => {
         })
       }
       // La reproducción se registra después de 30 segundos reales de escucha
+      // Guardar estado de última reproducción
+      saveLastPlayedState()
     } catch (error) {
       console.error('Error al reproducir:', error)
       isPlaying.value = false
@@ -222,6 +249,8 @@ export const usePlayer = () => {
     globalAudioElement.pause()
     isPlaying.value = false
     updateDocumentTitle(currentSong.value, false)
+    // Guardar posición actual al pausar
+    saveLastPlayedState()
   }
 
   const play = async () => {
@@ -305,9 +334,13 @@ export const usePlayer = () => {
       isMuted.value = false
       globalAudioElement.muted = false
       volumeBeforeMute.value = value
+      // Persistir preferencias
+      updatePlayerPreferences({ volume: value, isMuted: false })
     } else {
       isMuted.value = true
       globalAudioElement.muted = true
+      // Persistir preferencias
+      updatePlayerPreferences({ isMuted: true })
     }
   }
 
@@ -320,17 +353,23 @@ export const usePlayer = () => {
       globalAudioElement.muted = false
       volume.value = volumeBeforeMute.value
       globalAudioElement.volume = volumeBeforeMute.value
+      // Persistir preferencias
+      updatePlayerPreferences({ isMuted: false, volume: volumeBeforeMute.value })
     } else {
       // Mutear: guardar el volumen actual y poner a 0
       volumeBeforeMute.value = volume.value
       isMuted.value = true
       globalAudioElement.muted = true
       volume.value = 0
+      // Persistir preferencias
+      updatePlayerPreferences({ isMuted: true })
     }
   }
 
   const toggleShuffle = () => {
     isShuffled.value = !isShuffled.value
+    // Persistir preferencia
+    updatePlayerPreferences({ isShuffled: isShuffled.value })
 
     if (isShuffled.value && queue.value.length > 1) {
       // Guardar la canción actual
@@ -354,6 +393,8 @@ export const usePlayer = () => {
     } else {
       repeatMode.value = 'off'
     }
+    // Persistir preferencia
+    updatePlayerPreferences({ repeatMode: repeatMode.value })
   }
 
   const handleSongEnd = () => {
@@ -367,6 +408,8 @@ export const usePlayer = () => {
 
   const toggleLyrics = () => {
     showLyrics.value = !showLyrics.value
+    // Persistir preferencia
+    updateUIPreferences({ showLyrics: showLyrics.value })
   }
 
   const toggleNowPlaying = () => {
@@ -375,6 +418,8 @@ export const usePlayer = () => {
     if (showNowPlaying.value) {
       showQueue.value = false
     }
+    // Persistir preferencias
+    updateUIPreferences({ showNowPlaying: showNowPlaying.value, showQueue: showQueue.value })
   }
 
   const toggleQueue = () => {
@@ -383,6 +428,8 @@ export const usePlayer = () => {
     if (showQueue.value) {
       showNowPlaying.value = false
     }
+    // Persistir preferencias
+    updateUIPreferences({ showQueue: showQueue.value, showNowPlaying: showNowPlaying.value })
   }
 
   // Detener y resetear todo el estado del reproductor
@@ -430,6 +477,64 @@ export const usePlayer = () => {
     queue.value.splice(insertIndex, 0, song)
   }
 
+  // Restaurar última canción reproducida (sin auto-play)
+  const restoreLastPlayed = async (songs: any[]) => {
+    const lastPlayed = lastPlayedPreferences.value
+    if (!lastPlayed.songId || songs.length === 0) return false
+
+    // Buscar la canción en la lista proporcionada
+    const song = songs.find(s => s.id === lastPlayed.songId)
+    if (!song) return false
+
+    initAudio()
+    if (!globalAudioElement) return false
+
+    // Reconstruir la cola si hay IDs guardados
+    if (lastPlayed.queueIds.length > 0) {
+      const restoredQueue = lastPlayed.queueIds
+        .map(id => songs.find(s => s.id === id))
+        .filter(Boolean)
+
+      if (restoredQueue.length > 0) {
+        queue.value = restoredQueue
+        queueIndex.value = lastPlayed.queueIndex
+      } else {
+        queue.value = [song]
+        queueIndex.value = 0
+      }
+    } else {
+      queue.value = [song]
+      queueIndex.value = 0
+    }
+
+    // Restaurar contexto
+    playbackContext.value = {
+      type: lastPlayed.contextType as PlaybackContextType,
+      id: lastPlayed.contextId || undefined
+    }
+
+    // Cargar la canción sin reproducir
+    currentSong.value = song
+    globalAudioElement.src = song.audioUrl
+    globalAudioElement.load()
+
+    // Esperar a que cargue y establecer el tiempo
+    return new Promise<boolean>((resolve) => {
+      const onLoadedMetadata = () => {
+        duration.value = globalAudioElement?.duration || 0
+        // Restaurar posición de tiempo
+        if (lastPlayed.currentTime > 0 && lastPlayed.currentTime < duration.value) {
+          globalAudioElement!.currentTime = lastPlayed.currentTime
+          currentTime.value = lastPlayed.currentTime
+        }
+        globalAudioElement?.removeEventListener('loadedmetadata', onLoadedMetadata)
+        updateDocumentTitle(song, false)
+        resolve(true)
+      }
+      globalAudioElement?.addEventListener('loadedmetadata', onLoadedMetadata)
+    })
+  }
+
   return {
     currentSong,
     isPlaying,
@@ -461,6 +566,7 @@ export const usePlayer = () => {
     toggleQueue,
     stopAndReset,
     addToQueue,
+    restoreLastPlayed,
     formatTime
   }
 }

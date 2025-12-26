@@ -1,13 +1,14 @@
 <template>
   <div class="relative" ref="menuRef">
-    <button
-      @click.stop="toggleMenu"
-      class="p-2 rounded-full hover:bg-dark-hover transition-colors"
-      :class="{ 'bg-dark-hover': isOpen }"
-      title="Más opciones"
-    >
-      <IconMoreVertical :size="20" class="text-secondary hover:text-primary" />
-    </button>
+    <Tooltip text="Más opciones">
+      <button
+        @click.stop="toggleMenu"
+        class="p-2 rounded-full hover:bg-dark-hover transition-colors"
+        :class="{ 'bg-dark-hover': isOpen }"
+      >
+        <IconMoreVertical :size="20" class="text-secondary hover:text-primary" />
+      </button>
+    </Tooltip>
 
     <transition
       enter-active-class="transition-all duration-100"

@@ -1,10 +1,21 @@
+// Flag para saber si ya se inicializaron las preferencias
+let layoutPreferencesInitialized = false
+
 export const useSidebarResize = () => {
-  // Estado del sidebar izquierdo (biblioteca)
-  const leftSidebarWidth = useState('leftSidebarWidth', () => 340)
-  const leftSidebarCollapsed = useState('leftSidebarCollapsed', () => false)
+  const { layoutPreferences, updateLayoutPreferences, initPreferences } = useUserPreferences()
+
+  // Inicializar preferencias una sola vez
+  if (!layoutPreferencesInitialized && typeof window !== 'undefined') {
+    initPreferences()
+    layoutPreferencesInitialized = true
+  }
+
+  // Estado del sidebar izquierdo (biblioteca) - cargar desde preferencias
+  const leftSidebarWidth = useState('leftSidebarWidth', () => layoutPreferences.value.leftSidebarWidth)
+  const leftSidebarCollapsed = useState('leftSidebarCollapsed', () => layoutPreferences.value.leftSidebarCollapsed)
 
   // Estado del sidebar derecho (cola/now playing)
-  const rightSidebarWidth = useState('rightSidebarWidth', () => 380)
+  const rightSidebarWidth = useState('rightSidebarWidth', () => layoutPreferences.value.rightSidebarWidth)
 
   // Límites
   const LEFT_COLLAPSED = 80 // Mínimo colapsado (solo iconos)
@@ -26,6 +37,11 @@ export const useSidebarResize = () => {
       leftSidebarWidth.value = 340
     }
     collapseAccumulator.value = 0
+    // Persistir preferencias
+    updateLayoutPreferences({
+      leftSidebarCollapsed: leftSidebarCollapsed.value,
+      leftSidebarWidth: leftSidebarWidth.value
+    })
   }
 
   // Resize del sidebar izquierdo - con dos estados
@@ -39,6 +55,11 @@ export const useSidebarResize = () => {
           leftSidebarCollapsed.value = false
           leftSidebarWidth.value = LEFT_MIN
           collapseAccumulator.value = 0
+          // Persistir preferencias
+          updateLayoutPreferences({
+            leftSidebarCollapsed: false,
+            leftSidebarWidth: LEFT_MIN
+          })
         }
       }
     } else {
@@ -53,6 +74,11 @@ export const useSidebarResize = () => {
           leftSidebarCollapsed.value = true
           leftSidebarWidth.value = LEFT_COLLAPSED
           collapseAccumulator.value = 0
+          // Persistir preferencias
+          updateLayoutPreferences({
+            leftSidebarCollapsed: true,
+            leftSidebarWidth: LEFT_COLLAPSED
+          })
         }
       } else {
         // Resize normal entre LEFT_MIN y LEFT_MAX
@@ -62,15 +88,29 @@ export const useSidebarResize = () => {
     }
   }
 
+  // Guardar ancho del sidebar izquierdo al terminar el drag
+  const saveLeftSidebarWidth = () => {
+    if (!leftSidebarCollapsed.value) {
+      updateLayoutPreferences({ leftSidebarWidth: leftSidebarWidth.value })
+    }
+  }
+
   // Reset del acumulador cuando termina el drag
   const resetCollapseThreshold = () => {
     collapseAccumulator.value = 0
+    // Guardar el ancho actual al terminar el drag
+    saveLeftSidebarWidth()
   }
 
   // Resize del sidebar derecho
   const resizeRightSidebar = (delta: number) => {
     const newWidth = rightSidebarWidth.value - delta // Invertido porque arrastramos desde la izquierda
     rightSidebarWidth.value = Math.min(RIGHT_MAX, Math.max(RIGHT_MIN, newWidth))
+  }
+
+  // Guardar ancho del sidebar derecho al terminar el drag
+  const saveRightSidebarWidth = () => {
+    updateLayoutPreferences({ rightSidebarWidth: rightSidebarWidth.value })
   }
 
   return {
@@ -84,6 +124,7 @@ export const useSidebarResize = () => {
     resizeLeftSidebar,
     resizeRightSidebar,
     resetCollapseThreshold,
+    saveRightSidebarWidth,
 
     // Constantes
     LEFT_COLLAPSED,

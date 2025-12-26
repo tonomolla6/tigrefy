@@ -1,10 +1,13 @@
 <template>
   <Teleport to="body">
     <transition
-      enter-active-class="transition-transform duration-300 ease-out"
-      leave-active-class="transition-transform duration-300 ease-in"
-      enter-from-class="translate-y-full"
-      leave-to-class="translate-y-full"
+      enter-active-class="transition-all duration-400 ease-out"
+      leave-active-class="transition-all duration-300 ease-in"
+      enter-from-class="translate-y-full opacity-0 scale-95"
+      enter-to-class="translate-y-0 opacity-100 scale-100"
+      leave-to-class="translate-y-full opacity-0 scale-95"
+      @enter="onEnter"
+      @leave="onLeave"
     >
       <div
         v-if="isOpen && currentSong"
@@ -27,29 +30,29 @@
         <!-- Contenido -->
         <div class="relative flex flex-col h-full">
           <!-- Header con handle y botón cerrar -->
-          <div class="flex items-center justify-between px-4 py-4">
+          <div class="flex items-center justify-between px-3 py-2">
             <!-- Handle para arrastrar -->
-            <div class="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 bg-white/30 rounded-full" />
+            <div class="absolute top-1.5 left-1/2 -translate-x-1/2 w-8 h-1 bg-white/30 rounded-full" />
 
             <button
               @click="$emit('close')"
-              class="p-2 text-white/70 hover:text-white transition-colors"
+              class="p-1.5 text-white/70 hover:text-white transition-colors"
             >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
             <div class="text-center flex-1">
-              <p class="text-xs text-white/60 uppercase tracking-wider">Reproduciendo desde</p>
-              <p class="text-sm text-white font-medium truncate px-4">{{ contextLabel }}</p>
+              <p class="text-[10px] text-white/60 uppercase tracking-wider">Reproduciendo desde</p>
+              <p class="text-xs text-white font-medium truncate px-3">{{ contextLabel }}</p>
             </div>
 
             <button
               @click="showQueueSheet = true"
-              class="p-2 text-white/70 hover:text-white transition-colors"
+              class="p-1.5 text-white/70 hover:text-white transition-colors"
             >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
               </svg>
             </button>
@@ -57,7 +60,10 @@
 
           <!-- Portada grande -->
           <div class="flex-1 flex items-center justify-center px-8 py-4">
-            <div class="w-full max-w-[320px] aspect-square">
+            <div
+              class="w-full max-w-[320px] aspect-square transition-all duration-300 delay-50"
+              :class="isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-90'"
+            >
               <img
                 v-if="currentSong.cover"
                 :src="currentSong.cover"
@@ -73,7 +79,10 @@
           </div>
 
           <!-- Info de la canción -->
-          <div class="px-8 py-4">
+          <div
+            class="px-8 py-4 transition-all duration-300 delay-100"
+            :class="isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
+          >
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <h2 class="text-2xl font-bold text-white truncate">{{ currentSong.title }}</h2>
@@ -119,7 +128,10 @@
           </div>
 
           <!-- Controles principales -->
-          <div class="px-8 py-6">
+          <div
+            class="px-8 py-6 transition-all duration-300 delay-150"
+            :class="isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
+          >
             <div class="flex items-center justify-between">
               <button
                 @click="toggleShuffle"
@@ -289,6 +301,18 @@ const { data } = useData()
 const showQueueSheet = ref(false)
 const showLyricsSheet = ref(false)
 const showAddToPlaylistModal = ref(false)
+const isAnimating = ref(false)
+
+// Animaciones de entrada/salida
+const onEnter = () => {
+  setTimeout(() => {
+    isAnimating.value = true
+  }, 50)
+}
+
+const onLeave = () => {
+  isAnimating.value = false
+}
 
 // Swipe down to close
 const touchStartY = ref(0)
@@ -311,6 +335,7 @@ const handleTouchMove = (e: TouchEvent) => {
 const handleTouchEnd = () => {
   isDragging.value = false
   if (swipeOffset.value > 150) {
+    isAnimating.value = false
     emit('close')
   }
   swipeOffset.value = 0

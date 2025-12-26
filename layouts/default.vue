@@ -12,13 +12,14 @@
 
       <!-- Navegación y búsqueda centro -->
       <div class="flex-1 flex items-center justify-center gap-2 max-w-xl mx-auto px-4">
-        <NuxtLink
-          to="/"
-          class="w-12 h-12 flex items-center justify-center rounded-full bg-[#1f1f1f] hover:bg-[#2a2a2a] transition-colors"
-          title="Inicio"
-        >
-          <IconHome :size="24" :filled="isHomePage" class="text-white" />
-        </NuxtLink>
+        <Tooltip text="Inicio" position="bottom">
+          <NuxtLink
+            to="/"
+            class="w-12 h-12 flex items-center justify-center rounded-full bg-[#1f1f1f] hover:bg-[#2a2a2a] transition-colors"
+          >
+            <IconHome :size="24" :filled="isHomePage" class="text-white" />
+          </NuxtLink>
+        </Tooltip>
         <SearchBar />
       </div>
 
@@ -89,7 +90,7 @@
 
     <div
       class="flex flex-1 overflow-hidden transition-all"
-      :style="{ marginBottom: hasCurrentSong ? '80px' : '0' }"
+      :class="{ 'md:mb-[90px]': hasCurrentSong }"
     >
       <!-- Sidebar Izquierdo (Desktop) -->
       <MainSidebar />
@@ -117,6 +118,9 @@
 
     <!-- Toast Notifications -->
     <ToastContainer />
+
+    <!-- Menú Lateral Móvil -->
+    <MobileSideMenu />
   </div>
 </template>
 

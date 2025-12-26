@@ -10,10 +10,10 @@
       <!-- Mobile Header con perfil -->
       <MobileHeader />
 
-      <!-- Header con gradiente oscuro -->
-      <div class="bg-gradient-to-b from-tiger-900/50 via-tiger-950/30 to-dark-base pt-4 md:pt-6 pb-8 px-4 md:px-8">
+      <!-- Header con gradiente oscuro (solo desktop) -->
+      <div class="bg-dark-base md:bg-gradient-to-b md:from-tiger-900/50 md:via-tiger-950/30 md:to-dark-base pt-1 md:pt-6 pb-8 px-4 md:px-8">
         <!-- Saludo -->
-        <div class="mb-6">
+        <div class="mb-4 md:mb-6">
           <h1 class="text-2xl md:text-5xl font-bold mb-1">¡Hola, {{ userName }}!</h1>
           <p class="text-secondary text-base md:text-lg">{{ greeting }}</p>
         </div>
@@ -52,7 +52,7 @@
         <!-- Álbumes -->
         <HorizontalScroller
           title="Álbumes"
-          showAllLink="/albums"
+          showAllLink="/section/albums"
         >
           <SpotifyAlbumCard
             v-for="album in albums"
@@ -65,6 +65,7 @@
         <HorizontalScroller
           v-if="visiblePlaylists.length > 0"
           title="Listas"
+          showAllLink="/section/playlists"
         >
           <SpotifyPlaylistCard
             v-for="playlist in visiblePlaylists"
@@ -88,16 +89,16 @@ const userName = computed(() => {
   return user.value?.displayName || user.value?.username || 'Tigre'
 })
 
-// Datos computados
-const albums = computed(() => data.value.albums || [])
+// Datos computados - limitados a 8 elementos para el scroll horizontal
+const albums = computed(() => (data.value.albums || []).slice(0, 8))
 const playlists = computed(() => data.value.playlists || [])
 
-// Playlists visibles según rol: guest solo ve públicas, el resto ve todas
+// Playlists visibles según rol: guest solo ve públicas, el resto ve todas (máx 8)
 const visiblePlaylists = computed(() => {
-  if (isGuest.value) {
-    return playlists.value.filter((p: any) => p.isPublic)
-  }
-  return playlists.value
+  const filtered = isGuest.value
+    ? playlists.value.filter((p: any) => p.isPublic)
+    : playlists.value
+  return filtered.slice(0, 8)
 })
 
 const topSongs = computed(() => {

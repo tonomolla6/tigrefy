@@ -13,6 +13,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
   const savedPlaylistIds = ref<string[]>([])
   const savedAlbumIds = ref<string[]>([])
   const isLoading = ref(false)
+  const isLoaded = ref(false)
 
   // ====================
   // GETTERS
@@ -29,10 +30,15 @@ export const useFavoritesStore = defineStore('favorites', () => {
   // ====================
   // ACTIONS
   // ====================
-  async function loadFavorites() {
+  async function loadFavorites(forceReload = false) {
     const authStore = useAuthStore()
     if (!authStore.isAuthenticated) {
       $reset()
+      return
+    }
+
+    // Skip if already loaded and not forcing reload
+    if (!forceReload && isLoaded.value) {
       return
     }
 
@@ -54,6 +60,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
       savedPlaylistIds.value = savedPlaylists
       savedAlbumIds.value = savedAlbums
       favoriteArtistIds.value = legacyFavorites.artists || []
+      isLoaded.value = true
     } catch (error) {
       console.error('Error loading favorites:', error)
     } finally {
@@ -209,6 +216,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     savedPlaylistIds.value = []
     savedAlbumIds.value = []
     isLoading.value = false
+    isLoaded.value = false
   }
 
   // ====================
@@ -229,6 +237,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     savedPlaylistIds,
     savedAlbumIds,
     isLoading,
+    isLoaded,
 
     // backward compat aliases (para que funcione el código existente)
     songs,

@@ -36,22 +36,25 @@
     <!-- Actions Container (solo desktop) -->
     <div class="hidden md:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
       <!-- Add to Playlist Button -->
-      <button
-        @click.stop="showAddToPlaylist"
-        class="text-secondary hover:text-primary transition-colors"
-        title="Añadir a playlist"
-      >
-        <IconPlus :size="18" />
-      </button>
+      <Tooltip text="Añadir a playlist">
+        <button
+          @click.stop="showAddToPlaylist"
+          class="text-secondary hover:text-primary transition-colors"
+        >
+          <IconPlus :size="18" />
+        </button>
+      </Tooltip>
 
       <!-- Favorite Button -->
-      <button
-        @click.stop="toggleFavoriteSong(song.id)"
-        class="text-secondary hover:text-tiger-500 transition-colors"
-        :class="{ 'opacity-100 !text-tiger-500': isFavoriteSong(song.id) }"
-      >
-        <IconHeart :size="18" :filled="isFavoriteSong(song.id)" />
-      </button>
+      <Tooltip :text="isFavoriteSong(song.id) ? 'Quitar de Favoritos' : 'Añadir a Favoritos'">
+        <button
+          @click.stop="toggleFavoriteSong(song.id)"
+          class="text-secondary hover:text-tiger-500 transition-colors"
+          :class="{ 'opacity-100 !text-tiger-500': isFavoriteSong(song.id) }"
+        >
+          <IconHeart :size="18" :filled="isFavoriteSong(song.id)" />
+        </button>
+      </Tooltip>
 
       <!-- Context Menu -->
       <SongContextMenu

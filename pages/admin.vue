@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6">
+  <div class="p-6 pb-40 md:pb-6">
     <!-- Header -->
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-white mb-2">Panel de Administración</h1>

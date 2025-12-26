@@ -2,7 +2,14 @@
   <section class="relative group/scroller">
     <!-- Header de sección -->
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl md:text-2xl font-bold hover:underline cursor-pointer">
+      <NuxtLink
+        v-if="showAllLink"
+        :to="showAllLink"
+        class="text-xl md:text-2xl font-bold hover:underline cursor-pointer"
+      >
+        {{ title }}
+      </NuxtLink>
+      <h2 v-else class="text-xl md:text-2xl font-bold">
         {{ title }}
       </h2>
       <NuxtLink
@@ -10,7 +17,7 @@
         :to="showAllLink"
         class="text-sm font-semibold text-secondary hover:text-primary hover:underline transition-colors"
       >
-        Mostrar todo
+        Mostrar todos
       </NuxtLink>
     </div>
 
@@ -43,7 +50,7 @@
     <!-- Contenedor scroll -->
     <div
       ref="scrollContainer"
-      class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory pb-2"
+      class="flex items-start gap-2 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory pb-2"
       @scroll="updateScrollState"
     >
       <slot />

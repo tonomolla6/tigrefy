@@ -24,6 +24,7 @@ export const useUserStore = defineStore('user', () => {
   const playlists = ref<UserPlaylist[]>([])
   const searchHistory = ref<string[]>([])
   const isLoadingPlaylists = ref(false)
+  const isPlaylistsLoaded = ref(false)
 
   // ====================
   // GETTERS
@@ -43,11 +44,16 @@ export const useUserStore = defineStore('user', () => {
   // ====================
   // ACTIONS
   // ====================
-  async function loadPlaylists() {
+  async function loadPlaylists(forceReload = false) {
     const authStore = useAuthStore()
 
     if (!authStore.isAuthenticated) {
       playlists.value = []
+      return
+    }
+
+    // Skip if already loaded and not forcing reload
+    if (!forceReload && isPlaylistsLoaded.value) {
       return
     }
 
@@ -58,6 +64,7 @@ export const useUserStore = defineStore('user', () => {
         credentials: 'include'
       })
       playlists.value = data
+      isPlaylistsLoaded.value = true
     } catch (error) {
       console.error('Error loading playlists:', error)
     } finally {
@@ -113,6 +120,7 @@ export const useUserStore = defineStore('user', () => {
     playlists.value = []
     searchHistory.value = []
     isLoadingPlaylists.value = false
+    isPlaylistsLoaded.value = false
   }
 
   // ====================
@@ -123,6 +131,7 @@ export const useUserStore = defineStore('user', () => {
     playlists,
     searchHistory,
     isLoadingPlaylists,
+    isPlaylistsLoaded,
 
     // getters
     playlistsCount,

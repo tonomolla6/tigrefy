@@ -41,15 +41,16 @@
           <IconPlay v-else :size="28" />
         </button>
         <!-- Botón guardar en biblioteca -->
-        <button
-          @click="toggleSavePlaylist(playlist.id)"
-          class="border border-gray-600 hover:border-white rounded-full p-2 transition-all hover:scale-105"
-          :class="isPlaylistSaved(playlist.id) ? 'bg-tiger-500 border-tiger-500' : ''"
-          :title="isPlaylistSaved(playlist.id) ? 'Quitar de Tu biblioteca' : 'Guardar en Tu biblioteca'"
-        >
-          <IconCheck v-if="isPlaylistSaved(playlist.id)" :size="24" class="text-white" />
-          <IconPlus v-else :size="24" class="text-secondary hover:text-white" />
-        </button>
+        <Tooltip :text="isPlaylistSaved(playlist.id) ? 'Quitar de Tu biblioteca' : 'Guardar en Tu biblioteca'">
+          <button
+            @click="toggleSavePlaylist(playlist.id)"
+            class="border border-gray-600 hover:border-white rounded-full p-2 transition-all hover:scale-105"
+            :class="isPlaylistSaved(playlist.id) ? 'bg-tiger-500 border-tiger-500' : ''"
+          >
+            <IconCheck v-if="isPlaylistSaved(playlist.id)" :size="24" class="text-white" />
+            <IconPlus v-else :size="24" class="text-secondary hover:text-white" />
+          </button>
+        </Tooltip>
       </div>
 
       <!-- Controles móvil -->

@@ -1,6 +1,8 @@
 <template>
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t border-gray-900 z-40 pb-safe">
-    <div class="flex items-center justify-around px-1 py-2">
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 pb-safe">
+    <!-- Fondo con gradiente que se desvanece hacia arriba -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-transparent pointer-events-none"></div>
+    <div class="relative flex items-end justify-around px-1 pb-1 pt-4">
       <NuxtLink
         to="/"
         class="flex flex-col items-center gap-1 px-2 py-1.5 rounded-lg transition-colors"

@@ -12,16 +12,17 @@
         <!-- Contenedor del toggle + título -->
         <div v-if="!isCollapsed" class="flex items-center relative">
           <!-- Botón toggle (aparece desde la izquierda al hacer hover, posición absoluta) -->
-          <button
-            @click.prevent="toggleLeftSidebar"
-            class="absolute -left-1 p-1.5 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition-all duration-300 ease-out"
-            :class="isHovering ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-3 pointer-events-none'"
-            title="Contraer biblioteca"
-          >
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+          <Tooltip text="Contraer biblioteca">
+            <button
+              @click.prevent="toggleLeftSidebar"
+              class="absolute -left-1 p-1.5 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition-all duration-300 ease-out"
+              :class="isHovering ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-3 pointer-events-none'"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          </Tooltip>
           <!-- Título (se mueve a la derecha al hacer hover) -->
           <span
             class="font-bold text-white text-base whitespace-nowrap transition-all duration-300 ease-out"
@@ -30,16 +31,16 @@
         </div>
 
         <!-- Botón expandir cuando está colapsado -->
-        <button
-          v-else
-          @click="toggleLeftSidebar"
-          class="p-1.5 text-white/70 hover:text-white transition-colors rounded-full hover:bg-white/10"
-          title="Expandir biblioteca"
-        >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+        <Tooltip v-else text="Expandir biblioteca">
+          <button
+            @click="toggleLeftSidebar"
+            class="p-1.5 text-white/70 hover:text-white transition-colors rounded-full hover:bg-white/10"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </Tooltip>
       </div>
 
       <!-- Filtros (solo si no está colapsado) -->
@@ -134,10 +135,11 @@
                 <IconHeart :size="18" filled class="text-white" />
               </div>
               <button
-                @click.stop="playLikedSongs"
+                @click.stop="handleLikedSongsClick"
                 class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
               >
-                <IconPlay :size="28" class="text-white ml-0.5" />
+                <IconPause v-if="isPlayingLikedSongs" :size="28" class="text-white" />
+                <IconPlay v-else :size="28" class="text-white ml-0.5" />
               </button>
             </div>
             <template v-if="!isCollapsed">
@@ -170,10 +172,11 @@
                 class="w-12 h-12 rounded-md object-cover aspect-square"
               />
               <button
-                @click.stop="playUserPlaylist(playlist)"
+                @click.stop="handlePlaylistClick(playlist)"
                 class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
               >
-                <IconPlay :size="28" class="text-white ml-0.5" />
+                <IconPause v-if="isPlayingPlaylist(playlist.id)" :size="28" class="text-white" />
+                <IconPlay v-else :size="28" class="text-white ml-0.5" />
               </button>
             </div>
             <template v-if="!isCollapsed">
@@ -206,10 +209,11 @@
                 class="w-12 h-12 rounded-full object-cover aspect-square"
               />
               <button
-                @click.stop="playArtist(artist)"
+                @click.stop="handleArtistClick(artist)"
                 class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
               >
-                <IconPlay :size="28" class="text-white ml-0.5" />
+                <IconPause v-if="isPlayingArtist(artist.id)" :size="28" class="text-white" />
+                <IconPlay v-else :size="28" class="text-white ml-0.5" />
               </button>
             </div>
             <template v-if="!isCollapsed">
@@ -242,10 +246,11 @@
                 class="w-12 h-12 rounded-md object-cover aspect-square"
               />
               <button
-                @click.stop="playSavedPlaylist(playlist)"
+                @click.stop="handleSavedPlaylistClick(playlist)"
                 class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
               >
-                <IconPlay :size="28" class="text-white ml-0.5" />
+                <IconPause v-if="isPlayingPlaylist(playlist.id)" :size="28" class="text-white" />
+                <IconPlay v-else :size="28" class="text-white ml-0.5" />
               </button>
             </div>
             <template v-if="!isCollapsed">
@@ -278,10 +283,11 @@
                 class="w-12 h-12 rounded-md object-cover aspect-square"
               />
               <button
-                @click.stop="playAlbum(album)"
+                @click.stop="handleAlbumClick(album)"
                 class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
               >
-                <IconPlay :size="28" class="text-white ml-0.5" />
+                <IconPause v-if="isPlayingAlbum(album.id)" :size="28" class="text-white" />
+                <IconPlay v-else :size="28" class="text-white ml-0.5" />
               </button>
             </div>
             <template v-if="!isCollapsed">
@@ -311,7 +317,7 @@ const route = useRoute()
 const { data, isLoaded } = useData()
 const { userPlaylists } = useUserPlaylists()
 const { favoriteSongs, favoriteArtists, savedPlaylistIds, savedAlbumIds } = useFavorites()
-const { isPlaying, playbackContext, playSong } = usePlayer()
+const { isPlaying, playbackContext, playSong, togglePlay } = usePlayer()
 const { leftSidebarWidth, leftSidebarCollapsed, toggleLeftSidebar, resizeLeftSidebar, resetCollapseThreshold } = useSidebarResize()
 
 const isCollapsed = computed(() => leftSidebarCollapsed.value)
@@ -497,6 +503,47 @@ const playAlbum = (album: any) => {
 
   if (albumSongs.length > 0) {
     playSong(albumSongs[0], albumSongs, { type: 'album', id: album.id })
+  }
+}
+
+// Handlers con toggle play/pause
+const handleLikedSongsClick = () => {
+  if (isPlayingLikedSongs.value) {
+    togglePlay()
+  } else {
+    playLikedSongs()
+  }
+}
+
+const handlePlaylistClick = (playlist: any) => {
+  if (isPlayingPlaylist(playlist.id)) {
+    togglePlay()
+  } else {
+    playUserPlaylist(playlist)
+  }
+}
+
+const handleSavedPlaylistClick = (playlist: any) => {
+  if (isPlayingPlaylist(playlist.id)) {
+    togglePlay()
+  } else {
+    playSavedPlaylist(playlist)
+  }
+}
+
+const handleArtistClick = (artist: any) => {
+  if (isPlayingArtist(artist.id)) {
+    togglePlay()
+  } else {
+    playArtist(artist)
+  }
+}
+
+const handleAlbumClick = (album: any) => {
+  if (isPlayingAlbum(album.id)) {
+    togglePlay()
+  } else {
+    playAlbum(album)
   }
 }
 </script>

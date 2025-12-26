@@ -2,14 +2,14 @@
   <div
     class="group relative flex items-center gap-3 bg-white/10 hover:bg-white/20
            rounded-md overflow-hidden cursor-pointer transition-colors duration-200
-           h-14 md:h-16"
+           h-12 md:h-14"
     @click="handleClick"
   >
     <!-- Imagen cuadrada o gradiente para liked-songs -->
     <div class="h-full aspect-square">
       <div
         v-if="type === 'liked-songs'"
-        class="h-full w-full bg-gradient-to-br from-indigo-800 via-indigo-600 to-indigo-400 flex items-center justify-center shadow-md"
+        class="h-full w-full bg-gradient-to-br from-indigo-800 via-indigo-600 to-indigo-400 flex items-center justify-center rounded-l-md"
       >
         <IconHeart :size="24" class="text-white" :filled="true" />
       </div>
@@ -17,12 +17,12 @@
         v-else
         :src="image"
         :alt="title"
-        class="h-full w-full object-cover shadow-md"
+        class="h-full w-full object-cover rounded-l-md"
       />
     </div>
 
     <!-- Título -->
-    <span class="font-semibold text-sm md:text-base truncate pr-12 flex-1">
+    <span class="font-semibold text-xs md:text-sm pr-10 flex-1 line-clamp-2 leading-tight">
       {{ title }}
     </span>
 
@@ -44,8 +44,8 @@
              transition-all duration-200 opacity-0 group-hover:opacity-100"
       aria-label="Reproducir"
     >
-      <IconPause v-if="isCurrentlyPlaying" :size="16" class="text-black" />
-      <IconPlay v-else :size="16" class="text-black" />
+      <IconPause v-if="isCurrentlyPlaying" :size="16" class="text-white" />
+      <IconPlay v-else :size="16" class="text-white" />
     </button>
   </div>
 </template>
