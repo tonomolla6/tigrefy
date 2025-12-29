@@ -1,21 +1,18 @@
 <template>
   <NuxtLink :to="`/album/${album.id}`" class="block">
-    <div class="bg-dark-highlight p-4 rounded-lg card-hover group">
+    <div class="bg-dark-highlight p-4 rounded-lg card-hover group/card">
       <div class="relative mb-4">
         <img
           :src="album.cover"
           :alt="album.title"
           class="w-full aspect-square object-cover rounded-md shadow-lg"
-          @error="handleImageError"
+          @error="onImageError"
         />
-        <button
-          @click.prevent="handlePlayAlbum"
-          class="absolute bottom-2 right-2 bg-tiger-500 rounded-full p-3 shadow-lg transform translate-y-2 transition-all duration-300"
-          :class="isCurrentContext ? 'opacity-100 translate-y-0' : 'opacity-0 group-hover:opacity-100 group-hover:translate-y-0'"
-        >
-          <IconPause v-if="isCurrentlyPlaying" :size="24" class="text-white" />
-          <IconPlay v-else :size="24" class="text-white" />
-        </button>
+        <CardPlayButton
+          :is-playing="isCurrentlyPlaying"
+          :is-visible="isCurrentContext"
+          @click="handlePlayAlbum"
+        />
       </div>
       <h3 class="font-bold text-primary truncate mb-1">{{ album.title }}</h3>
       <p class="text-sm text-secondary truncate">{{ album.artistName }}</p>
@@ -30,6 +27,8 @@
 </template>
 
 <script setup lang="ts">
+import { handleImageError } from '~/utils/image'
+
 const props = defineProps<{
   album: any
 }>()
@@ -37,32 +36,24 @@ const props = defineProps<{
 const { getSongsByAlbumId } = useData()
 const { playSong, playbackContext, isPlaying, togglePlay } = usePlayer()
 
-// Check if this album is the current playback context
 const isCurrentContext = computed(() =>
   playbackContext.value.type === 'album' && playbackContext.value.id === props.album.id
 )
 
-// Check if currently playing from this album
 const isCurrentlyPlaying = computed(() =>
   isCurrentContext.value && isPlaying.value
 )
 
 const handlePlayAlbum = () => {
-  // If this is the current context, toggle play/pause
   if (isCurrentContext.value) {
     togglePlay()
     return
   }
-
-  // Otherwise, start playing this album
   const songs = getSongsByAlbumId(props.album.id)
   if (songs.length > 0) {
     playSong(songs[0], songs, { type: 'album', id: props.album.id })
   }
 }
 
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
-}
+const onImageError = (e: Event) => handleImageError(e)
 </script>

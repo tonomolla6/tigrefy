@@ -69,18 +69,12 @@
               :alt="item.title"
               class="w-full aspect-square object-cover rounded-md shadow-md"
             />
-            <button
-              @click.prevent="handlePlay(item)"
-              class="absolute bottom-2 right-2 bg-tiger-500 hover:bg-tiger-400 hover:scale-105 rounded-full w-12 h-12
-                     shadow-xl transition-all duration-300 flex items-center justify-center"
-              :class="isCurrentContext(item)
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-2 group-hover/card:opacity-100 group-hover/card:translate-y-0'"
+            <CardPlayButton
+              :is-playing="isCurrentlyPlaying(item)"
+              :is-visible="isCurrentContext(item)"
               :aria-label="`Reproducir ${item.title}`"
-            >
-              <IconPause v-if="isCurrentlyPlaying(item)" :size="22" class="text-white" />
-              <IconPlay v-else :size="22" class="text-black ml-0.5" />
-            </button>
+              @click="handlePlay(item)"
+            />
           </div>
           <h3 class="font-bold text-base text-white mb-1 line-clamp-2">{{ item.title }}</h3>
           <NuxtLink
@@ -109,18 +103,12 @@
               :alt="item.name"
               class="w-full aspect-square object-cover rounded-md shadow-md"
             />
-            <button
-              @click.prevent="handlePlay(item)"
-              class="absolute bottom-2 right-2 bg-tiger-500 hover:bg-tiger-400 hover:scale-105 rounded-full w-12 h-12
-                     shadow-xl transition-all duration-300 flex items-center justify-center"
-              :class="isCurrentContext(item)
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-2 group-hover/card:opacity-100 group-hover/card:translate-y-0'"
+            <CardPlayButton
+              :is-playing="isCurrentlyPlaying(item)"
+              :is-visible="isCurrentContext(item)"
               :aria-label="`Reproducir ${item.name}`"
-            >
-              <IconPause v-if="isCurrentlyPlaying(item)" :size="22" class="text-white" />
-              <IconPlay v-else :size="22" class="text-black ml-0.5" />
-            </button>
+              @click="handlePlay(item)"
+            />
           </div>
           <h3 class="font-bold text-base text-white mb-1 line-clamp-2">{{ item.name }}</h3>
           <p class="text-sm text-[#a7a7a7] line-clamp-2">{{ item.description || 'Playlist' }}</p>
@@ -161,8 +149,7 @@ const props = defineProps<{
 }>()
 
 const { playSong, playbackContext, isPlaying, togglePlay } = usePlayer()
-const { data } = useData()
-const { getSongsByIds } = useData()
+const { data, getSongsByIds } = useData()
 const { addToRecent } = useRecentlyPlayed()
 
 const scrollContainer = ref<HTMLElement | null>(null)

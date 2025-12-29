@@ -105,7 +105,7 @@
                         v-if="currentSong.artistId"
                         :to="`/artist/${currentSong.artistId}`"
                         @click.stop
-                        class="text-gray-400 text-[13px] truncate hover:text-white hover:underline transition-colors block"
+                        class="text-gray-400 text-[13px] truncate hover:text-white hover:underline transition-colors inline-block max-w-full"
                       >
                         {{ currentSong.artistName }}
                       </NuxtLink>
@@ -156,7 +156,7 @@
                         v-if="song.artistId"
                         :to="`/artist/${song.artistId}`"
                         @click.stop
-                        class="text-gray-400 text-[13px] truncate hover:text-white hover:underline transition-colors block"
+                        class="text-gray-400 text-[13px] truncate hover:text-white hover:underline transition-colors inline-block max-w-full"
                       >
                         {{ song.artistName }}
                       </NuxtLink>

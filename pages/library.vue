@@ -20,34 +20,10 @@
 
       <!-- Filtros horizontales -->
       <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        <button
-          @click="filterType = null"
-          class="px-4 py-2 text-sm font-medium rounded-full whitespace-nowrap transition-colors flex-shrink-0"
-          :class="filterType === null ? 'bg-white text-black' : 'bg-dark-hover text-white'"
-        >
-          Todo
-        </button>
-        <button
-          @click="filterType = 'playlist'"
-          class="px-4 py-2 text-sm font-medium rounded-full whitespace-nowrap transition-colors flex-shrink-0"
-          :class="filterType === 'playlist' ? 'bg-white text-black' : 'bg-dark-hover text-white'"
-        >
-          Playlists
-        </button>
-        <button
-          @click="filterType = 'album'"
-          class="px-4 py-2 text-sm font-medium rounded-full whitespace-nowrap transition-colors flex-shrink-0"
-          :class="filterType === 'album' ? 'bg-white text-black' : 'bg-dark-hover text-white'"
-        >
-          Álbumes
-        </button>
-        <button
-          @click="filterType = 'artist'"
-          class="px-4 py-2 text-sm font-medium rounded-full whitespace-nowrap transition-colors flex-shrink-0"
-          :class="filterType === 'artist' ? 'bg-white text-black' : 'bg-dark-hover text-white'"
-        >
-          Artistas
-        </button>
+        <FilterButton :active="filterType === null" @click="filterType = null">Todo</FilterButton>
+        <FilterButton :active="filterType === 'playlist'" @click="filterType = 'playlist'">Playlists</FilterButton>
+        <FilterButton :active="filterType === 'album'" @click="filterType = 'album'">Álbumes</FilterButton>
+        <FilterButton :active="filterType === 'artist'" @click="filterType = 'artist'">Artistas</FilterButton>
       </div>
     </div>
 

@@ -11,19 +11,14 @@
     <div class="px-4 md:px-8 py-4 md:py-6">
       <!-- Filtros por tipo (tabs como Spotify) -->
       <div v-if="searchQuery" class="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-        <button
+        <FilterButton
           v-for="tab in tabs"
           :key="tab.value"
+          :active="activeTab === tab.value"
           @click="activeTab = tab.value"
-          :class="[
-            'px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap',
-            activeTab === tab.value
-              ? 'bg-white text-black'
-              : 'bg-dark-card text-white hover:bg-dark-hover'
-          ]"
         >
           {{ tab.label }}
-        </button>
+        </FilterButton>
       </div>
 
       <!-- Resultados de búsqueda -->

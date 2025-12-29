@@ -76,6 +76,15 @@
           :items="visiblePlaylists"
           showAllLink="/section/playlists"
         />
+
+        <!-- Artistas -->
+        <MediaSection
+          v-if="artists.length > 0"
+          title="Artistas"
+          type="artists"
+          :items="artists"
+          showAllLink="/section/artists"
+        />
       </div>
     </div>
   </NuxtLayout>
@@ -95,6 +104,7 @@ const userName = computed(() => {
 // Datos computados - limitados a 8 elementos para el scroll horizontal
 const albums = computed(() => (data.value.albums || []).slice(0, 8))
 const playlists = computed(() => data.value.playlists || [])
+const artists = computed(() => (data.value.artists || []).slice(0, 8))
 
 // Playlists visibles según rol: guest solo ve públicas, el resto ve todas (máx 8)
 const visiblePlaylists = computed(() => {
