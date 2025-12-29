@@ -68,12 +68,7 @@
         >
           <div class="flex items-center justify-center">
             <!-- Animación de barras cuando está reproduciendo (sin hover) -->
-            <div v-if="isCurrentAndPlaying(song)" class="playing-indicator group-hover:hidden">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
+            <PlayingIndicator v-if="isCurrentAndPlaying(song)" class="group-hover:hidden" />
             <!-- Número cuando NO es la canción actual (sin hover) -->
             <span v-else class="text-secondary group-hover:hidden">{{ index + 1 }}</span>
             <!-- Iconos en hover -->
@@ -130,12 +125,7 @@
         >
           <!-- Número/Play -->
           <div class="w-8 flex items-center justify-center flex-shrink-0">
-            <div v-if="isCurrentAndPlaying(song)" class="playing-indicator">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
+            <PlayingIndicator v-if="isCurrentAndPlaying(song)" size="sm" />
             <span v-else class="text-secondary text-sm">{{ index + 1 }}</span>
           </div>
 
@@ -254,47 +244,3 @@ const handlePlaySong = (song: any) => {
 }
 </script>
 
-<style scoped>
-.playing-indicator {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 16px;
-}
-
-.playing-indicator span {
-  width: 3px;
-  background-color: #f97316;
-  border-radius: 1px;
-  animation: playing-bar 0.8s ease-in-out infinite;
-}
-
-.playing-indicator span:nth-child(1) {
-  height: 30%;
-  animation-delay: 0s;
-}
-
-.playing-indicator span:nth-child(2) {
-  height: 60%;
-  animation-delay: 0.2s;
-}
-
-.playing-indicator span:nth-child(3) {
-  height: 40%;
-  animation-delay: 0.4s;
-}
-
-.playing-indicator span:nth-child(4) {
-  height: 80%;
-  animation-delay: 0.1s;
-}
-
-@keyframes playing-bar {
-  0%, 100% {
-    height: 30%;
-  }
-  50% {
-    height: 100%;
-  }
-}
-</style>

@@ -44,11 +44,7 @@
               </NuxtLink>
             </div>
             <!-- Playing indicator -->
-            <div class="flex items-end gap-0.5 h-4">
-              <span class="w-1 bg-tiger-500 rounded-full animate-pulse" style="height: 40%; animation-delay: 0ms;"></span>
-              <span class="w-1 bg-tiger-500 rounded-full animate-pulse" style="height: 70%; animation-delay: 150ms;"></span>
-              <span class="w-1 bg-tiger-500 rounded-full animate-pulse" style="height: 50%; animation-delay: 300ms;"></span>
-            </div>
+            <PlayingIndicator size="sm" />
           </div>
         </div>
 
@@ -112,12 +108,3 @@ const formatDuration = (seconds: number) => {
 }
 </script>
 
-<style scoped>
-@keyframes pulse {
-  0%, 100% { transform: scaleY(0.5); }
-  50% { transform: scaleY(1); }
-}
-.animate-pulse {
-  animation: pulse 0.8s ease-in-out infinite;
-}
-</style>

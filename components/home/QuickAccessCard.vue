@@ -34,12 +34,9 @@
     <!-- Animación de ondas cuando se reproduce (visible sin hover) -->
     <div
       v-if="isCurrentlyPlaying"
-      class="absolute right-3 flex items-end gap-0.5 h-4 group-hover:opacity-0 transition-opacity"
+      class="absolute right-3 group-hover:opacity-0 transition-opacity"
     >
-      <span class="w-0.5 bg-tiger-500 rounded-sm animate-sound-wave-1"></span>
-      <span class="w-0.5 bg-tiger-500 rounded-sm animate-sound-wave-2"></span>
-      <span class="w-0.5 bg-tiger-500 rounded-sm animate-sound-wave-3"></span>
-      <span class="w-0.5 bg-tiger-500 rounded-sm animate-sound-wave-4"></span>
+      <PlayingIndicator size="sm" />
     </div>
 
     <!-- Botón play (aparece en hover) -->
@@ -169,30 +166,3 @@ const handlePlay = () => {
 }
 </script>
 
-<style scoped>
-/* Animaciones de ondas de sonido */
-@keyframes sound-wave {
-  0%, 100% { height: 3px; }
-  50% { height: 12px; }
-}
-
-.animate-sound-wave-1 {
-  animation: sound-wave 0.4s ease-in-out infinite;
-  animation-delay: 0s;
-}
-
-.animate-sound-wave-2 {
-  animation: sound-wave 0.4s ease-in-out infinite;
-  animation-delay: 0.1s;
-}
-
-.animate-sound-wave-3 {
-  animation: sound-wave 0.4s ease-in-out infinite;
-  animation-delay: 0.2s;
-}
-
-.animate-sound-wave-4 {
-  animation: sound-wave 0.4s ease-in-out infinite;
-  animation-delay: 0.3s;
-}
-</style>
