@@ -58,117 +58,48 @@
           </div>
         </div>
 
-        <!-- Desktop view -->
-        <div
+        <SongListRow
           v-for="(song, index) in likedSongs"
           :key="song.id"
-          class="hidden md:grid gap-4 items-center px-4 py-2 rounded hover:bg-dark-hover transition-colors group cursor-pointer"
-          style="grid-template-columns: 40px 1fr 200px 80px;"
-          @click="handlePlaySong(song)"
+          :song="song"
+          :index="index + 1"
+          :is-playing="isCurrentAndPlaying(song)"
+          :is-active="isCurrentSongInContext(song)"
+          :is-favorite="true"
+          :is-selected="selectedSongId === song.id"
+          :show-cover="true"
+          :show-artist="true"
+          grid-columns="40px 1fr 200px 80px"
+          @play="handlePlaySong(song)"
+          @select="selectedSongId = song.id"
+          @toggle-favorite="toggleFavoriteSong(song.id)"
+          @open-menu="openSongActions(song)"
         >
-          <div class="flex items-center justify-center">
-            <!-- Animación de barras cuando está reproduciendo (sin hover) -->
-            <PlayingIndicator v-if="isCurrentAndPlaying(song)" class="group-hover:hidden" />
-            <!-- Número cuando NO es la canción actual (sin hover) -->
-            <span v-else class="text-secondary group-hover:hidden">{{ index + 1 }}</span>
-            <!-- Iconos en hover -->
-            <div class="hidden group-hover:block">
-              <IconPause v-if="isCurrentAndPlaying(song)" :size="20" class="text-tiger-500" />
-              <IconPlay v-else :size="20" class="text-tiger-500" />
-            </div>
-          </div>
-          <div class="flex items-center gap-3 min-w-0">
-            <img
-              :src="song.cover"
-              :alt="song.title"
-              class="w-12 h-12 rounded flex-shrink-0"
-            />
-            <div class="min-w-0">
-              <h4 class="font-semibold truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
-                {{ song.title }}
-              </h4>
+          <template #extra-columns>
+            <div class="text-secondary text-sm truncate">
               <NuxtLink
-                :to="`/artist/${song.artistId}`"
+                :to="`/album/${song.albumId}`"
                 @click.stop
-                class="text-sm text-secondary hover:text-white hover:underline truncate block transition-colors"
+                class="hover:text-primary hover:underline transition-colors"
               >
-                {{ song.artistName }}
+                {{ song.albumName }}
               </NuxtLink>
             </div>
-          </div>
-          <div class="text-secondary text-sm truncate">
-            <NuxtLink
-              :to="`/album/${song.albumId}`"
-              @click.stop
-              class="hover:text-primary hover:underline transition-colors"
-            >
-              {{ song.albumName }}
-            </NuxtLink>
-          </div>
-          <div class="flex items-center gap-2 justify-end">
-            <button
-              @click.stop="toggleFavoriteSong(song.id)"
-              class="text-tiger-500 hover:text-tiger-400 transition-all"
-            >
-              <IconHeart :size="18" :filled="true" />
-            </button>
-            <span class="text-secondary text-sm">{{ formatTime(song.duration) }}</span>
-          </div>
-        </div>
-
-        <!-- Mobile view -->
-        <div
-          v-for="(song, index) in likedSongs"
-          :key="`mobile-${song.id}`"
-          class="md:hidden flex items-center gap-3 px-2 py-3 rounded-lg active:bg-dark-highlight transition-colors"
-          @click="handlePlaySong(song)"
-        >
-          <!-- Número/Play -->
-          <div class="w-8 flex items-center justify-center flex-shrink-0">
-            <PlayingIndicator v-if="isCurrentAndPlaying(song)" size="sm" />
-            <span v-else class="text-secondary text-sm">{{ index + 1 }}</span>
-          </div>
-
-          <!-- Info de canción -->
-          <div class="flex-1 min-w-0">
-            <h4 class="font-semibold text-sm truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
-              {{ song.title }}
-            </h4>
-            <NuxtLink
-              :to="`/artist/${song.artistId}`"
-              @click.stop
-              class="text-xs text-secondary hover:text-white hover:underline truncate block transition-colors"
-            >
-              {{ song.artistName }}
-            </NuxtLink>
-          </div>
-
-          <!-- Menú de acciones -->
-          <button
-            @click.stop="openSongActions(song)"
-            class="p-2 text-secondary hover:text-white transition-colors"
-          >
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <circle cx="12" cy="5" r="2" />
-              <circle cx="12" cy="12" r="2" />
-              <circle cx="12" cy="19" r="2" />
-            </svg>
-          </button>
-        </div>
+          </template>
+        </SongListRow>
       </div>
 
       <!-- Estado vacío -->
-      <div v-else class="text-center py-16">
-        <IconHeart :size="64" class="mx-auto text-secondary mb-4" />
-        <h3 class="text-xl font-bold mb-2">No tienes canciones guardadas</h3>
-        <p class="text-secondary mb-6">Guarda canciones tocando el icono del corazón</p>
-        <NuxtLink
-          to="/songs"
-          class="inline-block bg-tiger-500 hover:bg-tiger-600 text-white font-semibold px-6 py-3 rounded-full transition-colors"
-        >
+      <EmptyState
+        v-else
+        :icon="IconHeart"
+        title="No tienes canciones guardadas"
+        description="Guarda canciones tocando el icono del corazón"
+      >
+        <NuxtLink to="/songs" class="btn-tiger">
           Explorar canciones
         </NuxtLink>
-      </div>
+      </EmptyState>
     </div>
   </div>
 
@@ -181,14 +112,19 @@
 </template>
 
 <script setup lang="ts">
+import { formatTime } from '~/utils/formatting'
+
 definePageMeta({
   layout: 'default',
   middleware: 'auth'
 })
 
 const { data } = useData()
-const { playSong, currentSong, isPlaying, formatTime, togglePlay, playbackContext } = usePlayer()
+const { playSong, currentSong, isPlaying, togglePlay, playbackContext } = usePlayer()
 const { favoriteSongs, toggleFavoriteSong } = useFavorites()
+
+// Estado para selección de canción (desktop)
+const selectedSongId = ref<string | null>(null)
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)

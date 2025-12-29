@@ -29,6 +29,8 @@
 </template>
 
 <script setup lang="ts">
+import { handleImageError } from '~/utils/image'
+
 const props = defineProps<{
   artist: any
 }>()
@@ -58,10 +60,5 @@ const handlePlayArtist = () => {
   if (songs.length > 0) {
     playSong(songs[0], songs, { type: 'artist', id: props.artist.id })
   }
-}
-
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
 }
 </script>

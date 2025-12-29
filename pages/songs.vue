@@ -20,100 +20,68 @@
       <div v-if="filteredSongs.length > 0">
         <div class="bg-dark-elevated rounded-lg overflow-hidden">
           <!-- Header -->
-          <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-gray-800 text-secondary text-sm font-semibold">
-            <div class="col-span-1">#</div>
-            <div class="col-span-5">Título</div>
-            <div class="col-span-3">Álbum</div>
-            <div class="col-span-2">Reproducciones</div>
-            <div class="col-span-1 text-right">Duración</div>
+          <div class="hidden md:grid gap-4 px-4 py-3 border-b border-gray-800 text-secondary text-sm font-semibold" style="grid-template-columns: 40px 1fr 200px 120px 80px;">
+            <div class="text-center">#</div>
+            <div>Título</div>
+            <div>Álbum</div>
+            <div>Reproducciones</div>
+            <div class="text-right">Duración</div>
           </div>
 
           <!-- Canciones -->
-          <div
+          <SongListRow
             v-for="(song, index) in filteredSongs"
             :key="song.id"
-            class="grid grid-cols-12 gap-4 items-center px-4 md:px-6 py-3 hover:bg-dark-highlight transition-colors group cursor-pointer"
-            @click="handlePlaySong(song)"
+            :song="song"
+            :index="index + 1"
+            :is-playing="isCurrentAndPlaying(song)"
+            :is-active="isCurrentSong(song)"
+            :is-favorite="isFavoriteSong(song.id)"
+            :is-selected="selectedSongId === song.id"
+            :show-cover="true"
+            :show-artist="true"
+            :show-mobile-menu="false"
+            grid-columns="40px 1fr 200px 120px 80px"
+            @play="handlePlaySong(song)"
+            @select="selectedSongId = song.id"
+            @toggle-favorite="toggleFavoriteSong(song.id)"
           >
-            <!-- Número/Play en desktop -->
-            <div class="hidden md:block col-span-1">
-              <span class="text-secondary group-hover:hidden">{{ index + 1 }}</span>
-              <div class="hidden group-hover:block">
-                <IconPlay v-if="!isCurrentAndPlaying(song)" :size="20" class="text-tiger-500" />
-                <IconPause v-else :size="20" class="text-tiger-500" />
+            <template #extra-columns>
+              <div class="text-secondary text-sm truncate">
+                {{ song.albumName }}
               </div>
-            </div>
-
-            <!-- Título y portada -->
-            <div class="col-span-10 md:col-span-5 flex items-center gap-3">
-              <div class="relative flex-shrink-0">
-                <img
-                  :src="song.cover"
-                  :alt="song.title"
-                  class="w-12 h-12 md:w-14 md:h-14 rounded object-cover"
-                  @error="handleImageError"
-                />
-                <div class="md:hidden absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded">
-                  <IconPlay v-if="!isCurrentAndPlaying(song)" :size="20" class="text-white" />
-                  <IconPause v-else :size="20" class="text-white" />
-                </div>
+              <div class="text-secondary text-sm">
+                {{ formatPlays(song.plays) }}
               </div>
-              <div class="min-w-0">
-                <h4 class="font-semibold truncate" :class="isCurrentSong(song) ? 'text-tiger-500' : 'text-primary'">
-                  {{ song.title }}
-                </h4>
-                <NuxtLink
-                  :to="`/artist/${song.artistId}`"
-                  @click.stop
-                  class="text-sm text-secondary hover:text-white hover:underline truncate block transition-colors"
-                >
-                  {{ song.artistName }}
-                </NuxtLink>
-              </div>
-            </div>
-
-            <!-- Álbum (hidden on mobile) -->
-            <div class="hidden md:block col-span-3 text-secondary text-sm truncate">
-              {{ song.albumName }}
-            </div>
-
-            <!-- Reproducciones (hidden on mobile) -->
-            <div class="hidden md:block col-span-2 text-secondary text-sm">
-              {{ formatPlays(song.plays) }}
-            </div>
-
-            <!-- Duración y favorito -->
-            <div class="col-span-2 md:col-span-1 flex items-center justify-end gap-3">
-              <button
-                @click.stop="toggleFavoriteSong(song.id)"
-                class="opacity-0 group-hover:opacity-100 text-secondary hover:text-tiger-500 transition-all"
-                :class="{ 'opacity-100 text-tiger-500': isFavoriteSong(song.id) }"
-              >
-                <IconHeart :size="18" :filled="isFavoriteSong(song.id)" />
-              </button>
-              <span class="text-secondary text-sm">{{ formatTime(song.duration) }}</span>
-            </div>
-          </div>
+            </template>
+          </SongListRow>
         </div>
       </div>
 
-      <div v-else class="text-center py-12">
-        <IconSearch :size="64" class="text-secondary mx-auto mb-4" />
-        <p class="text-xl text-secondary">No se encontraron canciones</p>
-      </div>
+      <EmptyState
+        v-else
+        :icon="IconSearch"
+        title="No se encontraron canciones"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { formatTime, formatPlays } from '~/utils/formatting'
+import { handleImageError } from '~/utils/image'
+
 definePageMeta({
   layout: 'default',
   middleware: 'auth'
 })
 
 const { data, searchAll } = useData()
-const { playSong, currentSong, isPlaying, formatTime } = usePlayer()
+const { playSong, currentSong, isPlaying } = usePlayer()
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
+
+// Estado para selección de canción (desktop)
+const selectedSongId = ref<string | null>(null)
 
 const searchQuery = ref('')
 const searchResults = ref<any>(null)
@@ -141,21 +109,6 @@ const isCurrentAndPlaying = (song: any) => isCurrentSong(song) && isPlaying.valu
 
 const handlePlaySong = (song: any) => {
   playSong(song, filteredSongs.value, { type: 'search' })
-}
-
-const formatPlays = (plays: number) => {
-  if (plays >= 1000000) {
-    return `${(plays / 1000000).toFixed(1)}M`
-  }
-  if (plays >= 1000) {
-    return `${(plays / 1000).toFixed(1)}K`
-  }
-  return plays.toString()
-}
-
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
 }
 
 // Watch para búsqueda con debouncing

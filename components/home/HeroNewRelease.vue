@@ -105,6 +105,7 @@
 
 <script setup lang="ts">
 import type { PlaybackContext } from '~/composables/usePlayer'
+import { extractDominantColor } from '~/utils/image'
 
 const props = defineProps({
   song: {
@@ -134,53 +135,17 @@ const coverRef = ref<HTMLImageElement | null>(null)
 const coverRefDesktop = ref<HTMLImageElement | null>(null)
 const dominantColor = ref('#ea580c') // tiger-600 as fallback
 
-const extractColorFromImage = (img: HTMLImageElement) => {
-  try {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    canvas.width = 50
-    canvas.height = 50
-    ctx.drawImage(img, 0, 0, 50, 50)
-
-    const imageData = ctx.getImageData(0, 0, 50, 50).data
-    let r = 0, g = 0, b = 0, count = 0
-
-    // Sample pixels to get average color
-    for (let i = 0; i < imageData.length; i += 16) {
-      r += imageData[i]
-      g += imageData[i + 1]
-      b += imageData[i + 2]
-      count++
-    }
-
-    r = Math.round(r / count)
-    g = Math.round(g / count)
-    b = Math.round(b / count)
-
-    // Make color more saturated for better visibility
-    const max = Math.max(r, g, b)
-    const boost = 1.3
-    r = Math.min(255, Math.round(r * boost))
-    g = Math.min(255, Math.round(g * boost))
-    b = Math.min(255, Math.round(b * boost))
-
-    dominantColor.value = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
-  } catch {
-    // Keep fallback color on error (CORS, etc.)
-  }
-}
-
 const extractColor = () => {
   if (coverRef.value) {
-    extractColorFromImage(coverRef.value)
+    const color = extractDominantColor(coverRef.value)
+    if (color) dominantColor.value = color
   }
 }
 
 const extractColorDesktop = () => {
   if (coverRefDesktop.value) {
-    extractColorFromImage(coverRefDesktop.value)
+    const color = extractDominantColor(coverRefDesktop.value)
+    if (color) dominantColor.value = color
   }
 }
 

@@ -77,13 +77,18 @@
             />
           </div>
           <h3 class="font-bold text-base text-white mb-1 line-clamp-2">{{ item.title }}</h3>
+          <!-- Desktop: link clickeable -->
           <NuxtLink
             :to="`/artist/${item.artistId}`"
-            class="text-sm text-[#a7a7a7] truncate hover:text-white hover:underline transition-colors block"
+            class="hidden md:block text-sm text-[#a7a7a7] truncate hover:text-white hover:underline transition-colors"
             @click.stop
           >
             {{ item.artistName }}
           </NuxtLink>
+          <!-- Mobile: solo texto -->
+          <span class="md:hidden text-sm text-[#a7a7a7] truncate block">
+            {{ item.artistName }}
+          </span>
         </NuxtLink>
       </template>
 

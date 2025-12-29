@@ -1,20 +1,42 @@
 <template>
+  <!-- Mobile: toda la fila es clickeable -->
   <div
-    class="flex items-center gap-3 md:gap-4 p-2 rounded hover:bg-dark-hover transition-colors group cursor-pointer"
+    class="md:hidden flex items-center gap-3 p-2 rounded hover:bg-dark-hover transition-colors group cursor-pointer"
     @click="handlePlay"
   >
     <div class="relative flex-shrink-0">
       <img
         :src="song.cover"
         :alt="song.title"
-        class="w-10 h-10 md:w-12 md:h-12 rounded object-cover"
+        class="w-10 h-10 rounded object-cover"
+        @error="handleImageError"
+      />
+    </div>
+    <div class="flex-1 min-w-0">
+      <h4 class="text-sm font-semibold truncate" :class="isCurrentSong ? 'text-tiger-500' : 'text-primary'">
+        {{ song.title }}
+      </h4>
+      <span class="text-xs text-secondary truncate block">
+        {{ song.artistName }}
+      </span>
+    </div>
+    <div class="text-xs text-secondary flex-shrink-0">{{ formatTime(song.duration) }}</div>
+  </div>
+
+  <!-- Desktop: solo el botón de play reproduce -->
+  <div
+    class="hidden md:flex items-center gap-4 p-2 rounded hover:bg-dark-hover transition-colors group"
+  >
+    <div class="relative flex-shrink-0 cursor-pointer" @click="handlePlay">
+      <img
+        :src="song.cover"
+        :alt="song.title"
+        class="w-12 h-12 rounded object-cover"
         @error="handleImageError"
       />
       <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded">
-        <IconPlay v-if="!isCurrentAndPlaying" :size="16" class="text-white md:hidden" />
-        <IconPlay v-if="!isCurrentAndPlaying" :size="20" class="text-white hidden md:block" />
-        <IconPause v-if="isCurrentAndPlaying" :size="16" class="text-white md:hidden" />
-        <IconPause v-if="isCurrentAndPlaying" :size="20" class="text-white hidden md:block" />
+        <IconPlay v-if="!isCurrentAndPlaying" :size="20" class="text-white" />
+        <IconPause v-else :size="20" class="text-white" />
       </div>
     </div>
     <div class="flex-1 min-w-0">
@@ -23,18 +45,17 @@
       </h4>
       <NuxtLink
         :to="`/artist/${song.artistId}`"
-        @click.stop
-        class="text-xs text-secondary hover:text-white hover:underline truncate block transition-colors"
+        class="text-xs text-secondary hover:text-white hover:underline truncate inline-block max-w-full transition-colors"
       >
         {{ song.artistName }}
       </NuxtLink>
     </div>
 
-    <!-- Duración (visible siempre) -->
+    <!-- Duración -->
     <div class="text-xs text-secondary flex-shrink-0">{{ formatTime(song.duration) }}</div>
 
-    <!-- Actions Container (solo desktop) -->
-    <div class="hidden md:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+    <!-- Actions Container -->
+    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
       <!-- Add to Playlist Button -->
       <Tooltip text="Añadir a playlist">
         <button
@@ -80,6 +101,8 @@
 
 <script setup lang="ts">
 import type { PlaybackContext } from '~/composables/usePlayer'
+import { formatTime } from '~/utils/formatting'
+import { handleImageError } from '~/utils/image'
 
 const props = defineProps<{
   song: any
@@ -93,7 +116,7 @@ const emit = defineEmits<{
   removeFromPlaylist?: [songId: string]
 }>()
 
-const { playSong, currentSong, isPlaying, formatTime, togglePlay } = usePlayer()
+const { playSong, currentSong, isPlaying, togglePlay } = usePlayer()
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 
 const isCurrentSong = computed(() => currentSong.value?.id === props.song.id)
@@ -108,11 +131,6 @@ const handlePlay = () => {
   } else {
     playSong(props.song, props.playlist, props.context)
   }
-}
-
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
 }
 
 const showAddToPlaylist = () => {

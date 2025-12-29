@@ -122,9 +122,9 @@
           <!-- Canciones que te gustan -->
           <div
             v-if="showLikedSongs"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
+            class="list-row flex items-center gap-3 p-2 rounded-lg group"
             :class="[
-              isViewingLikedSongs ? 'bg-white/10' : 'hover:bg-white/10',
+              isViewingLikedSongs ? 'list-row-selected' : '',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? 'Canciones que te gustan' : ''"
@@ -157,9 +157,9 @@
           <div
             v-for="playlist in filteredUserPlaylists"
             :key="playlist.id"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
+            class="list-row flex items-center gap-3 p-2 rounded-lg group"
             :class="[
-              isViewingPlaylist(playlist.id) ? 'bg-white/10' : 'hover:bg-white/10',
+              isViewingPlaylist(playlist.id) ? 'list-row-selected' : '',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? playlist.name : ''"
@@ -194,9 +194,9 @@
           <div
             v-for="artist in filteredFavoriteArtists"
             :key="artist.id"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
+            class="list-row flex items-center gap-3 p-2 rounded-lg group"
             :class="[
-              isViewingArtist(artist.id) ? 'bg-white/10' : 'hover:bg-white/10',
+              isViewingArtist(artist.id) ? 'list-row-selected' : '',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? artist.name : ''"
@@ -231,9 +231,9 @@
           <div
             v-for="playlist in filteredSavedPlaylists"
             :key="playlist.id"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
+            class="list-row flex items-center gap-3 p-2 rounded-lg group"
             :class="[
-              isViewingPlaylist(playlist.id) ? 'bg-white/10' : 'hover:bg-white/10',
+              isViewingPlaylist(playlist.id) ? 'list-row-selected' : '',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? playlist.name : ''"
@@ -268,9 +268,9 @@
           <div
             v-for="album in filteredSavedAlbums"
             :key="album.id"
-            class="flex items-center gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
+            class="list-row flex items-center gap-3 p-2 rounded-lg group"
             :class="[
-              isViewingAlbum(album.id) ? 'bg-white/10' : 'hover:bg-white/10',
+              isViewingAlbum(album.id) ? 'list-row-selected' : '',
               isCollapsed ? 'justify-center' : ''
             ]"
             :title="isCollapsed ? album.title : ''"

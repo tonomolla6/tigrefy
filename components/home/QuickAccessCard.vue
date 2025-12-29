@@ -53,6 +53,8 @@
 </template>
 
 <script setup lang="ts">
+import { extractDominantColor } from '~/utils/image'
+
 const props = defineProps({
   image: {
     type: String,
@@ -82,40 +84,7 @@ const extractedColor = ref<string | null>(null)
 
 const extractColor = () => {
   if (!imgRef.value) return
-
-  try {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    canvas.width = 50
-    canvas.height = 50
-    ctx.drawImage(imgRef.value, 0, 0, 50, 50)
-
-    const imageData = ctx.getImageData(0, 0, 50, 50).data
-    let r = 0, g = 0, b = 0, count = 0
-
-    for (let i = 0; i < imageData.length; i += 16) {
-      r += imageData[i]
-      g += imageData[i + 1]
-      b += imageData[i + 2]
-      count++
-    }
-
-    r = Math.round(r / count)
-    g = Math.round(g / count)
-    b = Math.round(b / count)
-
-    // Boost saturation
-    const boost = 1.3
-    r = Math.min(255, Math.round(r * boost))
-    g = Math.min(255, Math.round(g * boost))
-    b = Math.min(255, Math.round(b * boost))
-
-    extractedColor.value = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
-  } catch {
-    // CORS error, keep null
-  }
+  extractedColor.value = extractDominantColor(imgRef.value)
 }
 
 const handleMouseEnter = () => {

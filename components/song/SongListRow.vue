@@ -1,18 +1,19 @@
 <template>
   <!-- Desktop -->
   <div
-    class="hidden md:grid gap-4 items-center px-4 py-3 rounded-lg hover:bg-dark-highlight transition-colors group cursor-pointer"
+    class="list-row hidden md:grid gap-4 items-center px-4 py-3 rounded-lg group"
+    :class="isSelected ? 'list-row-selected' : ''"
     :style="{ gridTemplateColumns: gridColumns }"
-    @click="$emit('play')"
+    @click="$emit('select')"
   >
     <!-- Número/Play/Animación -->
     <div class="flex items-center justify-center">
       <PlayingIndicator v-if="isPlaying" class="group-hover:hidden" />
       <span v-else class="text-secondary group-hover:hidden">{{ index }}</span>
-      <div class="hidden group-hover:block">
+      <button class="hidden group-hover:block" @click.stop="$emit('play')">
         <IconPause v-if="isPlaying" :size="20" class="text-tiger-500" />
         <IconPlay v-else :size="20" class="text-tiger-500" />
-      </div>
+      </button>
     </div>
 
     <!-- Título y artista -->
@@ -32,7 +33,7 @@
           v-if="showArtist"
           :to="`/artist/${song.artistId}`"
           @click.stop
-          class="text-sm text-secondary hover:text-white hover:underline truncate block transition-colors"
+          class="text-sm text-secondary hover:text-white hover:underline truncate inline-block max-w-full transition-colors"
         >
           {{ song.artistName }}
         </NuxtLink>
@@ -67,20 +68,38 @@
       <span v-else class="text-secondary text-sm">{{ index }}</span>
     </div>
 
+    <!-- Cover (mobile) -->
+    <img
+      v-if="showCover"
+      :src="song.cover"
+      :alt="song.title"
+      class="w-12 h-12 rounded flex-shrink-0"
+      @error="onImageError"
+    />
+
     <!-- Info de canción -->
     <div class="flex-1 min-w-0">
       <h4 class="font-semibold text-sm truncate" :class="isActive ? 'text-tiger-500' : 'text-primary'">
         {{ song.title }}
       </h4>
-      <NuxtLink
-        v-if="showArtist"
-        :to="`/artist/${song.artistId}`"
-        @click.stop
-        class="text-xs text-secondary hover:text-white hover:underline truncate block transition-colors"
-      >
-        {{ song.artistName }}
-      </NuxtLink>
+      <div v-if="showArtist || $slots['mobile-subtitle']" class="truncate">
+        <slot name="mobile-subtitle">
+          <span v-if="showArtist" class="text-xs text-secondary truncate block">
+            {{ song.artistName }}
+          </span>
+        </slot>
+      </div>
     </div>
+
+    <!-- Favorito móvil -->
+    <button
+      v-if="showMobileFavorite"
+      @click.stop="$emit('toggle-favorite')"
+      class="p-2 text-secondary hover:text-tiger-500 transition-all flex-shrink-0"
+      :class="{ 'text-tiger-500': isFavorite }"
+    >
+      <IconHeart :size="18" :filled="isFavorite" />
+    </button>
 
     <!-- Menú de acciones móvil -->
     <button
@@ -107,24 +126,29 @@ const props = withDefaults(defineProps<{
   isPlaying?: boolean
   isActive?: boolean
   isFavorite?: boolean
+  isSelected?: boolean
   showCover?: boolean
   showArtist?: boolean
   showFavorite?: boolean
   showMobileMenu?: boolean
+  showMobileFavorite?: boolean
   gridColumns?: string
 }>(), {
   isPlaying: false,
   isActive: false,
   isFavorite: false,
+  isSelected: false,
   showCover: false,
   showArtist: true,
   showFavorite: true,
   showMobileMenu: true,
+  showMobileFavorite: false,
   gridColumns: '40px 1fr 80px'
 })
 
 defineEmits<{
   play: []
+  select: []
   'toggle-favorite': []
   'open-menu': []
 }>()

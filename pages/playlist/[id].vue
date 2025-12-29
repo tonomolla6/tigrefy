@@ -93,9 +93,11 @@
           :is-playing="isCurrentAndPlaying(song)"
           :is-active="isCurrentSongInContext(song)"
           :is-favorite="isFavoriteSong(song.id)"
+          :is-selected="selectedSongId === song.id"
           :show-cover="true"
           grid-columns="40px 1fr 120px 200px 80px"
           @play="handlePlaySong(song, playlistSongs)"
+          @select="selectedSongId = song.id"
           @toggle-favorite="toggleFavoriteSong(song.id)"
           @open-menu="openSongActions(song)"
         >
@@ -116,23 +118,20 @@
         </SongListRow>
       </div>
 
-      <div v-else class="text-center py-16 max-w-md mx-auto">
-        <div class="mb-6">
-          <IconLibrary :size="64" class="text-secondary mx-auto opacity-50" />
-        </div>
-        <h3 class="text-2xl font-bold mb-2">Esta playlist está vacía</h3>
-        <p class="text-secondary mb-6">
-          Empieza a añadir canciones para crear tu colección perfecta. Busca tus favoritas o explora nuevas canciones.
-        </p>
-        <div class="flex gap-3 justify-center">
-          <NuxtLink to="/search" class="btn-tiger">
-            Buscar canciones
-          </NuxtLink>
-          <NuxtLink to="/albums" class="px-6 py-3 rounded-full font-semibold border border-gray-700 hover:bg-dark-hover transition-colors">
-            Explorar álbumes
-          </NuxtLink>
-        </div>
-      </div>
+      <EmptyState
+        v-else
+        :icon="IconLibrary"
+        title="Esta playlist está vacía"
+        description="Empieza a añadir canciones para crear tu colección perfecta. Busca tus favoritas o explora nuevas canciones."
+        centered
+      >
+        <NuxtLink to="/search" class="btn-tiger">
+          Buscar canciones
+        </NuxtLink>
+        <NuxtLink to="/albums" class="px-6 py-3 rounded-full font-semibold border border-gray-700 hover:bg-dark-hover transition-colors">
+          Explorar álbumes
+        </NuxtLink>
+      </EmptyState>
     </div>
   </div>
 
@@ -188,6 +187,9 @@ const {
   handlePlaySong,
   handlePlayContext
 } = useContextPlayback('playlist', playlistId)
+
+// Estado para selección de canción (desktop)
+const selectedSongId = ref<string | null>(null)
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)

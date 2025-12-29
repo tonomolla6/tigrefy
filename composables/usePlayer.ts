@@ -1,3 +1,5 @@
+import { formatTime } from '~/utils/formatting'
+
 // Variable global para el elemento de audio (singleton)
 let globalAudioElement: HTMLAudioElement | null = null
 const DEFAULT_TITLE = 'Tigrefy'
@@ -452,13 +454,6 @@ export const usePlayer = () => {
 
     // Restaurar título de la pestaña
     updateDocumentTitle(null, false)
-  }
-
-  const formatTime = (seconds: number) => {
-    if (!seconds || isNaN(seconds)) return '0:00'
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
-    return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
   // Añadir canción a la cola (después de la canción actual)

@@ -63,101 +63,33 @@
       <section class="mb-8 md:mb-12">
         <h2 class="text-xl md:text-2xl font-bold mb-4">Populares</h2>
 
-        <!-- Desktop view -->
-        <div class="hidden md:block">
-          <div
-            v-for="(song, index) in displayedSongs"
-            :key="song.id"
-            class="grid gap-4 items-center px-4 py-2 rounded-lg hover:bg-dark-highlight transition-colors group cursor-pointer"
-            style="grid-template-columns: 40px 56px 1fr 120px 80px;"
-            @click="handlePlaySong(song)"
-          >
-            <!-- Número/Play/Animación -->
-            <div class="flex items-center justify-center">
-              <PlayingIndicator v-if="isCurrentAndPlaying(song)" class="group-hover:hidden" />
-              <span v-else class="text-secondary group-hover:hidden">{{ index + 1 }}</span>
-              <div class="hidden group-hover:block">
-                <IconPause v-if="isCurrentAndPlaying(song)" :size="20" class="text-tiger-500" />
-                <IconPlay v-else :size="20" class="text-tiger-500" />
-              </div>
-            </div>
-
-            <!-- Cover -->
-            <div>
-              <img
-                :src="song.cover"
-                :alt="song.title"
-                class="w-12 h-12 rounded"
-                @error="handleImageError"
-              />
-            </div>
-
-            <!-- Título -->
-            <div class="min-w-0">
-              <h4 class="font-semibold truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
-                {{ song.title }}
-              </h4>
-            </div>
-
-            <!-- Reproducciones -->
+        <SongListRow
+          v-for="(song, index) in displayedSongs"
+          :key="song.id"
+          :song="song"
+          :index="index + 1"
+          :is-playing="isCurrentAndPlaying(song)"
+          :is-active="isCurrentSongInContext(song)"
+          :is-favorite="isFavoriteSong(song.id)"
+          :is-selected="selectedSongId === song.id"
+          :show-cover="true"
+          :show-artist="false"
+          :show-mobile-menu="false"
+          :show-mobile-favorite="true"
+          grid-columns="40px 56px 1fr 120px 80px"
+          @play="handlePlaySong(song)"
+          @select="selectedSongId = song.id"
+          @toggle-favorite="toggleFavoriteSong(song.id)"
+        >
+          <template #extra-columns>
             <div class="text-secondary text-sm text-right">
               {{ formatPlays(song.plays) }}
             </div>
-
-            <!-- Acciones y duración -->
-            <div class="flex items-center gap-3 justify-end">
-              <button
-                @click.stop="toggleFavoriteSong(song.id)"
-                class="opacity-0 group-hover:opacity-100 text-secondary hover:text-tiger-500 transition-all"
-                :class="{ 'opacity-100 text-tiger-500': isFavoriteSong(song.id) }"
-              >
-                <IconHeart :size="18" :filled="isFavoriteSong(song.id)" />
-              </button>
-              <span class="text-secondary text-sm">{{ formatTime(song.duration) }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mobile view -->
-        <div class="md:hidden">
-          <div
-            v-for="(song, index) in displayedSongs"
-            :key="`mobile-${song.id}`"
-            class="flex items-center gap-3 p-2 rounded-lg hover:bg-dark-highlight transition-colors group"
-            @click="handlePlaySong(song)"
-          >
-            <!-- Número/Animación -->
-            <div class="w-6 flex items-center justify-center flex-shrink-0">
-              <PlayingIndicator v-if="isCurrentAndPlaying(song)" size="sm" />
-              <span v-else class="text-secondary text-sm">{{ index + 1 }}</span>
-            </div>
-
-            <!-- Cover -->
-            <img
-              :src="song.cover"
-              :alt="song.title"
-              class="w-12 h-12 rounded flex-shrink-0"
-              @error="handleImageError"
-            />
-
-            <!-- Info -->
-            <div class="flex-1 min-w-0">
-              <h4 class="text-sm font-semibold truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
-                {{ song.title }}
-              </h4>
-              <p class="text-xs text-secondary">{{ formatPlays(song.plays) }}</p>
-            </div>
-
-            <!-- Like -->
-            <button
-              @click.stop="toggleFavoriteSong(song.id)"
-              class="text-secondary hover:text-tiger-500 transition-all flex-shrink-0"
-              :class="{ 'text-tiger-500': isFavoriteSong(song.id) }"
-            >
-              <IconHeart :size="18" :filled="isFavoriteSong(song.id)" />
-            </button>
-          </div>
-        </div>
+          </template>
+          <template #mobile-subtitle>
+            <span class="text-xs text-secondary">{{ formatPlays(song.plays) }}</span>
+          </template>
+        </SongListRow>
 
         <!-- Ver más -->
         <button
@@ -228,6 +160,9 @@
 </template>
 
 <script setup lang="ts">
+import { formatTime, formatFollowers, formatPlaysDetailed as formatPlays } from '~/utils/formatting'
+import { handleImageError } from '~/utils/image'
+
 definePageMeta({
   layout: 'default',
   middleware: 'auth'
@@ -235,7 +170,7 @@ definePageMeta({
 
 const route = useRoute()
 const { getArtistById, getAlbumsByArtistId, getSongsByArtistId } = useData()
-const { playSong, currentSong, isPlaying, formatTime, togglePlay, playbackContext } = usePlayer()
+const { playSong, currentSong, isPlaying, togglePlay, playbackContext } = usePlayer()
 const { toggleFavoriteArtist, isFavoriteArtist, toggleFavoriteSong, isFavoriteSong } = useFavorites()
 
 const artistId = route.params.id as string
@@ -250,6 +185,9 @@ const showAllSongs = ref(false)
 const displayedSongs = computed(() => {
   return showAllSongs.value ? popularSongs.value : popularSongs.value.slice(0, 10)
 })
+
+// Estado para selección de canción (desktop)
+const selectedSongId = ref<string | null>(null)
 
 // Check if this artist is the current playback context
 const isThisArtistContext = computed(() =>
@@ -290,20 +228,5 @@ const handlePlaySong = (song: any) => {
   }
 }
 
-const formatFollowers = (followers: number) => {
-  if (!followers) return '0'
-  return followers.toLocaleString('es-ES')
-}
-
-// Formatea reproducciones con separador de miles (como Spotify)
-const formatPlays = (plays: number | undefined) => {
-  if (!plays) return '0'
-  return plays.toLocaleString('es-ES')
-}
-
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
-}
 </script>
 

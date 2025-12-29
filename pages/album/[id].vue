@@ -93,8 +93,10 @@
           :is-playing="isCurrentAndPlaying(song)"
           :is-active="isCurrentSongInContext(song)"
           :is-favorite="isFavoriteSong(song.id)"
+          :is-selected="selectedSongId === song.id"
           :show-cover="false"
           @play="handlePlaySong(song, albumSongs)"
+          @select="selectedSongId = song.id"
           @toggle-favorite="toggleFavoriteSong(song.id)"
           @open-menu="openSongActions(song)"
         />
@@ -149,6 +151,9 @@ const {
   handlePlaySong,
   handlePlayContext
 } = useContextPlayback('album', albumId)
+
+// Estado para selección de canción (desktop)
+const selectedSongId = ref<string | null>(null)
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)

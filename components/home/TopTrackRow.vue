@@ -1,65 +1,64 @@
 <template>
+  <!-- Mobile: toda la fila es clickeable -->
   <div
-    class="group flex items-center gap-4 p-3 rounded-lg hover:bg-white/10
+    class="md:hidden group flex items-center gap-4 p-3 rounded-lg hover:bg-white/10
            transition-colors duration-200 cursor-pointer"
     @click="handlePlay"
   >
-    <!-- Número de posición -->
     <div class="w-8 text-center flex-shrink-0">
-      <span
-        class="text-2xl font-bold"
-        :class="index < 3 ? 'text-tiger-500' : 'text-secondary'"
-      >
+      <span class="text-2xl font-bold" :class="index < 3 ? 'text-tiger-500' : 'text-secondary'">
         {{ index + 1 }}
       </span>
     </div>
+    <img :src="song.cover" :alt="song.title" class="w-12 h-12 rounded object-cover flex-shrink-0" />
+    <div class="flex-1 min-w-0">
+      <h4 class="font-semibold truncate" :class="isCurrent ? 'text-tiger-500' : 'text-primary'">
+        {{ song.title }}
+      </h4>
+      <span class="text-sm text-secondary truncate block">{{ song.artistName }}</span>
+    </div>
+    <span class="text-sm text-secondary">{{ formatDuration(song.duration) }}</span>
+  </div>
 
-    <!-- Cover con overlay -->
-    <div class="relative flex-shrink-0">
-      <img
-        :src="song.cover"
-        :alt="song.title"
-        class="w-12 h-12 rounded object-cover"
-      />
-      <div
-        class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100
-               transition-opacity duration-200 flex items-center justify-center rounded"
-      >
+  <!-- Desktop: solo click en imagen reproduce -->
+  <div
+    class="hidden md:flex group items-center gap-4 p-3 rounded-lg hover:bg-white/10
+           transition-colors duration-200"
+  >
+    <div class="w-8 text-center flex-shrink-0">
+      <span class="text-2xl font-bold" :class="index < 3 ? 'text-tiger-500' : 'text-secondary'">
+        {{ index + 1 }}
+      </span>
+    </div>
+    <div class="relative flex-shrink-0 cursor-pointer" @click="handlePlay">
+      <img :src="song.cover" :alt="song.title" class="w-12 h-12 rounded object-cover" />
+      <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100
+                  transition-opacity duration-200 flex items-center justify-center rounded">
         <IconPlay v-if="!isCurrentlyPlaying" :size="16" class="text-white" />
         <IconPause v-else :size="16" class="text-white" />
       </div>
     </div>
-
-    <!-- Info -->
     <div class="flex-1 min-w-0">
-      <h4
-        class="font-semibold truncate transition-colors"
-        :class="isCurrent ? 'text-tiger-500' : 'text-primary'"
-      >
+      <h4 class="font-semibold truncate" :class="isCurrent ? 'text-tiger-500' : 'text-primary'">
         {{ song.title }}
       </h4>
       <NuxtLink
         :to="`/artist/${song.artistId}`"
-        @click.stop
-        class="text-sm text-secondary hover:text-white hover:underline truncate block transition-colors"
+        class="text-sm text-secondary hover:text-white hover:underline truncate inline-block max-w-full transition-colors"
       >
         {{ song.artistName }}
       </NuxtLink>
     </div>
-
-    <!-- Acciones (aparecen en hover) -->
     <div class="flex items-center gap-3">
       <button
-        @click.stop="toggleFavorite"
+        @click="toggleFavorite"
         class="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
         :class="isFavorite ? 'text-tiger-500 !opacity-100' : 'text-secondary hover:text-white'"
         aria-label="Favorito"
       >
         <IconHeart :size="18" :filled="isFavorite" />
       </button>
-      <span class="text-sm text-secondary w-12 text-right">
-        {{ formatDuration(song.duration) }}
-      </span>
+      <span class="text-sm text-secondary w-12 text-right">{{ formatDuration(song.duration) }}</span>
     </div>
   </div>
 </template>

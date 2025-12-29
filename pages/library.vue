@@ -58,21 +58,20 @@
     <!-- Lista de biblioteca -->
     <div class="px-4 pb-32">
       <!-- Estado vacío -->
-      <div v-if="libraryItems.length === 0" class="py-16 text-center">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-dark-hover flex items-center justify-center">
-          <IconLibrary :size="32" class="text-gray-500" />
-        </div>
-        <h2 class="text-xl font-bold text-white mb-2">Tu biblioteca está vacía</h2>
-        <p class="text-gray-400 text-sm mb-6">
-          {{ emptyMessage }}
-        </p>
+      <EmptyState
+        v-if="libraryItems.length === 0"
+        :icon="IconLibrary"
+        title="Tu biblioteca está vacía"
+        :description="emptyMessage"
+        icon-background
+      >
         <NuxtLink
           to="/search"
           class="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform"
         >
           Explorar música
         </NuxtLink>
-      </div>
+      </EmptyState>
 
       <!-- Lista de items -->
       <div v-else class="space-y-1">

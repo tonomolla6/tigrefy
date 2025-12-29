@@ -159,7 +159,7 @@
     </div>
 
     <!-- Content Tables -->
-    <div v-else class="bg-dark-hover rounded-lg overflow-hidden">
+    <div v-else class="bg-dark-hover rounded-lg overflow-x-auto">
       <!-- Artists Table -->
       <table v-if="activeTab === 'artists'" class="w-full">
         <thead class="bg-black/30">
@@ -217,7 +217,7 @@
       </table>
 
       <!-- Albums Table -->
-      <table v-if="activeTab === 'albums'" class="w-full">
+      <table v-if="activeTab === 'albums'" class="w-full min-w-[600px]">
         <thead class="bg-black/30">
           <tr>
             <th class="text-left text-xs font-medium text-gray-400 p-3">Álbum</th>
@@ -291,7 +291,7 @@
       </table>
 
       <!-- Songs Table -->
-      <table v-if="activeTab === 'songs'" class="w-full">
+      <table v-if="activeTab === 'songs'" class="w-full min-w-[600px]">
         <thead class="bg-black/30">
           <tr>
             <th class="text-left text-xs font-medium text-gray-400 p-3">Canción</th>
@@ -365,7 +365,7 @@
       </table>
 
       <!-- Playlists Table -->
-      <table v-if="activeTab === 'playlists'" class="w-full">
+      <table v-if="activeTab === 'playlists'" class="w-full min-w-[600px]">
         <thead class="bg-black/30">
           <tr>
             <th class="text-left text-xs font-medium text-gray-400 p-3">Playlist</th>
@@ -439,7 +439,7 @@
       </table>
 
       <!-- Users Table -->
-      <table v-if="activeTab === 'users'" class="w-full">
+      <table v-if="activeTab === 'users'" class="w-full min-w-[500px]">
         <thead class="bg-black/30">
           <tr>
             <th class="text-left text-xs font-medium text-gray-400 p-3">Usuario</th>

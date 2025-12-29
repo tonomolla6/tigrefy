@@ -38,6 +38,19 @@
   .sidebar-link.active {
     @apply text-primary;
   }
+
+  /* Estados de selección tipo Spotify */
+  .list-row {
+    @apply transition-colors cursor-pointer;
+  }
+
+  .list-row:not(.list-row-selected) {
+    @apply hover:bg-white/10;
+  }
+
+  .list-row-selected {
+    @apply bg-white/20 hover:bg-white/25;
+  }
 }
 
 /* Scrollbar global - ocultar flechas */

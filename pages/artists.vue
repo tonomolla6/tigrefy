@@ -34,6 +34,8 @@
 </template>
 
 <script setup lang="ts">
+import { handleImageError } from '~/utils/image'
+
 definePageMeta({
   layout: 'default',
   middleware: 'auth'
@@ -49,10 +51,5 @@ const handlePlayArtist = (artist: any) => {
   if (songs.length > 0) {
     playSong(songs[0], songs, { type: 'artist', id: artist.id })
   }
-}
-
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
 }
 </script>
