@@ -6,10 +6,10 @@ export default defineEventHandler(async (event) => {
   const db = useDB()
 
   const result = await db
-    .select({ songId: songLikes.songId })
+    .select({ songId: songLikes.songId, likedAt: songLikes.likedAt })
     .from(songLikes)
     .where(eq(songLikes.userId, userId))
     .orderBy(desc(songLikes.likedAt))
 
-  return result.map(r => r.songId)
+  return result
 })

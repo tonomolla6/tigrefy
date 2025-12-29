@@ -87,7 +87,7 @@ definePageMeta({
 
 const { data } = useData()
 const { playSong, currentSong, isPlaying, togglePlay, playbackContext } = usePlayer()
-const { favoriteSongs } = useFavorites()
+const { favoriteSongs, likedSongsWithDates } = useFavorites()
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)
@@ -98,12 +98,16 @@ const openSongActions = (song: any) => {
   showSongActions.value = true
 }
 
-// Obtener canciones favoritas
+// Obtener canciones favoritas con fecha de añadido
 const likedSongs = computed(() => {
   if (!data.value.songs) return []
-  return data.value.songs.filter((song: any) =>
-    favoriteSongs.value.includes(song.id)
-  )
+  const datesMap = new Map(likedSongsWithDates.value.map(ls => [ls.songId, ls.likedAt]))
+  return data.value.songs
+    .filter((song: any) => favoriteSongs.value.includes(song.id))
+    .map((song: any) => ({
+      ...song,
+      addedAt: datesMap.get(song.id)
+    }))
 })
 
 // Check if liked-songs is the current playback context

@@ -6,7 +6,10 @@ export const useFavoritesStore = defineStore('favorites', () => {
   // ====================
   // STATE
   // ====================
-  const likedSongIds = ref<string[]>([])
+  // Datos completos de likes con fechas
+  const likedSongsData = ref<{ songId: string; likedAt: string }[]>([])
+  // Computed para compatibilidad hacia atrás
+  const likedSongIds = computed(() => likedSongsData.value.map(ls => ls.songId))
   // Artistas favoritos (usa user_favorites legacy)
   const favoriteArtistIds = ref<string[]>([])
   // Guardados en Tu Biblioteca
@@ -47,7 +50,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     try {
       // Cargar likes de songs, guardados (playlists y albums), y artistas favoritos
       const [songs, savedPlaylists, savedAlbums, legacyFavorites] = await Promise.all([
-        $fetch<string[]>('/api/user/liked-songs', { credentials: 'include' }),
+        $fetch<{ songId: string; likedAt: string }[]>('/api/user/liked-songs', { credentials: 'include' }),
         $fetch<string[]>('/api/user/saved-playlists', { credentials: 'include' }),
         $fetch<string[]>('/api/user/saved-albums', { credentials: 'include' }),
         $fetch<{ artists: string[] }>(
@@ -56,7 +59,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
         ).catch(() => ({ artists: [] }))
       ])
 
-      likedSongIds.value = songs
+      likedSongsData.value = songs
       savedPlaylistIds.value = savedPlaylists
       savedAlbumIds.value = savedAlbums
       favoriteArtistIds.value = legacyFavorites.artists || []
@@ -76,9 +79,9 @@ export const useFavoritesStore = defineStore('favorites', () => {
 
     // Optimistic update
     if (wasLiked) {
-      likedSongIds.value = likedSongIds.value.filter(id => id !== songId)
+      likedSongsData.value = likedSongsData.value.filter(ls => ls.songId !== songId)
     } else {
-      likedSongIds.value.push(songId)
+      likedSongsData.value.unshift({ songId, likedAt: new Date().toISOString() })
     }
 
     try {
@@ -90,9 +93,9 @@ export const useFavoritesStore = defineStore('favorites', () => {
     } catch (error) {
       // Revert on error
       if (wasLiked) {
-        likedSongIds.value.push(songId)
+        likedSongsData.value.unshift({ songId, likedAt: new Date().toISOString() })
       } else {
-        likedSongIds.value = likedSongIds.value.filter(id => id !== songId)
+        likedSongsData.value = likedSongsData.value.filter(ls => ls.songId !== songId)
       }
       console.error('Error toggling song like:', error)
       return false
@@ -211,7 +214,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
   }
 
   function $reset() {
-    likedSongIds.value = []
+    likedSongsData.value = []
     favoriteArtistIds.value = []
     savedPlaylistIds.value = []
     savedAlbumIds.value = []
@@ -232,6 +235,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
   // ====================
   return {
     // state
+    likedSongsData,
     likedSongIds,
     favoriteArtistIds,
     savedPlaylistIds,

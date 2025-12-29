@@ -12,6 +12,8 @@ export const useFavorites = () => {
     savedPlaylistIds: computed(() => store.savedPlaylistIds),
     savedAlbumIds: computed(() => store.savedAlbumIds),
     isLoadingFavorites: computed(() => store.isLoading),
+    // Datos con fechas para liked-songs
+    likedSongsWithDates: computed(() => store.likedSongsData),
 
     // Métodos
     loadFavorites: () => store.loadFavorites(),
