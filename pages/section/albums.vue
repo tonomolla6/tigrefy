@@ -13,41 +13,36 @@
 
       <!-- Grid responsive alineado arriba -->
       <div v-else class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 items-start">
-        <div
+        <NuxtLink
           v-for="album in albums"
           :key="album.id"
-          class="group p-3 rounded-md bg-transparent hover:bg-[#1a1a1a] transition-all duration-300 cursor-pointer"
+          :to="`/album/${album.id}`"
+          class="group/card p-3 rounded-md bg-transparent hover:bg-[#1a1a1a] transition-all duration-300 cursor-pointer block"
         >
-          <NuxtLink :to="`/album/${album.id}`" class="block">
-            <!-- Imagen con botón play -->
-            <div class="relative mb-3">
-              <img
-                :src="album.cover"
-                :alt="album.title"
-                class="w-full aspect-square object-cover rounded-md shadow-md"
-              />
-              <button
-                @click.prevent="handlePlay(album)"
-                class="absolute bottom-2 right-2 bg-tiger-500 hover:bg-tiger-400 hover:scale-105 rounded-full w-12 h-12
-                       shadow-xl transition-all duration-300 flex items-center justify-center
-                       opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
-                aria-label="Reproducir álbum"
-              >
-                <IconPlay :size="22" class="text-black ml-0.5" />
-              </button>
-            </div>
+          <!-- Imagen con botón play -->
+          <div class="relative mb-3">
+            <img
+              :src="album.cover"
+              :alt="album.title"
+              class="w-full aspect-square object-cover rounded-md shadow-md"
+            />
+            <CardPlayButton
+              :is-playing="isCurrentlyPlaying(album)"
+              :is-visible="isCurrentContext(album)"
+              @click="handlePlay(album)"
+            />
+          </div>
 
-            <!-- Info -->
-            <h3 class="font-bold text-base text-white mb-1 line-clamp-2">{{ album.title }}</h3>
-            <NuxtLink
-              :to="`/artist/${album.artistId}`"
-              class="text-sm text-[#a7a7a7] hover:text-white hover:underline transition-colors block"
-              @click.stop
-            >
-              {{ album.artistName }}
-            </NuxtLink>
+          <!-- Info -->
+          <h3 class="font-bold text-base text-white mb-1 line-clamp-2">{{ album.title }}</h3>
+          <NuxtLink
+            :to="`/artist/${album.artistId}`"
+            class="text-sm text-[#a7a7a7] hover:text-white hover:underline transition-colors block"
+            @click.stop
+          >
+            {{ album.artistName }}
           </NuxtLink>
-        </div>
+        </NuxtLink>
       </div>
     </div>
   </div>
@@ -60,11 +55,23 @@ definePageMeta({
 })
 
 const { data, getSongsByAlbumId, isLoaded } = useData()
-const { playSong } = usePlayer()
+const { playSong, playbackContext, isPlaying, togglePlay } = usePlayer()
 
 const albums = computed(() => data.value.albums || [])
 
+const isCurrentContext = (album: any) => {
+  return playbackContext.value.type === 'album' && playbackContext.value.id === album.id
+}
+
+const isCurrentlyPlaying = (album: any) => {
+  return isCurrentContext(album) && isPlaying.value
+}
+
 const handlePlay = (album: any) => {
+  if (isCurrentContext(album)) {
+    togglePlay()
+    return
+  }
   const songs = getSongsByAlbumId(album.id)
   if (songs.length > 0) {
     playSong(songs[0], songs, { type: 'album', id: album.id })

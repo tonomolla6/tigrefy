@@ -13,35 +13,30 @@
 
       <!-- Grid responsive alineado arriba -->
       <div v-else class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 items-start">
-        <div
+        <NuxtLink
           v-for="playlist in playlists"
           :key="playlist.id"
-          class="group p-3 rounded-md bg-transparent hover:bg-[#1a1a1a] transition-all duration-300 cursor-pointer"
+          :to="`/playlist/${playlist.id}`"
+          class="group/card p-3 rounded-md bg-transparent hover:bg-[#1a1a1a] transition-all duration-300 cursor-pointer block"
         >
-          <NuxtLink :to="`/playlist/${playlist.id}`" class="block">
-            <!-- Imagen con botón play -->
-            <div class="relative mb-3">
-              <img
-                :src="playlist.cover || '/covers/default-playlist.png'"
-                :alt="playlist.name"
-                class="w-full aspect-square object-cover rounded-md shadow-md"
-              />
-              <button
-                @click.prevent="handlePlay(playlist)"
-                class="absolute bottom-2 right-2 bg-tiger-500 hover:bg-tiger-400 hover:scale-105 rounded-full w-12 h-12
-                       shadow-xl transition-all duration-300 flex items-center justify-center
-                       opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
-                aria-label="Reproducir playlist"
-              >
-                <IconPlay :size="22" class="text-black ml-0.5" />
-              </button>
-            </div>
+          <!-- Imagen con botón play -->
+          <div class="relative mb-3">
+            <img
+              :src="playlist.cover || '/covers/default-playlist.png'"
+              :alt="playlist.name"
+              class="w-full aspect-square object-cover rounded-md shadow-md"
+            />
+            <CardPlayButton
+              :is-playing="isCurrentlyPlaying(playlist)"
+              :is-visible="isCurrentContext(playlist)"
+              @click="handlePlay(playlist)"
+            />
+          </div>
 
-            <!-- Info -->
-            <h3 class="font-bold text-base text-white mb-1 line-clamp-2">{{ playlist.name }}</h3>
-            <p class="text-sm text-[#a7a7a7] line-clamp-2">{{ playlist.description || 'Playlist' }}</p>
-          </NuxtLink>
-        </div>
+          <!-- Info -->
+          <h3 class="font-bold text-base text-white mb-1 line-clamp-2">{{ playlist.name }}</h3>
+          <p class="text-sm text-[#a7a7a7] line-clamp-2">{{ playlist.description || 'Playlist' }}</p>
+        </NuxtLink>
       </div>
     </div>
   </div>
@@ -54,7 +49,7 @@ definePageMeta({
 })
 
 const { data, getSongsByIds, isLoaded } = useData()
-const { playSong } = usePlayer()
+const { playSong, playbackContext, isPlaying, togglePlay } = usePlayer()
 const { isGuest } = useAuth()
 
 const playlists = computed(() => {
@@ -64,7 +59,19 @@ const playlists = computed(() => {
     : allPlaylists
 })
 
+const isCurrentContext = (playlist: any) => {
+  return playbackContext.value.type === 'playlist' && playbackContext.value.id === playlist.id
+}
+
+const isCurrentlyPlaying = (playlist: any) => {
+  return isCurrentContext(playlist) && isPlaying.value
+}
+
 const handlePlay = (playlist: any) => {
+  if (isCurrentContext(playlist)) {
+    togglePlay()
+    return
+  }
   const songs = getSongsByIds(playlist.songIds || [])
   if (songs.length > 0) {
     playSong(songs[0], songs, { type: 'playlist', id: playlist.id })
