@@ -73,49 +73,13 @@
 
       <!-- Lista de canciones -->
       <div v-if="playlistSongs.length > 0" class="mb-8">
-        <!-- Header desktop -->
-        <div class="hidden md:grid gap-4 px-4 py-2 border-b border-gray-800 text-secondary text-sm mb-2" style="grid-template-columns: 40px 1fr 120px 200px 80px;">
-          <div class="text-center">#</div>
-          <div>Título</div>
-          <div class="text-right">Reproducciones</div>
-          <div>Álbum</div>
-          <div class="flex justify-end">
-            <IconClock :size="16" />
-          </div>
-        </div>
-
-        <!-- Canciones usando SongListRow -->
-        <SongListRow
-          v-for="(song, index) in playlistSongs"
-          :key="song.id"
-          :song="song"
-          :index="index + 1"
-          :is-playing="isCurrentAndPlaying(song)"
-          :is-active="isCurrentSongInContext(song)"
-          :is-favorite="isFavoriteSong(song.id)"
-          :is-selected="selectedSongId === song.id"
-          :show-cover="true"
-          grid-columns="40px 1fr 120px 200px 80px"
-          @play="handlePlaySong(song, playlistSongs)"
-          @select="selectedSongId = song.id"
-          @toggle-favorite="toggleFavoriteSong(song.id)"
-          @open-menu="openSongActions(song)"
-        >
-          <template #extra-columns>
-            <div class="text-secondary text-sm text-right">
-              {{ formatPlaysDetailed(song.plays) }}
-            </div>
-            <div class="text-secondary text-sm truncate">
-              <NuxtLink
-                :to="`/album/${song.albumId}`"
-                @click.stop
-                class="hover:text-primary hover:underline transition-colors"
-              >
-                {{ song.albumName }}
-              </NuxtLink>
-            </div>
-          </template>
-        </SongListRow>
+        <SongList
+          :songs="playlistSongs"
+          preset="playlist"
+          context-type="playlist"
+          :context-id="playlistId"
+          @open-menu="openSongActions"
+        />
       </div>
 
       <EmptyState
@@ -149,7 +113,7 @@
 
 <script setup lang="ts">
 import { handleImageError } from '~/utils/image'
-import { formatDuration, formatPlaysDetailed } from '~/utils/formatting'
+import { formatDuration } from '~/utils/formatting'
 
 definePageMeta({
   layout: 'default',
@@ -159,7 +123,7 @@ definePageMeta({
 const route = useRoute()
 const { getPlaylistById, getSongsByIds } = useData()
 const { userPlaylists } = useUserPlaylists()
-const { toggleSavePlaylist, isPlaylistSaved, toggleFavoriteSong, isFavoriteSong } = useFavorites()
+const { toggleSavePlaylist, isPlaylistSaved } = useFavorites()
 
 const playlistId = route.params.id as string
 
@@ -181,15 +145,9 @@ const totalDuration = computed(() => {
 
 // Usar composable de contexto de reproducción
 const {
-  isCurrentSongInContext,
-  isCurrentAndPlaying,
   isContextPlaying,
-  handlePlaySong,
   handlePlayContext
 } = useContextPlayback('playlist', playlistId)
-
-// Estado para selección de canción (desktop)
-const selectedSongId = ref<string | null>(null)
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)

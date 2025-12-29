@@ -16,28 +16,28 @@
       </button>
     </div>
 
+    <!-- Cover (columna separada si showCover) -->
+    <img
+      v-if="showCover"
+      :src="song.cover"
+      :alt="song.title"
+      class="w-12 h-12 rounded flex-shrink-0"
+      @error="onImageError"
+    />
+
     <!-- Título y artista -->
-    <div class="flex items-center gap-3 min-w-0">
-      <img
-        v-if="showCover"
-        :src="song.cover"
-        :alt="song.title"
-        class="w-12 h-12 rounded flex-shrink-0"
-        @error="onImageError"
-      />
-      <div class="min-w-0">
-        <h4 class="font-semibold truncate" :class="isActive ? 'text-tiger-500' : 'text-primary'">
-          {{ song.title }}
-        </h4>
-        <NuxtLink
-          v-if="showArtist"
-          :to="`/artist/${song.artistId}`"
-          @click.stop
-          class="text-sm text-secondary hover:text-white hover:underline truncate inline-block max-w-full transition-colors"
-        >
-          {{ song.artistName }}
-        </NuxtLink>
-      </div>
+    <div class="min-w-0">
+      <h4 class="font-semibold truncate" :class="isActive ? 'text-tiger-500' : 'text-primary'">
+        {{ song.title }}
+      </h4>
+      <NuxtLink
+        v-if="showArtist"
+        :to="`/artist/${song.artistId}`"
+        @click.stop
+        class="text-sm text-secondary hover:text-white hover:underline truncate inline-block max-w-full transition-colors"
+      >
+        {{ song.artistName }}
+      </NuxtLink>
     </div>
 
     <!-- Slot para columnas adicionales (reproducciones, álbum, etc.) -->

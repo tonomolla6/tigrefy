@@ -75,30 +75,12 @@
 
       <!-- Lista de canciones -->
       <div class="mb-8">
-        <!-- Header (solo desktop) -->
-        <div class="hidden md:grid gap-4 px-4 py-2 border-b border-gray-800 text-secondary text-sm mb-2" style="grid-template-columns: 40px 1fr 80px;">
-          <div class="text-center">#</div>
-          <div>Título</div>
-          <div class="flex justify-end">
-            <IconClock :size="16" />
-          </div>
-        </div>
-
-        <!-- Canciones usando SongListRow -->
-        <SongListRow
-          v-for="(song, index) in albumSongs"
-          :key="song.id"
-          :song="song"
-          :index="index + 1"
-          :is-playing="isCurrentAndPlaying(song)"
-          :is-active="isCurrentSongInContext(song)"
-          :is-favorite="isFavoriteSong(song.id)"
-          :is-selected="selectedSongId === song.id"
-          :show-cover="false"
-          @play="handlePlaySong(song, albumSongs)"
-          @select="selectedSongId = song.id"
-          @toggle-favorite="toggleFavoriteSong(song.id)"
-          @open-menu="openSongActions(song)"
+        <SongList
+          :songs="albumSongs"
+          preset="album"
+          context-type="album"
+          :context-id="albumId"
+          @open-menu="openSongActions"
         />
       </div>
 
@@ -137,7 +119,7 @@ definePageMeta({
 
 const route = useRoute()
 const { getAlbumById, getSongsByAlbumId } = useData()
-const { toggleFavoriteSong, isFavoriteSong, toggleSaveAlbum, isAlbumSaved } = useFavorites()
+const { toggleSaveAlbum, isAlbumSaved } = useFavorites()
 
 const albumId = route.params.id as string
 const album = computed(() => getAlbumById(albumId))
@@ -145,15 +127,9 @@ const albumSongs = computed(() => getSongsByAlbumId(albumId))
 
 // Usar composable de contexto de reproducción
 const {
-  isCurrentSongInContext,
-  isCurrentAndPlaying,
   isContextPlaying,
-  handlePlaySong,
   handlePlayContext
 } = useContextPlayback('album', albumId)
-
-// Estado para selección de canción (desktop)
-const selectedSongId = ref<string | null>(null)
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)

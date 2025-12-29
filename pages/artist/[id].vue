@@ -63,33 +63,14 @@
       <section class="mb-8 md:mb-12">
         <h2 class="text-xl md:text-2xl font-bold mb-4">Populares</h2>
 
-        <SongListRow
-          v-for="(song, index) in displayedSongs"
-          :key="song.id"
-          :song="song"
-          :index="index + 1"
-          :is-playing="isCurrentAndPlaying(song)"
-          :is-active="isCurrentSongInContext(song)"
-          :is-favorite="isFavoriteSong(song.id)"
-          :is-selected="selectedSongId === song.id"
-          :show-cover="true"
-          :show-artist="false"
+        <SongList
+          :songs="displayedSongs"
+          preset="artist"
+          context-type="artist"
+          :context-id="artistId"
           :show-mobile-menu="false"
-          :show-mobile-favorite="true"
-          grid-columns="40px 56px 1fr 120px 80px"
-          @play="handlePlaySong(song)"
-          @select="selectedSongId = song.id"
-          @toggle-favorite="toggleFavoriteSong(song.id)"
-        >
-          <template #extra-columns>
-            <div class="text-secondary text-sm text-right">
-              {{ formatPlays(song.plays) }}
-            </div>
-          </template>
-          <template #mobile-subtitle>
-            <span class="text-xs text-secondary">{{ formatPlays(song.plays) }}</span>
-          </template>
-        </SongListRow>
+          :show-plays-on-mobile="true"
+        />
 
         <!-- Ver más -->
         <button
@@ -160,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatTime, formatFollowers, formatPlaysDetailed as formatPlays } from '~/utils/formatting'
+import { formatFollowers } from '~/utils/formatting'
 import { handleImageError } from '~/utils/image'
 
 definePageMeta({
@@ -171,7 +152,7 @@ definePageMeta({
 const route = useRoute()
 const { getArtistById, getAlbumsByArtistId, getSongsByArtistId } = useData()
 const { playSong, currentSong, isPlaying, togglePlay, playbackContext } = usePlayer()
-const { toggleFavoriteArtist, isFavoriteArtist, toggleFavoriteSong, isFavoriteSong } = useFavorites()
+const { toggleFavoriteArtist, isFavoriteArtist } = useFavorites()
 
 const artistId = route.params.id as string
 const artist = computed(() => getArtistById(artistId))
@@ -186,20 +167,10 @@ const displayedSongs = computed(() => {
   return showAllSongs.value ? popularSongs.value : popularSongs.value.slice(0, 10)
 })
 
-// Estado para selección de canción (desktop)
-const selectedSongId = ref<string | null>(null)
-
 // Check if this artist is the current playback context
 const isThisArtistContext = computed(() =>
   playbackContext.value.type === 'artist' && playbackContext.value.id === artistId
 )
-
-// Check if this is the current song AND playing from this artist context (for orange text)
-const isCurrentSongInContext = (song: any) => currentSong.value?.id === song.id && isThisArtistContext.value
-// Only show animation if: same song AND this artist is the context AND actually playing
-const isCurrentAndPlaying = (song: any) => isCurrentSongInContext(song) && isPlaying.value
-// Keep isCurrentSong for toggle logic (any context)
-const isCurrentSong = (song: any) => currentSong.value?.id === song.id
 
 // Verifica si alguna canción del artista se está reproduciendo DESDE ESTE ARTISTA
 const isArtistPlaying = computed(() => {
@@ -208,23 +179,12 @@ const isArtistPlaying = computed(() => {
 })
 
 const handlePlayArtistButton = () => {
-  // Si ya está sonando una canción de este artista desde este contexto
   if (isArtistPlaying.value) {
     togglePlay()
   } else if (isThisArtistContext.value && currentSong.value && !isPlaying.value) {
-    // Si está pausado pero es del contexto de este artista, reanudar
     togglePlay()
   } else if (popularSongs.value.length > 0) {
-    // Si no, empezar a reproducir las canciones populares del artista
     playSong(popularSongs.value[0], popularSongs.value, { type: 'artist', id: artistId })
-  }
-}
-
-const handlePlaySong = (song: any) => {
-  if (isCurrentSong(song)) {
-    togglePlay()
-  } else {
-    playSong(song, popularSongs.value, { type: 'artist', id: artistId })
   }
 }
 

@@ -48,45 +48,13 @@
 
       <!-- Lista de canciones -->
       <div v-if="likedSongs.length > 0" class="mb-8">
-        <!-- Header desktop -->
-        <div class="hidden md:grid gap-4 px-4 py-2 border-b border-gray-800 text-secondary text-sm mb-2" style="grid-template-columns: 40px 1fr 200px 80px;">
-          <div class="text-center">#</div>
-          <div>Título</div>
-          <div>Álbum</div>
-          <div class="flex justify-end">
-            <IconClock :size="16" />
-          </div>
-        </div>
-
-        <SongListRow
-          v-for="(song, index) in likedSongs"
-          :key="song.id"
-          :song="song"
-          :index="index + 1"
-          :is-playing="isCurrentAndPlaying(song)"
-          :is-active="isCurrentSongInContext(song)"
-          :is-favorite="true"
-          :is-selected="selectedSongId === song.id"
-          :show-cover="true"
-          :show-artist="true"
-          grid-columns="40px 1fr 200px 80px"
-          @play="handlePlaySong(song)"
-          @select="selectedSongId = song.id"
-          @toggle-favorite="toggleFavoriteSong(song.id)"
-          @open-menu="openSongActions(song)"
-        >
-          <template #extra-columns>
-            <div class="text-secondary text-sm truncate">
-              <NuxtLink
-                :to="`/album/${song.albumId}`"
-                @click.stop
-                class="hover:text-primary hover:underline transition-colors"
-              >
-                {{ song.albumName }}
-              </NuxtLink>
-            </div>
-          </template>
-        </SongListRow>
+        <SongList
+          :songs="likedSongs"
+          preset="liked"
+          context-type="liked"
+          context-id="liked-songs"
+          @open-menu="openSongActions"
+        />
       </div>
 
       <!-- Estado vacío -->
@@ -112,8 +80,6 @@
 </template>
 
 <script setup lang="ts">
-import { formatTime } from '~/utils/formatting'
-
 definePageMeta({
   layout: 'default',
   middleware: 'auth'
@@ -121,10 +87,7 @@ definePageMeta({
 
 const { data } = useData()
 const { playSong, currentSong, isPlaying, togglePlay, playbackContext } = usePlayer()
-const { favoriteSongs, toggleFavoriteSong } = useFavorites()
-
-// Estado para selección de canción (desktop)
-const selectedSongId = ref<string | null>(null)
+const { favoriteSongs } = useFavorites()
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)
@@ -145,15 +108,8 @@ const likedSongs = computed(() => {
 
 // Check if liked-songs is the current playback context
 const isLikedSongsContext = computed(() =>
-  playbackContext.value.type === 'liked-songs'
+  playbackContext.value.type === 'liked' || playbackContext.value.type === 'liked-songs'
 )
-
-// Check if this is the current song AND playing from liked-songs context (for orange text)
-const isCurrentSongInContext = (song: any) => currentSong.value?.id === song.id && isLikedSongsContext.value
-// Only show as playing if: same song AND liked-songs is the context AND actually playing (for animation)
-const isCurrentAndPlaying = (song: any) => isCurrentSongInContext(song) && isPlaying.value
-// Keep isCurrentSong for toggle logic (any context)
-const isCurrentSong = (song: any) => currentSong.value?.id === song.id
 
 // Check if currently playing from liked-songs
 const isLikedSongsPlaying = computed(() => {
@@ -167,15 +123,7 @@ const handlePlayAll = () => {
   } else if (currentSong.value && likedSongs.value.some((s: any) => s.id === currentSong.value.id) && isLikedSongsContext.value) {
     togglePlay()
   } else if (likedSongs.value.length > 0) {
-    playSong(likedSongs.value[0], likedSongs.value, { type: 'liked-songs' })
-  }
-}
-
-const handlePlaySong = (song: any) => {
-  if (isCurrentSong(song)) {
-    togglePlay()
-  } else {
-    playSong(song, likedSongs.value, { type: 'liked-songs' })
+    playSong(likedSongs.value[0], likedSongs.value, { type: 'liked', id: 'liked-songs' })
   }
 }
 </script>
