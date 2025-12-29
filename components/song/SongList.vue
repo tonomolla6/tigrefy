@@ -42,7 +42,7 @@
               class="w-12 h-12 rounded flex-shrink-0"
               @error="onImageError"
             />
-            <div class="min-w-0 overflow-hidden">
+            <div class="min-w-0">
               <h4 class="font-semibold truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
                 {{ song.title }}
               </h4>
@@ -50,7 +50,7 @@
                 v-if="showArtist"
                 :to="`/artist/${song.artistId}`"
                 @click.stop
-                class="text-sm text-secondary hover:text-white hover:underline truncate block transition-colors"
+                class="text-sm text-secondary hover:text-white hover:underline truncate inline-block max-w-full transition-colors"
               >
                 {{ song.artistName }}
               </NuxtLink>
