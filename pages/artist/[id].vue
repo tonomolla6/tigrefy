@@ -74,7 +74,7 @@
 
         <!-- Ver más -->
         <button
-          v-if="popularSongs.length > 10 && !showAllSongs"
+          v-if="popularSongs.length > 5 && !showAllSongs"
           @click="showAllSongs = true"
           class="text-secondary hover:text-primary text-sm font-semibold mt-4 transition-colors"
         >
@@ -164,7 +164,9 @@ const popularSongs = computed(() => {
 
 const showAllSongs = ref(false)
 const displayedSongs = computed(() => {
-  return showAllSongs.value ? popularSongs.value : popularSongs.value.slice(0, 10)
+  // Mostrar máximo 10 canciones, 5 por defecto
+  const maxSongs = popularSongs.value.slice(0, 10)
+  return showAllSongs.value ? maxSongs : maxSongs.slice(0, 5)
 })
 
 // Check if this artist is the current playback context
