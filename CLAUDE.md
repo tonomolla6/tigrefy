@@ -118,7 +118,7 @@ User-created playlists are stored separately from `db.json` in localStorage:
 ### Deployment Configuration
 
 Configured for Cloudflare Workers:
-- SSR disabled (`ssr: false` in `nuxt.config.ts`)
+- Hybrid rendering (`ssr: true` with `routeRules` using SPA for pages and SSR for `/api/**`)
 - Nitro preset: `cloudflare-module`
 - All assets must be in `public/` directory to be accessible in production
 
