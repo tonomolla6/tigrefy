@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "rm -rf .wrangler/deploy dist && NITRO_PRESET=cloudflare-module nuxt build",
+    "build:worker": "rm -rf .wrangler/deploy dist && NITRO_PRESET=cloudflare-module nuxt build",
+    "deploy:worker": "npm run build:worker && wrangler deploy",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
