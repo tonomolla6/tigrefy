@@ -2,11 +2,10 @@
   <NuxtLink :to="`/album/${album.id}`" class="block">
     <div class="bg-dark-highlight p-4 rounded-lg card-hover group/card">
       <div class="relative mb-4">
-        <img
+        <SecureImage
           :src="album.cover"
           :alt="album.title"
           class="w-full aspect-square object-cover rounded-md shadow-lg"
-          @error="onImageError"
         />
         <CardPlayButton
           :is-playing="isCurrentlyPlaying"
@@ -27,8 +26,6 @@
 </template>
 
 <script setup lang="ts">
-import { handleImageError } from '~/utils/image'
-
 const props = defineProps<{
   album: any
 }>()
@@ -55,5 +52,4 @@ const handlePlayAlbum = () => {
   }
 }
 
-const onImageError = (e: Event) => handleImageError(e)
 </script>

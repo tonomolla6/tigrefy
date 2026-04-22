@@ -4,12 +4,11 @@
     <div class="hidden md:flex items-center justify-between h-[90px] px-4">
       <!-- Info de la canción (izquierda) - min-width 180px, width 30% -->
       <div class="flex items-center gap-3 min-w-[180px] w-[30%]">
-        <img
+        <SecureImage
           v-if="currentSong.cover"
           :src="currentSong.cover"
           :alt="currentSong.title"
           class="w-14 h-14 rounded object-cover flex-shrink-0"
-          @error="handleImageError"
         />
         <div class="flex items-center gap-3 min-w-0">
           <div class="min-w-0">
@@ -199,13 +198,14 @@
         >
           <!-- Portada con animación de cambio -->
           <div class="relative w-11 h-11 flex-shrink-0">
-            <img
+            <SecureImage
               v-if="currentSong.cover"
               :src="currentSong.cover"
               :alt="currentSong.title"
-              class="w-11 h-11 rounded-md object-cover transition-all duration-200"
-              :class="isChangingSong ? 'scale-95 opacity-70' : 'scale-100 opacity-100'"
-              @error="handleImageError"
+              :class="[
+                'w-11 h-11 rounded-md object-cover transition-all duration-200',
+                isChangingSong ? 'scale-95 opacity-70' : 'scale-100 opacity-100'
+              ]"
             />
           </div>
           <!-- Texto con swipe - contenedor con clip -->
@@ -488,10 +488,6 @@ const handleVolumeChange = (e: Event) => {
   setVolume(parseFloat(target.value))
 }
 
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
-}
 
 // Tooltip para el botón de repetir
 const repeatTooltip = computed(() => {

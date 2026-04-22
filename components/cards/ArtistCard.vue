@@ -2,11 +2,10 @@
   <NuxtLink :to="`/artist/${artist.id}`" class="block">
     <div class="bg-dark-highlight p-4 rounded-lg card-hover group">
       <div class="relative mb-4">
-        <img
+        <SecureImage
           :src="artist.image"
           :alt="artist.name"
           class="w-full aspect-square object-cover rounded-full shadow-lg"
-          @error="handleImageError"
         />
         <button
           @click.prevent="handlePlayArtist"
@@ -29,8 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import { handleImageError } from '~/utils/image'
-
 const props = defineProps<{
   artist: any
 }>()

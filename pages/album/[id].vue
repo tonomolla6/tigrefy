@@ -6,22 +6,20 @@
     <!-- Header del álbum -->
     <div class="bg-gradient-to-b from-tiger-800 via-tiger-900 to-dark-base px-4 md:px-8 py-6 md:py-8 pb-8">
       <div class="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6">
-        <img
+        <SecureImage
           :src="album.cover"
           :alt="album.title"
           class="w-56 h-56 md:w-60 md:h-60 rounded-lg shadow-2xl"
-          @error="onImageError"
         />
         <div class="flex-1 pb-0 md:pb-4 text-center md:text-left">
           <p class="text-xs md:text-sm font-semibold uppercase text-tiger-300">Álbum</p>
           <h1 class="text-3xl md:text-6xl lg:text-7xl font-bold my-2 md:my-4">{{ album.title }}</h1>
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 text-sm">
-            <NuxtLink
-              :to="`/artist/${album.artistId}`"
-              class="font-semibold hover:underline transition-colors"
-            >
-              {{ album.artistName }}
-            </NuxtLink>
+            <ArtistChip
+              :artist-id="album.artistId"
+              :name="album.artistName"
+              :image="artist?.image"
+            />
             <span class="text-secondary">•</span>
             <span class="text-secondary">{{ album.releaseDate?.substring(0, 4) }}</span>
             <span class="text-secondary">•</span>
@@ -35,13 +33,7 @@
     <div class="bg-dark-base px-4 md:px-8 py-6">
       <!-- Controles (ocultos en móvil) -->
       <div class="hidden md:flex items-center gap-4 md:gap-8 mb-8">
-        <button
-          @click="handlePlayContext(albumSongs)"
-          class="bg-tiger-500 hover:bg-tiger-600 hover:scale-105 text-white rounded-full p-4 md:p-5 transition-all shadow-lg"
-        >
-          <IconPause v-if="isContextPlaying(albumSongs)" :size="32" />
-          <IconPlay v-else :size="32" />
-        </button>
+        <PlayButton :playing="isContextPlaying(albumSongs)" size="lg" @click="handlePlayContext(albumSongs)" />
         <Tooltip :text="isAlbumSaved(album.id) ? 'Quitar de Tu biblioteca' : 'Guardar en Tu biblioteca'">
           <button
             @click="toggleSaveAlbum(album.id)"
@@ -64,13 +56,7 @@
           <IconHeart :size="28" :filled="isAlbumSaved(album.id)" />
         </button>
         <div class="flex-1" />
-        <button
-          @click="handlePlayContext(albumSongs)"
-          class="bg-tiger-500 hover:bg-tiger-600 text-black rounded-full p-3 transition-all shadow-lg"
-        >
-          <IconPause v-if="isContextPlaying(albumSongs)" :size="28" />
-          <IconPlay v-else :size="28" />
-        </button>
+        <PlayButton :playing="isContextPlaying(albumSongs)" size="lg" @click="handlePlayContext(albumSongs)" />
       </div>
 
       <!-- Lista de canciones -->
@@ -118,18 +104,27 @@ definePageMeta({
 })
 
 const route = useRoute()
-const { getAlbumById, getSongsByAlbumId } = useData()
+const { getAlbumById, getSongsByAlbumId, getArtistById } = useData()
 const { toggleSaveAlbum, isAlbumSaved } = useFavorites()
 
 const albumId = route.params.id as string
 const album = computed(() => getAlbumById(albumId))
 const albumSongs = computed(() => getSongsByAlbumId(albumId))
+const artist = computed(() => album.value ? getArtistById(album.value.artistId) : null)
 
 // Usar composable de contexto de reproducción
 const {
   isContextPlaying,
   handlePlayContext
 } = useContextPlayback('album', albumId)
+
+// Sticky header al hacer scroll
+useDetailStickyHeader({
+  title: computed(() => album.value?.title),
+  playing: computed(() => isContextPlaying(albumSongs.value)),
+  onPlay: () => handlePlayContext(albumSongs.value),
+  bgClass: 'bg-tiger-800'
+})
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)

@@ -21,7 +21,7 @@
     <CustomScrollbar class="flex-1 min-h-0 px-4 pb-4">
       <!-- Cover -->
       <div class="mb-4">
-        <img
+        <SecureImage
           :src="currentSong.cover"
           :alt="currentSong.title"
           class="w-full aspect-square object-cover rounded-lg shadow-xl"
@@ -47,7 +47,7 @@
           class="block bg-dark-hover rounded-lg overflow-hidden hover:bg-gray-700/50 transition-colors"
         >
           <div class="relative">
-            <img
+            <SecureImage
               :src="currentArtist.image"
               :alt="currentArtist.name"
               class="w-full h-48 object-cover"
