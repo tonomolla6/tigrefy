@@ -4,11 +4,10 @@
     <div class="relative">
       <!-- Imagen de fondo con gradiente -->
       <div class="absolute inset-0 overflow-hidden">
-        <img
+        <SecureImage
           :src="artist.image"
           :alt="artist.name"
           class="w-full h-full object-cover blur-sm scale-110 opacity-60"
-          @error="handleImageError"
         />
         <div class="absolute inset-0 bg-gradient-to-t from-dark-base via-dark-base/70 to-transparent"></div>
       </div>
@@ -16,11 +15,10 @@
       <!-- Contenido del header -->
       <div class="relative px-4 md:px-8 pt-16 md:pt-24 pb-6 md:pb-8">
         <div class="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6">
-          <img
+          <SecureImage
             :src="artist.image"
             :alt="artist.name"
             class="w-40 h-40 md:w-56 md:h-56 rounded-full shadow-2xl object-cover border-4 border-dark-base/50"
-            @error="handleImageError"
           />
           <div class="flex-1 text-center md:text-left md:pb-2">
             <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
@@ -60,34 +58,11 @@
       </div>
 
       <!-- Canciones populares -->
-      <section class="mb-8 md:mb-12">
-        <h2 class="text-xl md:text-2xl font-bold mb-4">Populares</h2>
-
-        <SongList
-          :songs="displayedSongs"
-          preset="artist"
-          context-type="artist"
-          :context-id="artistId"
-          :show-mobile-menu="false"
-          :show-plays-on-mobile="true"
-        />
-
-        <!-- Ver más -->
-        <button
-          v-if="popularSongs.length > 5 && !showAllSongs"
-          @click="showAllSongs = true"
-          class="text-secondary hover:text-primary text-sm font-semibold mt-4 transition-colors"
-        >
-          Ver más
-        </button>
-        <button
-          v-if="showAllSongs"
-          @click="showAllSongs = false"
-          class="text-secondary hover:text-primary text-sm font-semibold mt-4 transition-colors"
-        >
-          Mostrar menos
-        </button>
-      </section>
+      <ArtistTopSongs :artist-id="artistId" class="mb-8 md:mb-12">
+        <template #header>
+          <h2 class="text-xl md:text-2xl font-bold mb-4">Populares</h2>
+        </template>
+      </ArtistTopSongs>
 
       <!-- Discografía -->
       <section class="mb-8 md:mb-12">
@@ -111,11 +86,10 @@
         <h2 class="text-xl md:text-2xl font-bold mb-4">Acerca de</h2>
         <div class="bg-dark-highlight rounded-lg p-4 md:p-6 max-w-2xl">
           <div class="flex gap-4 mb-4">
-            <img
+            <SecureImage
               :src="artist.image"
               :alt="artist.name"
               class="w-20 h-20 md:w-24 md:h-24 rounded-lg object-cover"
-              @error="handleImageError"
             />
             <div class="flex-1">
               <p class="text-sm md:text-base text-secondary leading-relaxed">{{ artist.bio }}</p>
@@ -142,7 +116,6 @@
 
 <script setup lang="ts">
 import { formatFollowers } from '~/utils/formatting'
-import { handleImageError } from '~/utils/image'
 
 definePageMeta({
   layout: 'default',
@@ -158,16 +131,9 @@ const artistId = route.params.id as string
 const artist = computed(() => getArtistById(artistId))
 const artistAlbums = computed(() => getAlbumsByArtistId(artistId))
 const artistSongs = computed(() => getSongsByArtistId(artistId))
-const popularSongs = computed(() => {
-  return [...artistSongs.value].sort((a, b) => (b.plays || 0) - (a.plays || 0))
-})
-
-const showAllSongs = ref(false)
-const displayedSongs = computed(() => {
-  // Mostrar máximo 10 canciones, 5 por defecto
-  const maxSongs = popularSongs.value.slice(0, 10)
-  return showAllSongs.value ? maxSongs : maxSongs.slice(0, 5)
-})
+const popularSongs = computed(() =>
+  [...artistSongs.value].sort((a, b) => (b.plays || 0) - (a.plays || 0))
+)
 
 // Check if this artist is the current playback context
 const isThisArtistContext = computed(() =>
@@ -189,6 +155,14 @@ const handlePlayArtistButton = () => {
     playSong(popularSongs.value[0], popularSongs.value, { type: 'artist', id: artistId })
   }
 }
+
+// Sticky header al hacer scroll
+useDetailStickyHeader({
+  title: computed(() => artist.value?.name),
+  playing: computed(() => isArtistPlaying.value),
+  onPlay: handlePlayArtistButton,
+  bgClass: 'bg-tiger-800'
+})
 
 </script>
 

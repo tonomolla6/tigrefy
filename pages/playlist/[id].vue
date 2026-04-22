@@ -31,14 +31,12 @@
     <div class="bg-dark-base px-4 md:px-8 py-4 md:py-6">
       <!-- Controles desktop -->
       <div class="hidden md:flex items-center gap-4 md:gap-8 mb-6 md:mb-8 flex-wrap">
-        <button
+        <PlayButton
           v-if="playlistSongs.length > 0"
+          :playing="isContextPlaying(playlistSongs)"
+          size="lg"
           @click="handlePlayContext(playlistSongs)"
-          class="bg-tiger-500 hover:bg-tiger-600 text-white rounded-full p-4 transition-all hover:scale-105"
-        >
-          <IconPause v-if="isContextPlaying(playlistSongs)" :size="28" />
-          <IconPlay v-else :size="28" />
-        </button>
+        />
         <Tooltip :text="isPlaylistSaved(playlist.id) ? 'Quitar de Tu biblioteca' : 'Guardar en Tu biblioteca'">
           <button
             @click="toggleSavePlaylist(playlist.id)"
@@ -61,14 +59,12 @@
           <IconHeart :size="28" :filled="isPlaylistSaved(playlist.id)" />
         </button>
         <div class="flex-1" />
-        <button
+        <PlayButton
           v-if="playlistSongs.length > 0"
+          :playing="isContextPlaying(playlistSongs)"
+          size="lg"
           @click="handlePlayContext(playlistSongs)"
-          class="bg-tiger-500 hover:bg-tiger-600 text-black rounded-full p-3 transition-all shadow-lg"
-        >
-          <IconPause v-if="isContextPlaying(playlistSongs)" :size="28" />
-          <IconPlay v-else :size="28" />
-        </button>
+        />
       </div>
 
       <!-- Lista de canciones -->
@@ -148,6 +144,14 @@ const {
   isContextPlaying,
   handlePlayContext
 } = useContextPlayback('playlist', playlistId)
+
+// Sticky header al hacer scroll
+useDetailStickyHeader({
+  title: computed(() => playlist.value?.name),
+  playing: computed(() => isContextPlaying(playlistSongs.value)),
+  onPlay: () => handlePlayContext(playlistSongs.value),
+  bgClass: 'bg-tiger-600'
+})
 
 // Estado para SongActionSheet
 const showSongActions = ref(false)

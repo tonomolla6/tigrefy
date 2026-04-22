@@ -23,27 +23,10 @@
 
     <!-- Controles y canciones -->
     <div class="bg-dark-base px-4 md:px-8 py-4 md:py-6">
-      <!-- Controles desktop -->
-      <div v-if="likedSongs.length > 0" class="hidden md:flex items-center gap-4 md:gap-8 mb-6 md:mb-8">
-        <button
-          @click="handlePlayAll"
-          class="bg-tiger-500 hover:bg-tiger-600 hover:scale-105 text-white rounded-full p-4 transition-all shadow-lg"
-        >
-          <IconPause v-if="isLikedSongsPlaying" :size="28" />
-          <IconPlay v-else :size="28" />
-        </button>
-      </div>
-
-      <!-- Controles móvil -->
-      <div v-if="likedSongs.length > 0" class="flex md:hidden items-center gap-4 mb-6">
-        <div class="flex-1" />
-        <button
-          @click="handlePlayAll"
-          class="bg-tiger-500 hover:bg-tiger-600 text-black rounded-full p-3 transition-all shadow-lg"
-        >
-          <IconPause v-if="isLikedSongsPlaying" :size="28" />
-          <IconPlay v-else :size="28" />
-        </button>
+      <!-- Controles -->
+      <div v-if="likedSongs.length > 0" class="flex items-center gap-4 md:gap-8 mb-6 md:mb-8">
+        <div class="flex-1 md:hidden" />
+        <PlayButton :playing="isLikedSongsPlaying" size="lg" @click="handlePlayAll" />
       </div>
 
       <!-- Lista de canciones -->
@@ -130,5 +113,13 @@ const handlePlayAll = () => {
     playSong(likedSongs.value[0], likedSongs.value, { type: 'liked', id: 'liked-songs' })
   }
 }
+
+// Sticky header al hacer scroll
+useDetailStickyHeader({
+  title: computed(() => 'Canciones que te gustan'),
+  playing: computed(() => isLikedSongsPlaying.value),
+  onPlay: handlePlayAll,
+  bgClass: 'bg-indigo-800'
+})
 </script>
 

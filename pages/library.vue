@@ -1,31 +1,17 @@
 <template>
-  <div class="min-h-screen bg-black pb-20 md:pb-0">
-    <!-- Mobile Header con perfil -->
-    <MobileHeader title="Tu biblioteca" />
+  <div class="min-h-screen bg-dark-base pb-20 md:pb-0">
+    <!-- Mobile Header con perfil + pills de filtro -->
+    <MobileHeader title="Tu biblioteca">
+      <template #below>
+        <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+          <FilterButton :active="filterType === null" @click="filterType = null">Todo</FilterButton>
+          <FilterButton :active="filterType === 'playlist'" @click="filterType = 'playlist'">Playlists</FilterButton>
+          <FilterButton :active="filterType === 'album'" @click="filterType = 'album'">Álbumes</FilterButton>
+          <FilterButton :active="filterType === 'artist'" @click="filterType = 'artist'">Artistas</FilterButton>
+        </div>
+      </template>
+    </MobileHeader>
 
-    <!-- Header con filtros -->
-    <div class="sticky top-[52px] md:top-0 z-10 bg-black/95 backdrop-blur-sm px-4 py-4">
-      <div class="flex items-center justify-between mb-4">
-        <h1 class="text-xl md:text-2xl font-bold text-white hidden md:block">Tu biblioteca</h1>
-        <button
-          @click="toggleSortMenu"
-          class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors ml-auto"
-        >
-          <span>{{ sortLabel }}</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Filtros horizontales -->
-      <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        <FilterButton :active="filterType === null" @click="filterType = null">Todo</FilterButton>
-        <FilterButton :active="filterType === 'playlist'" @click="filterType = 'playlist'">Playlists</FilterButton>
-        <FilterButton :active="filterType === 'album'" @click="filterType = 'album'">Álbumes</FilterButton>
-        <FilterButton :active="filterType === 'artist'" @click="filterType = 'artist'">Artistas</FilterButton>
-      </div>
-    </div>
 
     <!-- Sort Menu Dropdown -->
     <Teleport to="body">

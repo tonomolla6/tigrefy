@@ -27,6 +27,10 @@
 </template>
 
 <script setup lang="ts">
+const emit = defineEmits<{
+  scroll: [scrollTop: number]
+}>()
+
 const scrollContainer = ref<HTMLElement | null>(null)
 const scrollTop = ref(0)
 const scrollHeight = ref(0)
@@ -56,6 +60,7 @@ const onScroll = () => {
     scrollTop.value = scrollContainer.value.scrollTop
     scrollHeight.value = scrollContainer.value.scrollHeight
     clientHeight.value = scrollContainer.value.clientHeight
+    emit('scroll', scrollTop.value)
   }
 }
 
@@ -90,9 +95,16 @@ onMounted(() => {
   })
 })
 
-// Exponer método para actualizar medidas desde fuera
+const scrollToTop = () => {
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTop = 0
+  }
+}
+
+// Exponer métodos para uso desde fuera
 defineExpose({
-  refresh: onScroll
+  refresh: onScroll,
+  scrollToTop
 })
 </script>
 

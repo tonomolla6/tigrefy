@@ -2,7 +2,7 @@
   <div class="song-list">
     <!-- Header (desktop) -->
     <SongListHeader
-      v-if="showHeader"
+      v-if="showHeader && !hideHeader"
       :columns="columns"
       :grid-template-columns="gridTemplateColumns"
       :hidden-columns="hiddenColumns"
@@ -43,9 +43,14 @@
               @error="onImageError"
             />
             <div class="min-w-0">
-              <h4 class="font-semibold truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
+              <NuxtLink
+                :to="`/track/${song.id}`"
+                @click.stop="handleTitleClick(song)"
+                class="font-semibold truncate block hover:underline transition-colors"
+                :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary hover:text-white'"
+              >
                 {{ song.title }}
-              </h4>
+              </NuxtLink>
               <NuxtLink
                 v-if="showArtist"
                 :to="`/artist/${song.artistId}`"
@@ -101,12 +106,12 @@
 
       <!-- Mobile Row -->
       <div
-        class="md:hidden flex items-center gap-3 px-2 py-3 rounded-lg active:bg-dark-highlight transition-colors"
+        class="md:hidden flex items-center gap-2 px-2 py-3 rounded-lg active:bg-dark-highlight transition-colors"
         @click="handlePlay(song)"
       >
-        <div class="w-8 flex items-center justify-center flex-shrink-0">
+        <div class="w-4 flex items-center justify-center flex-shrink-0">
           <PlayingIndicator v-if="isCurrentAndPlaying(song)" size="sm" />
-          <span v-else class="text-secondary text-sm">{{ index + 1 }}</span>
+          <span v-else class="text-secondary text-xs">{{ index + 1 }}</span>
         </div>
 
         <img
@@ -118,9 +123,12 @@
         />
 
         <div class="flex-1 min-w-0">
-          <h4 class="font-semibold text-sm truncate" :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'">
+          <span
+            class="font-semibold text-sm truncate block"
+            :class="isCurrentSongInContext(song) ? 'text-tiger-500' : 'text-primary'"
+          >
             {{ song.title }}
-          </h4>
+          </span>
           <span v-if="showArtist" class="text-xs text-secondary truncate block">
             {{ song.artistName }}
           </span>
@@ -166,9 +174,11 @@ const props = withDefaults(defineProps<{
   contextId: string
   showMobileMenu?: boolean
   showPlaysOnMobile?: boolean
+  hideHeader?: boolean
 }>(), {
   showMobileMenu: true,
   showPlaysOnMobile: false,
+  hideHeader: false,
 })
 
 defineEmits<{
@@ -199,11 +209,14 @@ const isCurrentAndPlaying = (song: any) =>
 const isCurrentSong = (song: any) =>
   currentSong.value?.id === song.id
 
-// Manejar reproducción
+// Manejar reproducción: siempre empieza desde 0 (no hace toggle play/pause)
 const handlePlay = (song: any) => {
-  if (isCurrentSong(song)) {
-    togglePlay()
-  } else {
+  playSong(song, props.songs, { type: props.contextType, id: props.contextId })
+}
+
+// Al hacer click en el título: navega a la track page y además reproduce si no hay nada sonando (parado o pausado)
+const handleTitleClick = (song: any) => {
+  if (!isPlaying.value) {
     playSong(song, props.songs, { type: props.contextType, id: props.contextId })
   }
 }

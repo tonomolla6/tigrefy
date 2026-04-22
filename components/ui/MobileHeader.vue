@@ -1,5 +1,5 @@
 <template>
-  <header class="md:hidden sticky top-0 z-20 bg-dark-base/95 backdrop-blur-sm px-3 py-2">
+  <header class="md:hidden sticky top-0 z-20 bg-dark-base px-3 py-2 shadow-md shadow-black/40">
     <div class="flex items-center gap-2">
       <!-- Avatar de usuario con menú (izquierda) -->
       <button
@@ -17,6 +17,11 @@
           <h1 v-if="title" class="text-lg font-bold truncate">{{ title }}</h1>
         </slot>
       </div>
+    </div>
+
+    <!-- Contenido debajo del título (pills, filtros, etc) -->
+    <div v-if="$slots.below" class="mt-2">
+      <slot name="below" />
     </div>
   </header>
 </template>

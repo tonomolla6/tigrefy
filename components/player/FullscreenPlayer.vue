@@ -48,14 +48,6 @@
               <p class="text-xs text-white font-medium truncate px-3">{{ contextLabel }}</p>
             </div>
 
-            <button
-              @click="showQueueSheet = true"
-              class="p-1.5 text-white/70 hover:text-white transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-            </button>
           </div>
 
           <!-- Portada grande -->
@@ -85,7 +77,15 @@
           >
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
-                <h2 class="text-2xl font-bold text-white truncate">{{ currentSong.title }}</h2>
+                <NuxtLink
+                  v-if="currentSong.albumId"
+                  :to="`/album/${currentSong.albumId}`"
+                  @click="$emit('close')"
+                  class="block"
+                >
+                  <MarqueeText :text="currentSong.title" class="text-2xl font-bold text-white" />
+                </NuxtLink>
+                <MarqueeText v-else :text="currentSong.title" class="text-2xl font-bold text-white" />
                 <NuxtLink
                   :to="`/artist/${currentSong.artistId}`"
                   @click="$emit('close')"
@@ -136,7 +136,7 @@
               <button
                 @click="toggleShuffle"
                 class="p-3 transition-colors"
-                :class="isShuffled ? 'text-tiger-500' : 'text-white/60 hover:text-white'"
+                :class="isShuffled ? 'text-tiger-500' : 'text-white'"
               >
                 <IconShuffle :size="24" />
               </button>
@@ -166,58 +166,26 @@
               <button
                 @click="toggleRepeat"
                 class="p-3 transition-colors"
-                :class="repeatMode !== 'off' ? 'text-tiger-500' : 'text-white/60 hover:text-white'"
+                :class="repeatMode !== 'off' ? 'text-tiger-500' : 'text-white'"
               >
                 <IconRepeat :size="24" :mode="repeatMode" />
               </button>
             </div>
-          </div>
 
-          <!-- Botones adicionales -->
-          <div class="px-8 pb-8 pt-2">
-            <div class="flex items-center justify-around">
-              <button
-                @click="showAddToPlaylistModal = true"
-                class="flex flex-col items-center gap-1 p-3 text-white/60 hover:text-white transition-colors"
-              >
-                <IconPlus :size="22" />
-                <span class="text-[10px]">Añadir</span>
-              </button>
-
-              <button
-                v-if="currentSong.lyrics"
-                @click="showLyricsSheet = true"
-                class="flex flex-col items-center gap-1 p-3 text-white/60 hover:text-white transition-colors"
-              >
-                <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                </svg>
-                <span class="text-[10px]">Letra</span>
-              </button>
-
+            <!-- Botón de cola, esquina inferior derecha -->
+            <div class="flex justify-end mt-4">
               <button
                 @click="showQueueSheet = true"
-                class="flex flex-col items-center gap-1 p-3 text-white/60 hover:text-white transition-colors"
+                class="p-2 text-white transition-colors"
+                aria-label="Cola de reproducción"
               >
-                <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                 </svg>
-                <span class="text-[10px]">Cola</span>
               </button>
-
-              <NuxtLink
-                v-if="currentSong.albumId"
-                :to="`/album/${currentSong.albumId}`"
-                @click="$emit('close')"
-                class="flex flex-col items-center gap-1 p-3 text-white/60 hover:text-white transition-colors"
-              >
-                <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="text-[10px]">Álbum</span>
-              </NuxtLink>
             </div>
           </div>
+
         </div>
 
         <!-- Queue Sheet -->

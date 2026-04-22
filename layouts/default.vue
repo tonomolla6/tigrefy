@@ -96,11 +96,36 @@
       <MainSidebar />
 
       <!-- Main content -->
-      <main class="flex-1 min-w-0 overflow-hidden bg-dark md:rounded-lg md:mx-2 md:my-0">
-        <CustomScrollbar class="hidden md:block h-full">
+      <main class="relative flex-1 min-w-0 overflow-hidden bg-dark md:rounded-lg md:mx-2 md:my-0">
+        <!-- Sticky header visible al hacer scroll (track/album/artist/etc.) -->
+        <Transition name="fade">
+          <div
+            v-if="detailStickyHeader && detailStickyScrollTop > 300"
+            :class="[detailStickyHeader.bgClass, 'absolute top-0 left-0 right-0 z-30 px-4 md:px-6 py-2 flex items-center gap-4']"
+          >
+            <button
+              @click="detailStickyHeader.onPlay"
+              class="bg-tiger-500 hover:bg-tiger-600 hover:scale-105 text-white rounded-full p-3 transition-all shadow-lg flex-shrink-0"
+            >
+              <IconPause v-if="detailStickyHeader.playing" :size="24" />
+              <IconPlay v-else :size="24" />
+            </button>
+            <h2 class="text-lg md:text-xl font-bold truncate">{{ detailStickyHeader.title }}</h2>
+          </div>
+        </Transition>
+
+        <CustomScrollbar
+          ref="desktopScrollbar"
+          class="hidden md:block h-full"
+          @scroll="onDesktopScroll"
+        >
           <slot />
         </CustomScrollbar>
-        <div class="md:hidden h-full overflow-y-auto">
+        <div
+          ref="mobileScroll"
+          class="md:hidden h-full overflow-y-auto"
+          @scroll="onMobileScroll"
+        >
           <slot />
         </div>
       </main>
@@ -141,6 +166,23 @@ const showUserMenu = ref(false)
 const hasCurrentSong = computed(() => !!currentSong.value)
 const isHomePage = computed(() => route.path === '/')
 
+// Resetear scroll al cambiar de ruta (el scroll vive en contenedores internos, no en window)
+const desktopScrollbar = ref<{ scrollToTop: () => void } | null>(null)
+const mobileScroll = ref<HTMLElement | null>(null)
+watch(() => route.path, () => {
+  desktopScrollbar.value?.scrollToTop()
+  if (mobileScroll.value) mobileScroll.value.scrollTop = 0
+})
+
+// Sticky header para páginas de detalle (track/album/artist)
+const { state: detailStickyHeader, scrollTop: detailStickyScrollTop } = provideDetailStickyHeader()
+const onDesktopScroll = (scrollTop: number) => {
+  detailStickyScrollTop.value = scrollTop
+}
+const onMobileScroll = (e: Event) => {
+  detailStickyScrollTop.value = (e.target as HTMLElement).scrollTop
+}
+
 const userInitials = computed(() => {
   const name = user.value?.displayName || user.value?.username || ''
   return name.slice(0, 2).toUpperCase()
@@ -166,4 +208,15 @@ onMounted(async () => {
   })
 })
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
 
