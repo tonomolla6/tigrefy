@@ -98,16 +98,16 @@ const openSongActions = (song: any) => {
   showSongActions.value = true
 }
 
-// Obtener canciones favoritas con fecha de añadido
+// Obtener canciones favoritas en orden de añadido (más reciente primero)
 const likedSongs = computed(() => {
   if (!data.value.songs) return []
-  const datesMap = new Map(likedSongsWithDates.value.map(ls => [ls.songId, ls.likedAt]))
-  return data.value.songs
-    .filter((song: any) => favoriteSongs.value.includes(song.id))
-    .map((song: any) => ({
-      ...song,
-      addedAt: datesMap.get(song.id)
-    }))
+  const songsMap = new Map(data.value.songs.map((song: any) => [song.id, song]))
+  return likedSongsWithDates.value
+    .map(ls => {
+      const song = songsMap.get(ls.songId)
+      return song ? { ...song, addedAt: ls.likedAt } : null
+    })
+    .filter((s): s is any => s !== null)
 })
 
 // Check if liked-songs is the current playback context
