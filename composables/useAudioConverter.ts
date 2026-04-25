@@ -37,9 +37,15 @@ async function getFFmpeg(onProgress?: (p: ConvertProgress) => void): Promise<any
 
     const ffmpeg = new FFmpeg()
 
-    // Servimos los archivos core desde nuestro propio dominio (public/ffmpeg/)
-    // para evitar problemas de CORS / CSP con CDNs externos en algunos entornos.
-    const baseURL = '/ffmpeg'
+    // Los archivos del core (~30 MB total) los servimos desde R2 porque no
+    // caben en los assets de Cloudflare Workers (límite 25 MiB por archivo).
+    // Hace falta que la app tenga `runtimeConfig.public.r2MediaDomain`.
+    const config = useRuntimeConfig()
+    const domain = config.public.r2MediaDomain
+    if (!domain) {
+      throw new Error('R2_MEDIA_DOMAIN no configurado, no se puede cargar ffmpeg')
+    }
+    const baseURL = `https://${domain}/ffmpeg`
 
     onProgress?.({ step: 'loading-ffmpeg', percent: null, message: 'Descargando ffmpeg…' })
 
