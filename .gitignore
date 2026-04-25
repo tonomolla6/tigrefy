@@ -26,4 +26,5 @@ logs
 # Media servida desde R2 (ya no se sirve desde public/)
 public/covers/
 public/artists/
+public/audio/
 output/
