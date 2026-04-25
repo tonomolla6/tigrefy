@@ -1282,6 +1282,7 @@ interface Song {
   artistName: string
   albumId: string | null
   albumName: string | null
+  trackNumber: number | null
   cover: string | null
   isPublic: boolean
 }
@@ -1505,7 +1506,7 @@ const songsInSelectedAlbum = computed(() => {
   if (!newSong.value.albumId) return []
   return songs.value
     .filter(s => s.albumId === newSong.value.albumId)
-    .map(s => ({ id: s.id, title: s.title, trackNumber: (s as any).trackNumber ?? null }))
+    .map(s => ({ id: s.id, title: s.title, trackNumber: s.trackNumber ?? null }))
 })
 
 // Canciones del álbum de la canción que se edita (excluyéndola)
@@ -1513,7 +1514,7 @@ const songsInEditedSongAlbum = computed(() => {
   if (!editingSong.value?.albumId) return []
   return songs.value
     .filter(s => s.albumId === editingSong.value!.albumId)
-    .map(s => ({ id: s.id, title: s.title, trackNumber: (s as any).trackNumber ?? null }))
+    .map(s => ({ id: s.id, title: s.title, trackNumber: s.trackNumber ?? null }))
 })
 
 const availableSongsForEdit = computed(() => {
@@ -1727,7 +1728,7 @@ const songsInEditedAlbum = computed(() => {
   if (!editingAlbum.value) return []
   return songs.value
     .filter(s => s.albumId === editingAlbum.value!.id)
-    .map(s => ({ id: s.id, title: s.title, trackNumber: (s as any).trackNumber ?? null }))
+    .map(s => ({ id: s.id, title: s.title, trackNumber: s.trackNumber ?? null }))
 })
 
 const trackOrderChanged = computed(() => {

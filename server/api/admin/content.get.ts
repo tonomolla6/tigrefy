@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
       artistName: song.artist.name,
       albumId: song.albumId,
       albumName: song.album?.title || null,
+      trackNumber: song.trackNumber,
       cover: song.album?.cover || null,
       isPublic: song.isPublic
     })),
