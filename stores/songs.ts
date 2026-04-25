@@ -11,7 +11,6 @@ export interface Song {
   trackNumber: number | null
   duration: number
   cover: string | null
-  audioUrl: string
   lyrics: string | null
   plays: number
   releaseDate: string | null

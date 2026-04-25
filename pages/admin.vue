@@ -518,1052 +518,747 @@
     </div>
 
     <!-- Modal Crear Artista -->
-    <Teleport to="body">
-      <div v-if="showCreateArtistModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold text-white mb-4">Crear nuevo artista</h2>
-
-          <form @submit.prevent="createArtist" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Nombre *</label>
-              <input
-                v-model="newArtist.name"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Nombre del artista"
-                required
-              />
-            </div>
-
-            <div>
-              <FileUpload
-                ref="artistImageUpload"
-                v-model="newArtist.image"
-                type="artist"
-                label="Imagen del artista"
-                placeholder="/artists/nombre.jpg"
-                allow-manual-url
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Biografía</label>
-              <textarea
-                v-model="newArtist.bio"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-24 resize-none"
-                placeholder="Descripción del artista..."
-              ></textarea>
-            </div>
-
-            <div v-if="createError" class="text-red-400 text-sm">
-              {{ createError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showCreateArtistModal = false"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="isCreating"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
-              >
-                <span v-if="isCreating">Creando...</span>
-                <span v-else>Crear artista</span>
-              </button>
-            </div>
-          </form>
-        </div>
+    <AdminModal
+      v-model:open="showCreateArtistModal"
+      title="Crear nuevo artista"
+      size="md"
+      :loading="isCreating"
+      :error="createError"
+      submit-label="Crear artista"
+      @submit="createArtist"
+    >
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Nombre <span class="text-red-400">*</span></label>
+        <input
+          v-model="newArtist.name"
+          type="text"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+          placeholder="Nombre del artista"
+          required
+        />
       </div>
-    </Teleport>
+
+      <FileUpload
+        ref="artistImageUpload"
+        v-model="newArtist.image"
+        type="artist"
+        label="Imagen del artista"
+      />
+
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Biografía</label>
+        <textarea
+          v-model="newArtist.bio"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-28 resize-none"
+          placeholder="Descripción del artista..."
+        ></textarea>
+      </div>
+    </AdminModal>
 
     <!-- Modal Editar Artista -->
-    <Teleport to="body">
-      <div v-if="showEditArtistModal && editingArtist" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold text-white mb-4">Editar artista</h2>
-
-          <form @submit.prevent="saveArtistChanges" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Nombre *</label>
-              <input
-                v-model="editArtistForm.name"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Nombre del artista"
-                required
-              />
-            </div>
-
-            <div>
-              <FileUpload
-                ref="editArtistImageUpload"
-                v-model="editArtistForm.image"
-                type="artist"
-                label="Imagen del artista"
-                placeholder="/artists/nombre.jpg"
-                allow-manual-url
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Biografía</label>
-              <textarea
-                v-model="editArtistForm.bio"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-24 resize-none"
-                placeholder="Descripción del artista..."
-              ></textarea>
-            </div>
-
-            <div v-if="editArtistError" class="text-red-400 text-sm">
-              {{ editArtistError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="closeEditArtistModal"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="isEditingArtist"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
-              >
-                <span v-if="isEditingArtist">Guardando...</span>
-                <span v-else>Guardar cambios</span>
-              </button>
-            </div>
-          </form>
-        </div>
+    <AdminModal
+      :open="showEditArtistModal && !!editingArtist"
+      @update:open="(v) => !v && closeEditArtistModal()"
+      title="Editar artista"
+      size="md"
+      :loading="isEditingArtist"
+      :error="editArtistError"
+      submit-label="Guardar cambios"
+      @submit="saveArtistChanges"
+    >
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Nombre <span class="text-red-400">*</span></label>
+        <input
+          v-model="editArtistForm.name"
+          type="text"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+          required
+        />
       </div>
-    </Teleport>
+
+      <FileUpload
+        ref="editArtistImageUpload"
+        v-model="editArtistForm.image"
+        type="artist"
+        label="Imagen del artista"
+      />
+
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Biografía</label>
+        <textarea
+          v-model="editArtistForm.bio"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-28 resize-none"
+        ></textarea>
+      </div>
+    </AdminModal>
 
     <!-- Modal Confirmar Eliminación Artista -->
-    <Teleport to="body">
-      <div v-if="artistToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
-          <h2 class="text-xl font-bold text-white mb-2">Eliminar artista</h2>
-          <p class="text-gray-400 mb-4">
-            ¿Estás seguro de que quieres eliminar a <span class="text-white font-medium">{{ artistToDelete.name }}</span>?
-          </p>
-          <p class="text-yellow-400 text-sm mb-4">
-            Solo se puede eliminar si no tiene álbumes ni canciones asociadas.
-          </p>
-
-          <div v-if="deleteArtistError" class="text-red-400 text-sm mb-4">
-            {{ deleteArtistError }}
-          </div>
-
-          <div class="flex gap-3">
-            <button
-              @click="artistToDelete = null; deleteArtistError = ''"
-              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              @click="deleteArtist"
-              :disabled="isUpdating === artistToDelete?.id"
-              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-            >
-              <span v-if="isUpdating === artistToDelete?.id">Eliminando...</span>
-              <span v-else>Eliminar</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <AdminModal
+      :open="!!artistToDelete"
+      @update:open="(v) => !v && (artistToDelete = null, deleteArtistError = '')"
+      title="Eliminar artista"
+      size="sm"
+      :loading="isUpdating === artistToDelete?.id"
+      :error="deleteArtistError"
+      submit-label="Eliminar"
+      destructive
+      @submit="deleteArtist"
+    >
+      <p class="text-white/80">
+        ¿Eliminar a <span class="text-white font-semibold">{{ artistToDelete?.name }}</span>?
+      </p>
+      <p class="text-yellow-400 text-sm">
+        Solo se puede eliminar si no tiene álbumes ni canciones asociadas.
+      </p>
+    </AdminModal>
 
     <!-- Modal Crear Álbum -->
-    <Teleport to="body">
-      <div v-if="showCreateAlbumModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold text-white mb-4">Crear nuevo álbum</h2>
+    <AdminModal
+      v-model:open="showCreateAlbumModal"
+      title="Crear nuevo álbum"
+      size="md"
+      :loading="isCreating"
+      :error="createError"
+      submit-label="Crear álbum"
+      @submit="createAlbum"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-5">
+        <FileUpload
+          ref="albumCoverUpload"
+          v-model="newAlbum.cover"
+          type="cover"
+          label="Portada"
+        />
+        <div class="space-y-5">
+          <div class="space-y-1">
+            <label class="block text-sm text-white/70">Título <span class="text-red-400">*</span></label>
+            <input
+              v-model="newAlbum.title"
+              type="text"
+              class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+              required
+            />
+          </div>
 
-          <form @submit.prevent="createAlbum" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Título *</label>
-              <input
-                v-model="newAlbum.title"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Título del álbum"
-                required
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Artista *</label>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="block text-sm text-white/70">Artista <span class="text-red-400">*</span></label>
               <select
                 v-model="newAlbum.artistId"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
                 required
               >
-                <option value="" disabled>Selecciona un artista</option>
-                <option v-for="artist in artistsList" :key="artist.id" :value="artist.id">
-                  {{ artist.name }}
-                </option>
+                <option value="" disabled>—</option>
+                <option v-for="artist in artistsList" :key="artist.id" :value="artist.id">{{ artist.name }}</option>
               </select>
             </div>
-
-            <div>
-              <FileUpload
-                ref="albumCoverUpload"
-                v-model="newAlbum.cover"
-                type="cover"
-                label="Portada del álbum"
-                placeholder="/covers/nombre-album.jpg"
-                allow-manual-url
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Fecha de lanzamiento</label>
+            <div class="space-y-1">
+              <label class="block text-sm text-white/70">Fecha de lanzamiento</label>
               <input
                 v-model="newAlbum.releaseDate"
                 type="date"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
               />
             </div>
+          </div>
 
-            <div>
-              <label class="flex items-center gap-2 text-sm text-gray-400">
-                <input
-                  v-model="newAlbum.isPublic"
-                  type="checkbox"
-                  class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
-                />
-                Visible para todos (público)
-              </label>
-            </div>
-
-            <div v-if="createError" class="text-red-400 text-sm">
-              {{ createError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showCreateAlbumModal = false"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="isCreating"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
-              >
-                <span v-if="isCreating">Creando...</span>
-                <span v-else>Crear álbum</span>
-              </button>
-            </div>
-          </form>
+          <label class="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer select-none">
+            <input
+              v-model="newAlbum.isPublic"
+              type="checkbox"
+              class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+            />
+            Visible para todos (público)
+          </label>
         </div>
       </div>
-    </Teleport>
+    </AdminModal>
 
     <!-- Modal Crear Canción -->
-    <Teleport to="body">
-      <div v-if="showCreateSongModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold text-white mb-4">Crear nueva canción</h2>
+    <AdminModal
+      v-model:open="showCreateSongModal"
+      title="Crear nueva canción"
+      subtitle="Sube el MP3 y rellena los datos. La duración se detecta sola."
+      size="lg"
+      :loading="isCreating"
+      :error="createError"
+      submit-label="Crear canción"
+      @submit="createSong"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Columna izquierda: metadatos básicos -->
+        <div class="space-y-5">
+          <div class="space-y-1">
+            <label class="block text-sm text-white/70">Título <span class="text-red-400">*</span></label>
+            <input
+              v-model="newSong.title"
+              type="text"
+              class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+              placeholder="Título de la canción"
+              required
+            />
+          </div>
 
-          <form @submit.prevent="createSong" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Título *</label>
-              <input
-                v-model="newSong.title"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Título de la canción"
-                required
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Artista *</label>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="block text-sm text-white/70">Artista <span class="text-red-400">*</span></label>
               <select
                 v-model="newSong.artistId"
                 @change="onSongArtistChange"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
                 required
               >
-                <option value="" disabled>Selecciona un artista</option>
+                <option value="" disabled>—</option>
                 <option v-for="artist in artistsList" :key="artist.id" :value="artist.id">
                   {{ artist.name }}
                 </option>
               </select>
             </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Álbum *</label>
+            <div class="space-y-1">
+              <label class="block text-sm text-white/70">Álbum <span class="text-red-400">*</span></label>
               <select
                 v-model="newSong.albumId"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 disabled:opacity-60"
                 :disabled="!newSong.artistId"
                 required
               >
-                <option value="" disabled>{{ newSong.artistId ? 'Selecciona un álbum' : 'Primero selecciona un artista' }}</option>
+                <option value="" disabled>{{ newSong.artistId ? '—' : '↑ Artista' }}</option>
                 <option v-for="album in filteredAlbumsForSong" :key="album.id" :value="album.id">
                   {{ album.title }}
                 </option>
               </select>
             </div>
+          </div>
 
-            <div>
-              <FileUpload
-                ref="songAudioUpload"
-                v-model="newSong.audioUrl"
-                type="audio"
-                label="Archivo de audio *"
-                placeholder="/audio/nombre-cancion.mp3"
-                allow-manual-url
-                @duration-detected="newSong.duration = $event"
-              />
-            </div>
+          <FileUpload
+            ref="songAudioUpload"
+            model-value=""
+            type="audio"
+            label="Archivo de audio *"
+            @duration-detected="newSong.duration = $event"
+          />
 
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm text-gray-400 mb-1">Número de pista</label>
-                <input
-                  v-model.number="newSong.trackNumber"
-                  type="number"
-                  min="1"
-                  class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                  placeholder="Auto"
-                />
-              </div>
-              <div>
-                <label class="block text-sm text-gray-400 mb-1">Duración (seg)</label>
-                <input
-                  v-model.number="newSong.duration"
-                  type="number"
-                  min="0"
-                  class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                  placeholder="0"
-                />
-              </div>
-            </div>
+          <label class="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer select-none">
+            <input
+              v-model="newSong.isPublic"
+              type="checkbox"
+              class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+            />
+            Visible para todos (público)
+          </label>
+        </div>
 
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Letra</label>
-              <textarea
-                v-model="newSong.lyrics"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-24 resize-none"
-                placeholder="Letra de la canción..."
-              ></textarea>
-            </div>
+        <!-- Columna derecha: orden + letra -->
+        <div class="space-y-5">
+          <TrackPositionPicker
+            v-if="newSong.albumId"
+            v-model="newSong.trackNumber"
+            :album-songs="songsInSelectedAlbum"
+          />
+          <div v-else class="text-sm text-white/40 bg-dark-hover rounded-lg p-3">
+            Selecciona un álbum para elegir el orden
+          </div>
 
-            <div>
-              <label class="flex items-center gap-2 text-sm text-gray-400">
-                <input
-                  v-model="newSong.isPublic"
-                  type="checkbox"
-                  class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
-                />
-                Visible para todos (público)
-              </label>
-            </div>
-
-            <div v-if="createError" class="text-red-400 text-sm">
-              {{ createError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showCreateSongModal = false"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="isCreating"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
-              >
-                <span v-if="isCreating">Creando...</span>
-                <span v-else>Crear canción</span>
-              </button>
-            </div>
-          </form>
+          <div class="space-y-1">
+            <label class="block text-sm text-white/70">Letra</label>
+            <LyricsTextarea v-model="newSong.lyrics" :min-lines="10" />
+          </div>
         </div>
       </div>
-    </Teleport>
+    </AdminModal>
 
     <!-- Modal Editar Álbum -->
-    <Teleport to="body">
-      <div v-if="showEditAlbumModal && editingAlbum" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold text-white mb-4">Editar álbum</h2>
-
-          <form @submit.prevent="saveAlbumChanges" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Título *</label>
-              <input
-                v-model="editAlbumForm.title"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Título del álbum"
-                required
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Artista *</label>
-              <select
-                v-model="editAlbumForm.artistId"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                required
-              >
-                <option v-for="artist in artistsList" :key="artist.id" :value="artist.id">
-                  {{ artist.name }}
-                </option>
-              </select>
-            </div>
-
-            <div>
-              <FileUpload
-                ref="editAlbumCoverUpload"
-                v-model="editAlbumForm.cover"
-                type="cover"
-                label="Portada del álbum"
-                placeholder="/covers/nombre-album.jpg"
-                allow-manual-url
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Fecha de lanzamiento</label>
-              <input
-                v-model="editAlbumForm.releaseDate"
-                type="date"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-              />
-            </div>
-
-            <div>
-              <label class="flex items-center gap-2 text-sm text-gray-400">
+    <AdminModal
+      :open="showEditAlbumModal && !!editingAlbum"
+      @update:open="(v) => !v && closeEditAlbumModal()"
+      title="Editar álbum"
+      size="lg"
+      :loading="isEditingAlbum"
+      :error="editAlbumError"
+      submit-label="Guardar cambios"
+      @submit="saveAlbumChanges"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Columna izquierda: metadatos -->
+        <div class="space-y-5">
+          <div class="grid grid-cols-[200px_1fr] gap-4">
+            <FileUpload
+              ref="editAlbumCoverUpload"
+              v-model="editAlbumForm.cover"
+              type="cover"
+              label="Portada"
+            />
+            <div class="space-y-3">
+              <div class="space-y-1">
+                <label class="block text-sm text-white/70">Título <span class="text-red-400">*</span></label>
                 <input
-                  v-model="editAlbumForm.isPublic"
-                  type="checkbox"
-                  class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+                  v-model="editAlbumForm.title"
+                  type="text"
+                  class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                  required
                 />
-                Visible para todos (público)
-              </label>
+              </div>
+              <div class="space-y-1">
+                <label class="block text-sm text-white/70">Fecha</label>
+                <input
+                  v-model="editAlbumForm.releaseDate"
+                  type="date"
+                  class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+                />
+              </div>
             </div>
+          </div>
 
-            <div v-if="editAlbumError" class="text-red-400 text-sm">
-              {{ editAlbumError }}
-            </div>
+          <div class="space-y-1">
+            <label class="block text-sm text-white/70">Artista <span class="text-red-400">*</span></label>
+            <select
+              v-model="editAlbumForm.artistId"
+              class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+              required
+            >
+              <option v-for="artist in artistsList" :key="artist.id" :value="artist.id">{{ artist.name }}</option>
+            </select>
+          </div>
 
-            <div class="flex gap-3 pt-2">
+          <label class="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer select-none">
+            <input
+              v-model="editAlbumForm.isPublic"
+              type="checkbox"
+              class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+            />
+            Visible para todos (público)
+          </label>
+        </div>
+
+        <!-- Columna derecha: orden de canciones -->
+        <div v-if="songsInEditedAlbum.length > 0" class="space-y-1.5">
+          <label class="block text-sm text-white/70">
+            Orden de canciones <span class="text-white/40">({{ songsInEditedAlbum.length }})</span>
+          </label>
+          <div class="bg-dark-hover rounded-lg divide-y divide-white/5">
+            <div
+              v-for="(song, idx) in editAlbumSongOrder"
+              :key="song.id"
+              class="flex items-center gap-2 px-3 py-2.5"
+            >
+              <span class="text-tiger-400 text-xs font-bold w-7 text-right tabular-nums">#{{ idx + 1 }}</span>
+              <span class="text-sm text-white/90 truncate flex-1 min-w-0">{{ song.title }}</span>
               <button
                 type="button"
-                @click="closeEditAlbumModal"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
+                :disabled="idx === 0"
+                @click="moveSongInAlbum(idx, idx - 1)"
+                class="w-7 h-7 rounded text-white/60 hover:text-white hover:bg-white/10 flex items-center justify-center disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                aria-label="Subir"
               >
-                Cancelar
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
+                </svg>
               </button>
               <button
-                type="submit"
-                :disabled="isEditingAlbum"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
+                type="button"
+                :disabled="idx === editAlbumSongOrder.length - 1"
+                @click="moveSongInAlbum(idx, idx + 1)"
+                class="w-7 h-7 rounded text-white/60 hover:text-white hover:bg-white/10 flex items-center justify-center disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                aria-label="Bajar"
               >
-                <span v-if="isEditingAlbum">Guardando...</span>
-                <span v-else>Guardar cambios</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
             </div>
-          </form>
+          </div>
+          <p v-if="trackOrderChanged" class="text-xs text-tiger-400 px-1">Los cambios de orden se guardarán al pulsar Guardar</p>
+        </div>
+        <div v-else class="text-sm text-white/40 bg-dark-hover rounded-lg p-3">
+          Este álbum no tiene canciones aún
         </div>
       </div>
-    </Teleport>
+    </AdminModal>
 
     <!-- Modal Confirmar Eliminación Álbum -->
-    <Teleport to="body">
-      <div v-if="albumToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
-          <h2 class="text-xl font-bold text-white mb-2">Eliminar álbum</h2>
-          <p class="text-gray-400 mb-4">
-            ¿Estás seguro de que quieres eliminar <span class="text-white font-medium">{{ albumToDelete.title }}</span>?
-          </p>
-          <p class="text-yellow-400 text-sm mb-4">
-            Solo se puede eliminar si no tiene canciones asociadas.
-          </p>
-
-          <div v-if="deleteAlbumError" class="text-red-400 text-sm mb-4">
-            {{ deleteAlbumError }}
-          </div>
-
-          <div class="flex gap-3">
-            <button
-              @click="albumToDelete = null; deleteAlbumError = ''"
-              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              @click="deleteAlbum"
-              :disabled="isUpdating === albumToDelete?.id"
-              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-            >
-              <span v-if="isUpdating === albumToDelete?.id">Eliminando...</span>
-              <span v-else>Eliminar</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <AdminModal
+      :open="!!albumToDelete"
+      @update:open="(v) => !v && (albumToDelete = null, deleteAlbumError = '')"
+      title="Eliminar álbum"
+      size="sm"
+      :loading="isUpdating === albumToDelete?.id"
+      :error="deleteAlbumError"
+      submit-label="Eliminar"
+      destructive
+      @submit="deleteAlbum"
+    >
+      <p class="text-white/80">
+        ¿Eliminar <span class="text-white font-semibold">{{ albumToDelete?.title }}</span>?
+      </p>
+      <p class="text-yellow-400 text-sm">Solo se puede eliminar si no tiene canciones asociadas.</p>
+    </AdminModal>
 
     <!-- Modal Editar Canción -->
-    <Teleport to="body">
-      <div v-if="showEditSongModal && editingSong" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold text-white mb-4">Editar canción</h2>
+    <AdminModal
+      :open="showEditSongModal && !!editingSong"
+      @update:open="(v) => !v && closeEditSongModal()"
+      title="Editar canción"
+      size="lg"
+      :loading="isEditingSong"
+      :error="editSongError"
+      submit-label="Guardar cambios"
+      @submit="saveSongChanges"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="space-y-5">
+          <div class="space-y-1">
+            <label class="block text-sm text-white/70">Título <span class="text-red-400">*</span></label>
+            <input
+              v-model="editSongForm.title"
+              type="text"
+              class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+              required
+            />
+          </div>
 
-          <form @submit.prevent="saveSongChanges" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Título *</label>
-              <input
-                v-model="editSongForm.title"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Título de la canción"
-                required
-              />
-            </div>
+          <FileUpload
+            ref="editSongAudioUpload"
+            model-value=""
+            type="audio"
+            label="Reemplazar audio (opcional)"
+            @duration-detected="editSongForm.duration = $event"
+          />
 
-            <div>
-              <FileUpload
-                ref="editSongAudioUpload"
-                v-model="editSongForm.audioUrl"
-                type="audio"
-                label="Archivo de audio"
-                placeholder="/audio/nombre-cancion.mp3"
-                allow-manual-url
-                @duration-detected="editSongForm.duration = $event"
-              />
-            </div>
+          <label class="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer select-none">
+            <input
+              v-model="editSongForm.isPublic"
+              type="checkbox"
+              class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+            />
+            Visible para todos (público)
+          </label>
+        </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm text-gray-400 mb-1">Número de pista</label>
-                <input
-                  v-model.number="editSongForm.trackNumber"
-                  type="number"
-                  min="1"
-                  class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                />
-              </div>
-              <div>
-                <label class="block text-sm text-gray-400 mb-1">Duración (seg)</label>
-                <input
-                  v-model.number="editSongForm.duration"
-                  type="number"
-                  min="0"
-                  class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                />
-              </div>
-            </div>
+        <div class="space-y-5">
+          <TrackPositionPicker
+            v-if="editingSong"
+            v-model="editSongForm.trackNumber"
+            :album-songs="songsInEditedSongAlbum"
+            :exclude-song-id="editingSong.id"
+          />
 
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Letra</label>
-              <textarea
-                v-model="editSongForm.lyrics"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-24 resize-none"
-                placeholder="Letra de la canción..."
-              ></textarea>
-            </div>
-
-            <div>
-              <label class="flex items-center gap-2 text-sm text-gray-400">
-                <input
-                  v-model="editSongForm.isPublic"
-                  type="checkbox"
-                  class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
-                />
-                Visible para todos (público)
-              </label>
-            </div>
-
-            <div v-if="editSongError" class="text-red-400 text-sm">
-              {{ editSongError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="closeEditSongModal"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="isEditingSong"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
-              >
-                <span v-if="isEditingSong">Guardando...</span>
-                <span v-else>Guardar cambios</span>
-              </button>
-            </div>
-          </form>
+          <div class="space-y-1">
+            <label class="block text-sm text-white/70">Letra</label>
+            <LyricsTextarea v-model="editSongForm.lyrics" :min-lines="10" />
+          </div>
         </div>
       </div>
-    </Teleport>
+    </AdminModal>
 
     <!-- Modal Confirmar Eliminación Canción -->
-    <Teleport to="body">
-      <div v-if="songToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
-          <h2 class="text-xl font-bold text-white mb-2">Eliminar canción</h2>
-          <p class="text-gray-400 mb-4">
-            ¿Estás seguro de que quieres eliminar <span class="text-white font-medium">{{ songToDelete.title }}</span>?
-          </p>
-          <p class="text-yellow-400 text-sm mb-4">
-            Esta acción también eliminará la canción de todas las playlists donde esté incluida.
-          </p>
-
-          <div v-if="deleteSongError" class="text-red-400 text-sm mb-4">
-            {{ deleteSongError }}
-          </div>
-
-          <div class="flex gap-3">
-            <button
-              @click="songToDelete = null; deleteSongError = ''"
-              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              @click="deleteSong"
-              :disabled="isUpdating === songToDelete?.id"
-              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-            >
-              <span v-if="isUpdating === songToDelete?.id">Eliminando...</span>
-              <span v-else>Eliminar</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <AdminModal
+      :open="!!songToDelete"
+      @update:open="(v) => !v && (songToDelete = null, deleteSongError = '')"
+      title="Eliminar canción"
+      size="sm"
+      :loading="isUpdating === songToDelete?.id"
+      :error="deleteSongError"
+      submit-label="Eliminar"
+      destructive
+      @submit="deleteSong"
+    >
+      <p class="text-white/80">
+        ¿Eliminar <span class="text-white font-semibold">{{ songToDelete?.title }}</span>?
+      </p>
+      <p class="text-yellow-400 text-sm">
+        Esta acción también eliminará la canción de todas las playlists donde esté incluida.
+      </p>
+    </AdminModal>
 
     <!-- Modal Crear Playlist -->
-    <Teleport to="body">
-      <div v-if="showCreatePlaylistModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold text-white mb-4">Crear nueva playlist</h2>
+    <AdminModal
+      v-model:open="showCreatePlaylistModal"
+      title="Crear nueva playlist"
+      size="md"
+      :loading="isCreating"
+      :error="createError"
+      submit-label="Crear playlist"
+      @submit="createPlaylist"
+    >
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Nombre <span class="text-red-400">*</span></label>
+        <input
+          v-model="newPlaylist.name"
+          type="text"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+          required
+        />
+      </div>
 
-          <form @submit.prevent="createPlaylist" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Nombre *</label>
-              <input
-                v-model="newPlaylist.name"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Nombre de la playlist"
-                required
-              />
-            </div>
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Descripción</label>
+        <textarea
+          v-model="newPlaylist.description"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-28 resize-none"
+        ></textarea>
+      </div>
 
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Descripción</label>
-              <textarea
-                v-model="newPlaylist.description"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-24 resize-none"
-                placeholder="Descripción de la playlist..."
-              ></textarea>
-            </div>
+      <FileUpload
+        ref="playlistCoverUpload"
+        v-model="newPlaylist.cover"
+        type="cover"
+        label="Portada de la playlist"
+      />
 
-            <div>
-              <FileUpload
-                ref="playlistCoverUpload"
-                v-model="newPlaylist.cover"
-                type="cover"
-                label="Portada de la playlist"
-                placeholder="/covers/nombre-playlist.jpg"
-                allow-manual-url
-              />
-            </div>
+      <label class="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer select-none">
+        <input
+          v-model="newPlaylist.isPublic"
+          type="checkbox"
+          class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+        />
+        Visible para todos (público)
+      </label>
 
-            <div>
-              <label class="flex items-center gap-2 text-sm text-gray-400">
-                <input
-                  v-model="newPlaylist.isPublic"
-                  type="checkbox"
-                  class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
-                />
-                Visible para todos (público)
-              </label>
+      <div class="space-y-1.5">
+        <label class="block text-sm text-white/70">
+          Canciones <span class="text-white/40">({{ newPlaylistSongIds.length }} seleccionadas)</span>
+        </label>
+        <div class="bg-dark-hover rounded-lg max-h-48 overflow-y-auto">
+          <div
+            v-for="song in songs"
+            :key="song.id"
+            @click="togglePlaylistSong(song.id)"
+            class="flex items-center gap-3 p-2 hover:bg-white/5 cursor-pointer transition-colors"
+            :class="{ 'bg-tiger-500/15': newPlaylistSongIds.includes(song.id) }"
+          >
+            <input
+              type="checkbox"
+              :checked="newPlaylistSongIds.includes(song.id)"
+              class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
+              @click.stop
+              @change="togglePlaylistSong(song.id)"
+            />
+            <SecureImage :src="song.cover" :alt="song.title" class="w-8 h-8 rounded" />
+            <div class="min-w-0 flex-1">
+              <p class="text-white text-sm truncate">{{ song.title }}</p>
+              <p class="text-white/50 text-xs truncate">{{ song.artistName }}</p>
             </div>
-
-            <!-- Selector de canciones -->
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Canciones (opcional)</label>
-              <div class="bg-dark-hover rounded-lg max-h-48 overflow-y-auto">
-                <div
-                  v-for="song in songs"
-                  :key="song.id"
-                  @click="togglePlaylistSong(song.id)"
-                  class="flex items-center gap-3 p-2 hover:bg-gray-700 cursor-pointer transition-colors"
-                  :class="{ 'bg-tiger-500/20': newPlaylistSongIds.includes(song.id) }"
-                >
-                  <input
-                    type="checkbox"
-                    :checked="newPlaylistSongIds.includes(song.id)"
-                    class="w-4 h-4 rounded bg-dark-hover border-gray-600 text-tiger-500 focus:ring-tiger-500"
-                    @click.stop
-                    @change="togglePlaylistSong(song.id)"
-                  />
-                  <SecureImage
-                    :src="song.cover"
-                    :alt="song.title"
-                    class="w-8 h-8 rounded"
-                  />
-                  <div class="min-w-0 flex-1">
-                    <p class="text-white text-sm truncate">{{ song.title }}</p>
-                    <p class="text-gray-400 text-xs truncate">{{ song.artistName }}</p>
-                  </div>
-                </div>
-                <p v-if="songs.length === 0" class="text-gray-500 text-sm p-3 text-center">No hay canciones disponibles</p>
-              </div>
-              <p class="text-xs text-gray-500 mt-1">{{ newPlaylistSongIds.length }} canciones seleccionadas</p>
-            </div>
-
-            <div v-if="createError" class="text-red-400 text-sm">
-              {{ createError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showCreatePlaylistModal = false"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="isCreating"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
-              >
-                <span v-if="isCreating">Creando...</span>
-                <span v-else>Crear playlist</span>
-              </button>
-            </div>
-          </form>
+          </div>
+          <p v-if="songs.length === 0" class="text-white/40 text-sm p-3 text-center">No hay canciones disponibles</p>
         </div>
       </div>
-    </Teleport>
+    </AdminModal>
 
     <!-- Modal Editar Playlist -->
-    <Teleport to="body">
-      <div v-if="showEditPlaylistModal && editingPlaylist" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-          <h2 class="text-xl font-bold text-white mb-4">Editar playlist: {{ editingPlaylist.name }}</h2>
-
-          <div class="space-y-4">
-            <!-- Canciones actuales -->
-            <div>
-              <label class="block text-sm text-gray-400 mb-2">Canciones en la playlist ({{ editPlaylistSongIds.length }})</label>
-              <div class="bg-dark-hover rounded-lg max-h-40 overflow-y-auto">
-                <div
-                  v-for="songId in editPlaylistSongIds"
-                  :key="songId"
-                  class="flex items-center gap-3 p-2 hover:bg-gray-700 transition-colors"
-                >
-                  <SecureImage
-                    :src="getSongById(songId)?.cover"
-                    :alt="getSongById(songId)?.title"
-                    class="w-8 h-8 rounded"
-                  />
-                  <div class="min-w-0 flex-1">
-                    <p class="text-white text-sm truncate">{{ getSongById(songId)?.title || 'Canción desconocida' }}</p>
-                    <p class="text-gray-400 text-xs truncate">{{ getSongById(songId)?.artistName || '' }}</p>
-                  </div>
-                  <button
-                    @click="removeFromEditPlaylist(songId)"
-                    class="p-1 text-red-400 hover:text-red-300 transition-colors"
-                    title="Quitar de la playlist"
-                  >
-                    ✕
-                  </button>
-                </div>
-                <p v-if="editPlaylistSongIds.length === 0" class="text-gray-500 text-sm p-3 text-center">Sin canciones</p>
+    <AdminModal
+      :open="showEditPlaylistModal && !!editingPlaylist"
+      @update:open="(v) => !v && closeEditPlaylistModal()"
+      :title="`Editar: ${editingPlaylist?.name || ''}`"
+      size="xl"
+      :error="editPlaylistError"
+      hide-footer
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Columna izquierda: canciones actuales -->
+        <div class="space-y-1.5">
+          <label class="block text-sm text-white/70">
+            En la playlist <span class="text-white/40">({{ editPlaylistSongIds.length }})</span>
+          </label>
+          <div class="bg-dark-hover rounded-lg max-h-[60vh] overflow-y-auto">
+            <div
+              v-for="songId in editPlaylistSongIds"
+              :key="songId"
+              class="flex items-center gap-3 p-2.5 hover:bg-white/5 transition-colors"
+            >
+              <SecureImage
+                :src="getSongById(songId)?.cover"
+                :alt="getSongById(songId)?.title"
+                class="w-9 h-9 rounded"
+              />
+              <div class="min-w-0 flex-1">
+                <p class="text-white text-sm truncate">{{ getSongById(songId)?.title || 'Canción desconocida' }}</p>
+                <p class="text-white/50 text-xs truncate">{{ getSongById(songId)?.artistName || '' }}</p>
               </div>
-            </div>
-
-            <!-- Añadir canciones -->
-            <div>
-              <label class="block text-sm text-gray-400 mb-2">Añadir canciones</label>
-              <div class="bg-dark-hover rounded-lg max-h-48 overflow-y-auto">
-                <div
-                  v-for="song in availableSongsForEdit"
-                  :key="song.id"
-                  @click="addToEditPlaylist(song.id)"
-                  class="flex items-center gap-3 p-2 hover:bg-gray-700 cursor-pointer transition-colors"
-                >
-                  <SecureImage
-                    :src="song.cover"
-                    :alt="song.title"
-                    class="w-8 h-8 rounded"
-                  />
-                  <div class="min-w-0 flex-1">
-                    <p class="text-white text-sm truncate">{{ song.title }}</p>
-                    <p class="text-gray-400 text-xs truncate">{{ song.artistName }}</p>
-                  </div>
-                  <span class="text-tiger-400 text-lg">+</span>
-                </div>
-                <p v-if="availableSongsForEdit.length === 0" class="text-gray-500 text-sm p-3 text-center">Todas las canciones ya están en la playlist</p>
-              </div>
-            </div>
-
-            <div v-if="editPlaylistError" class="text-red-400 text-sm">
-              {{ editPlaylistError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
               <button
-                type="button"
-                @click="closeEditPlaylistModal"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cerrar
-              </button>
+                @click="removeFromEditPlaylist(songId)"
+                class="w-8 h-8 rounded-full text-red-400 hover:text-red-300 hover:bg-white/5 transition-colors flex items-center justify-center flex-shrink-0"
+                title="Quitar"
+              >✕</button>
             </div>
+            <p v-if="editPlaylistSongIds.length === 0" class="text-white/40 text-sm p-4 text-center">Sin canciones</p>
+          </div>
+        </div>
+
+        <!-- Columna derecha: añadir canciones -->
+        <div class="space-y-1.5">
+          <label class="block text-sm text-white/70">
+            Añadir canciones <span class="text-white/40">({{ availableSongsForEdit.length }})</span>
+          </label>
+          <div class="bg-dark-hover rounded-lg max-h-[60vh] overflow-y-auto">
+            <div
+              v-for="song in availableSongsForEdit"
+              :key="song.id"
+              @click="addToEditPlaylist(song.id)"
+              class="flex items-center gap-3 p-2.5 hover:bg-white/5 cursor-pointer transition-colors"
+            >
+              <SecureImage :src="song.cover" :alt="song.title" class="w-9 h-9 rounded" />
+              <div class="min-w-0 flex-1">
+                <p class="text-white text-sm truncate">{{ song.title }}</p>
+                <p class="text-white/50 text-xs truncate">{{ song.artistName }}</p>
+              </div>
+              <span class="text-tiger-400 text-lg leading-none flex-shrink-0">+</span>
+            </div>
+            <p v-if="availableSongsForEdit.length === 0" class="text-white/40 text-sm p-4 text-center">Todas las canciones ya están en la playlist</p>
           </div>
         </div>
       </div>
-    </Teleport>
+    </AdminModal>
 
     <!-- Modal Confirmar Eliminación Playlist -->
-    <Teleport to="body">
-      <div v-if="playlistToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
-          <h2 class="text-xl font-bold text-white mb-2">Eliminar playlist</h2>
-          <p class="text-gray-400 mb-4">
-            ¿Estás seguro de que quieres eliminar <span class="text-white font-medium">{{ playlistToDelete.name }}</span>?
-          </p>
-
-          <div v-if="deletePlaylistError" class="text-red-400 text-sm mb-4">
-            {{ deletePlaylistError }}
-          </div>
-
-          <div class="flex gap-3">
-            <button
-              @click="playlistToDelete = null; deletePlaylistError = ''"
-              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              @click="deletePlaylist"
-              :disabled="isUpdating === playlistToDelete?.id"
-              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-            >
-              <span v-if="isUpdating === playlistToDelete?.id">Eliminando...</span>
-              <span v-else>Eliminar</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <AdminModal
+      :open="!!playlistToDelete"
+      @update:open="(v) => !v && (playlistToDelete = null, deletePlaylistError = '')"
+      title="Eliminar playlist"
+      size="sm"
+      :loading="isUpdating === playlistToDelete?.id"
+      :error="deletePlaylistError"
+      submit-label="Eliminar"
+      destructive
+      @submit="deletePlaylist"
+    >
+      <p class="text-white/80">
+        ¿Eliminar <span class="text-white font-semibold">{{ playlistToDelete?.name }}</span>?
+      </p>
+    </AdminModal>
 
     <!-- Modal Crear Usuario -->
-    <Teleport to="body">
-      <div v-if="showCreateUserModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
-          <h2 class="text-xl font-bold text-white mb-4">Crear nuevo usuario</h2>
-
-          <form @submit.prevent="createUser" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Username</label>
-              <input
-                v-model="newUser.username"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Mínimo 3 caracteres"
-                required
-                minlength="3"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Nombre para mostrar</label>
-              <input
-                v-model="newUser.displayName"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Opcional"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Contraseña</label>
-              <input
-                v-model="newUser.password"
-                type="password"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Mínimo 6 caracteres"
-                required
-                minlength="6"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Rol</label>
-              <select
-                v-model="newUser.role"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-              >
-                <option value="guest">Guest - Solo contenido público</option>
-                <option value="user">User - Ve todo el contenido</option>
-                <option value="tigre">Tigre - Acceso completo + gestión</option>
-              </select>
-            </div>
-
-            <div v-if="createUserError" class="text-red-400 text-sm">
-              {{ createUserError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="showCreateUserModal = false"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="isCreatingUser"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
-              >
-                <span v-if="isCreatingUser">Creando...</span>
-                <span v-else>Crear usuario</span>
-              </button>
-            </div>
-          </form>
-        </div>
+    <!-- Modal Crear Usuario -->
+    <AdminModal
+      v-model:open="showCreateUserModal"
+      title="Crear nuevo usuario"
+      size="md"
+      :loading="isCreatingUser"
+      :error="createUserError"
+      submit-label="Crear usuario"
+      @submit="createUser"
+    >
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Username</label>
+        <input
+          v-model="newUser.username"
+          type="text"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+          placeholder="Mínimo 3 caracteres"
+          required
+          minlength="3"
+        />
       </div>
-    </Teleport>
 
-    <!-- Modal Confirmar Eliminación -->
-    <Teleport to="body">
-      <div v-if="userToDelete" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
-          <h2 class="text-xl font-bold text-white mb-2">Eliminar usuario</h2>
-          <p class="text-gray-400 mb-4">
-            ¿Estás seguro de que quieres eliminar a <span class="text-white font-medium">{{ userToDelete.username }}</span>? Esta acción no se puede deshacer.
-          </p>
-
-          <div class="flex gap-3">
-            <button
-              @click="userToDelete = null"
-              class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              @click="deleteUser"
-              :disabled="isUpdating === userToDelete?.id"
-              class="flex-1 px-4 py-2 rounded-full bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-            >
-              <span v-if="isUpdating === userToDelete?.id">Eliminando...</span>
-              <span v-else>Eliminar</span>
-            </button>
-          </div>
-        </div>
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Nombre para mostrar</label>
+        <input
+          v-model="newUser.displayName"
+          type="text"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+          placeholder="Opcional"
+        />
       </div>
-    </Teleport>
+
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Contraseña</label>
+        <input
+          v-model="newUser.password"
+          type="password"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+          placeholder="Mínimo 6 caracteres"
+          required
+          minlength="6"
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Rol</label>
+        <select
+          v-model="newUser.role"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+        >
+          <option value="guest">Guest — Solo contenido público</option>
+          <option value="user">User — Ve todo el contenido</option>
+          <option value="tigre">Tigre — Acceso completo + gestión</option>
+        </select>
+      </div>
+    </AdminModal>
+
+    <!-- Modal Confirmar Eliminación Usuario -->
+    <AdminModal
+      :open="!!userToDelete"
+      @update:open="(v) => !v && (userToDelete = null)"
+      title="Eliminar usuario"
+      size="sm"
+      :loading="isUpdating === userToDelete?.id"
+      submit-label="Eliminar"
+      destructive
+      @submit="deleteUser"
+    >
+      <p class="text-white/80">
+        ¿Eliminar a <span class="text-white font-semibold">{{ userToDelete?.username }}</span>?
+      </p>
+      <p class="text-yellow-400 text-sm">Esta acción no se puede deshacer.</p>
+    </AdminModal>
 
     <!-- Modal Editar Usuario -->
-    <Teleport to="body">
-      <div v-if="showEditUserModal && editingUser" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-dark-card rounded-lg p-6 w-full max-w-md">
-          <h2 class="text-xl font-bold text-white mb-4">Editar usuario</h2>
-
-          <form @submit.prevent="saveUserChanges" class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Username</label>
-              <input
-                v-model="editUserForm.username"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Mínimo 3 caracteres"
-                required
-                minlength="3"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Nombre para mostrar</label>
-              <input
-                v-model="editUserForm.displayName"
-                type="text"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Nombre visible"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Nueva contraseña <span class="text-gray-600">(dejar vacío para mantener)</span></label>
-              <input
-                v-model="editUserForm.password"
-                type="password"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                placeholder="Mínimo 6 caracteres"
-                minlength="6"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm text-gray-400 mb-1">Rol</label>
-              <select
-                v-model="editUserForm.role"
-                class="w-full bg-dark-hover text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                :disabled="editingUser.id === user?.id"
-              >
-                <option value="guest">Guest - Solo contenido público</option>
-                <option value="user">User - Ve todo el contenido</option>
-                <option value="tigre">Tigre - Acceso completo + gestión</option>
-              </select>
-              <p v-if="editingUser.id === user?.id" class="text-xs text-gray-500 mt-1">No puedes cambiar tu propio rol</p>
-            </div>
-
-            <div v-if="editUserError" class="text-red-400 text-sm">
-              {{ editUserError }}
-            </div>
-
-            <div class="flex gap-3 pt-2">
-              <button
-                type="button"
-                @click="closeEditUserModal"
-                class="flex-1 px-4 py-2 rounded-full bg-dark-hover text-white hover:bg-gray-700 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                :disabled="isEditingUser"
-                class="flex-1 px-4 py-2 rounded-full bg-tiger-500 text-black font-medium hover:bg-tiger-400 transition-colors disabled:opacity-50"
-              >
-                <span v-if="isEditingUser">Guardando...</span>
-                <span v-else>Guardar cambios</span>
-              </button>
-            </div>
-          </form>
-        </div>
+    <AdminModal
+      :open="showEditUserModal && !!editingUser"
+      @update:open="(v) => !v && closeEditUserModal()"
+      title="Editar usuario"
+      size="md"
+      :loading="isEditingUser"
+      :error="editUserError"
+      submit-label="Guardar cambios"
+      @submit="saveUserChanges"
+    >
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Username</label>
+        <input
+          v-model="editUserForm.username"
+          type="text"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+          required
+          minlength="3"
+        />
       </div>
-    </Teleport>
+
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Nombre para mostrar</label>
+        <input
+          v-model="editUserForm.displayName"
+          type="text"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">
+          Nueva contraseña <span class="text-white/40">(dejar vacío para mantener)</span>
+        </label>
+        <input
+          v-model="editUserForm.password"
+          type="password"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
+          placeholder="Mínimo 6 caracteres"
+          minlength="6"
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label class="block text-sm text-white/70">Rol</label>
+        <select
+          v-model="editUserForm.role"
+          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 disabled:opacity-60"
+          :disabled="editingUser?.id === user?.id"
+        >
+          <option value="guest">Guest — Solo contenido público</option>
+          <option value="user">User — Ve todo el contenido</option>
+          <option value="tigre">Tigre — Acceso completo + gestión</option>
+        </select>
+        <p v-if="editingUser?.id === user?.id" class="text-xs text-white/40 mt-1">No puedes cambiar tu propio rol</p>
+      </div>
+    </AdminModal>
   </div>
 </template>
 
@@ -1699,7 +1394,6 @@ const isEditingSong = ref(false)
 const editSongError = ref('')
 const editSongForm = ref({
   title: '',
-  audioUrl: '',
   trackNumber: null as number | null,
   duration: 0,
   lyrics: '',
@@ -1735,12 +1429,19 @@ const newAlbum = ref({
   isPublic: false
 })
 
-const newSong = ref({
+const newSong = ref<{
+  title: string
+  artistId: string
+  albumId: string
+  trackNumber: number | null
+  duration: number
+  lyrics: string
+  isPublic: boolean
+}>({
   title: '',
   artistId: '',
   albumId: '',
-  audioUrl: '',
-  trackNumber: null as number | null,
+  trackNumber: null,
   duration: 0,
   lyrics: '',
   isPublic: false
@@ -1797,6 +1498,22 @@ const filteredPlaylists = computed(() => {
 const filteredAlbumsForSong = computed(() => {
   if (!newSong.value.artistId) return []
   return albums.value.filter(a => a.artistId === newSong.value.artistId)
+})
+
+// Canciones del álbum seleccionado al crear (para el TrackPositionPicker)
+const songsInSelectedAlbum = computed(() => {
+  if (!newSong.value.albumId) return []
+  return songs.value
+    .filter(s => s.albumId === newSong.value.albumId)
+    .map(s => ({ id: s.id, title: s.title, trackNumber: (s as any).trackNumber ?? null }))
+})
+
+// Canciones del álbum de la canción que se edita (excluyéndola)
+const songsInEditedSongAlbum = computed(() => {
+  if (!editingSong.value?.albumId) return []
+  return songs.value
+    .filter(s => s.albumId === editingSong.value!.albumId)
+    .map(s => ({ id: s.id, title: s.title, trackNumber: (s as any).trackNumber ?? null }))
 })
 
 const availableSongsForEdit = computed(() => {
@@ -2002,6 +1719,30 @@ const deleteArtist = async () => {
   }
 }
 
+// Estado del orden de canciones (editado en local hasta guardar)
+const editAlbumSongOrder = ref<Array<{ id: string; title: string; trackNumber: number | null }>>([])
+const initialAlbumSongOrder = ref<string[]>([])  // ids en su orden original (para detectar cambios)
+
+const songsInEditedAlbum = computed(() => {
+  if (!editingAlbum.value) return []
+  return songs.value
+    .filter(s => s.albumId === editingAlbum.value!.id)
+    .map(s => ({ id: s.id, title: s.title, trackNumber: (s as any).trackNumber ?? null }))
+})
+
+const trackOrderChanged = computed(() => {
+  if (initialAlbumSongOrder.value.length !== editAlbumSongOrder.value.length) return false
+  return editAlbumSongOrder.value.some((s, i) => s.id !== initialAlbumSongOrder.value[i])
+})
+
+const moveSongInAlbum = (from: number, to: number) => {
+  if (to < 0 || to >= editAlbumSongOrder.value.length) return
+  const arr = [...editAlbumSongOrder.value]
+  const [moved] = arr.splice(from, 1)
+  arr.splice(to, 0, moved)
+  editAlbumSongOrder.value = arr
+}
+
 // Funciones para editar álbum
 const openEditAlbumModal = (album: Album) => {
   editingAlbum.value = album
@@ -2012,6 +1753,12 @@ const openEditAlbumModal = (album: Album) => {
     releaseDate: (album as any).releaseDate || '',
     isPublic: album.isPublic
   }
+  // Inicializar orden de canciones (ordenado por trackNumber)
+  const ordered = [...songsInEditedAlbum.value].sort(
+    (a, b) => (a.trackNumber || 999) - (b.trackNumber || 999)
+  )
+  editAlbumSongOrder.value = ordered
+  initialAlbumSongOrder.value = ordered.map(s => s.id)
   editAlbumError.value = ''
   showEditAlbumModal.value = true
 }
@@ -2020,6 +1767,8 @@ const closeEditAlbumModal = () => {
   showEditAlbumModal.value = false
   editingAlbum.value = null
   editAlbumForm.value = { title: '', artistId: '', cover: '', releaseDate: '', isPublic: false }
+  editAlbumSongOrder.value = []
+  initialAlbumSongOrder.value = []
   editAlbumError.value = ''
 }
 
@@ -2037,7 +1786,7 @@ const saveAlbumChanges = async () => {
       if (uploadedUrl) {
         coverUrl = uploadedUrl
       } else {
-        editAlbumError.value = 'Error al subir la portada. Sube el archivo manualmente a /public/covers/ y escribe la ruta.'
+        editAlbumError.value = 'Error al subir la portada'
         isEditingAlbum.value = false
         return
       }
@@ -2055,12 +1804,23 @@ const saveAlbumChanges = async () => {
       }
     })
 
+    // Si cambió el orden de canciones, mandar reorder
+    if (trackOrderChanged.value && editAlbumSongOrder.value.length > 0) {
+      await $fetch(`/api/admin/albums/${editingAlbum.value.id}/reorder`, {
+        method: 'POST',
+        credentials: 'include',
+        body: { songIds: editAlbumSongOrder.value.map(s => s.id) }
+      })
+      // Actualizar trackNumber en local para reflejar el nuevo orden
+      editAlbumSongOrder.value.forEach((s, i) => {
+        const idx = songs.value.findIndex(x => x.id === s.id)
+        if (idx !== -1) (songs.value[idx] as any).trackNumber = i + 1
+      })
+    }
+
     if (data.success && data.album) {
-      // Actualizar en la lista
       const idx = albums.value.findIndex(a => a.id === editingAlbum.value?.id)
-      if (idx !== -1) {
-        albums.value[idx] = data.album
-      }
+      if (idx !== -1) albums.value[idx] = data.album
       updateStats()
       closeEditAlbumModal()
     }
@@ -2109,7 +1869,6 @@ const openEditSongModal = (song: Song) => {
   editingSong.value = song
   editSongForm.value = {
     title: song.title,
-    audioUrl: (song as any).audioUrl || '',
     trackNumber: (song as any).trackNumber || null,
     duration: (song as any).duration || 0,
     lyrics: (song as any).lyrics || '',
@@ -2122,7 +1881,7 @@ const openEditSongModal = (song: Song) => {
 const closeEditSongModal = () => {
   showEditSongModal.value = false
   editingSong.value = null
-  editSongForm.value = { title: '', audioUrl: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false }
+  editSongForm.value = { title: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false }
   editSongError.value = ''
 }
 
@@ -2133,17 +1892,18 @@ const saveSongChanges = async () => {
   isEditingSong.value = true
 
   try {
-    // Subir audio si hay archivo pendiente
-    let audioUrl = editSongForm.value.audioUrl
+    // Si hay un audio nuevo pendiente, lo subimos al MISMO trackId (sustitución).
+    // Si llega, también actualizamos la duración con la del nuevo audio.
+    let newDuration: number | undefined
     if (editSongAudioUpload.value?.hasPendingFile()) {
-      const uploadedUrl = await editSongAudioUpload.value.uploadPendingFile()
-      if (uploadedUrl) {
-        audioUrl = uploadedUrl
-      } else {
-        editSongError.value = 'Error al subir el audio. Sube el archivo manualmente a /public/audio/ y escribe la ruta.'
+      const uploaded = await editSongAudioUpload.value.uploadPendingFile(editingSong.value.id)
+      if (!uploaded) {
+        editSongError.value = 'Error al subir el audio'
         isEditingSong.value = false
         return
       }
+      const uploadResponse = (editSongAudioUpload.value as any).lastUploadResponse?.()
+      newDuration = uploadResponse?.duration
     }
 
     const data = await $fetch<{ success: boolean, song: Song }>(`/api/admin/songs/${editingSong.value.id}`, {
@@ -2151,9 +1911,8 @@ const saveSongChanges = async () => {
       credentials: 'include',
       body: {
         title: editSongForm.value.title,
-        audioUrl: audioUrl || null,
         trackNumber: editSongForm.value.trackNumber || null,
-        duration: editSongForm.value.duration || 0,
+        ...(newDuration !== undefined ? { duration: newDuration } : {}),
         lyrics: editSongForm.value.lyrics || null,
         isPublic: editSongForm.value.isPublic
       }
@@ -2315,36 +2074,35 @@ const createSong = async () => {
   isCreating.value = true
 
   try {
-    // Subir audio si hay archivo pendiente
-    let audioUrl = newSong.value.audioUrl
-    if (songAudioUpload.value?.hasPendingFile()) {
-      const uploadedUrl = await songAudioUpload.value.uploadPendingFile()
-      if (uploadedUrl) {
-        audioUrl = uploadedUrl
-      } else {
-        // Si falla la subida, mostrar error específico
-        createError.value = 'Error al subir el archivo de audio. Puedes subir el archivo manualmente a /public/audio/ y escribir la ruta (ej: /audio/cancion.mp3)'
-        isCreating.value = false
-        return
-      }
-    }
-
-    if (!audioUrl) {
+    // El audio es obligatorio. Subimos el MP3, el server lo convierte a HLS
+    // y devuelve un songId que también será el id de la canción en BD.
+    if (!songAudioUpload.value?.hasPendingFile()) {
       createError.value = 'Debes seleccionar un archivo de audio'
       isCreating.value = false
       return
     }
 
+    const trackId = await songAudioUpload.value.uploadPendingFile()
+    if (!trackId) {
+      createError.value = 'Error al subir el archivo de audio'
+      isCreating.value = false
+      return
+    }
+
+    // El server calcula la duración real desde el HLS y la devuelve en el response
+    const uploadResponse = (songAudioUpload.value as any).lastUploadResponse?.()
+    const duration = uploadResponse?.duration ?? 0
+
     const data = await $fetch<{ success: boolean, song: Song }>('/api/admin/songs', {
       method: 'POST',
       credentials: 'include',
       body: {
+        id: trackId,
         title: newSong.value.title,
         artistId: newSong.value.artistId,
         albumId: newSong.value.albumId,
-        audioUrl: audioUrl,
         trackNumber: newSong.value.trackNumber || null,
-        duration: newSong.value.duration || 0,
+        duration,
         lyrics: newSong.value.lyrics || null,
         isPublic: newSong.value.isPublic
       }
@@ -2366,7 +2124,7 @@ const createSong = async () => {
         album.totalTracks++
       }
       showCreateSongModal.value = false
-      newSong.value = { title: '', artistId: '', albumId: '', audioUrl: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false }
+      newSong.value = { title: '', artistId: '', albumId: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false }
     }
   } catch (error: any) {
     createError.value = error?.data?.statusMessage || 'Error al crear canción'

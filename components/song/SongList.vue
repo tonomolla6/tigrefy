@@ -206,8 +206,13 @@ const isCurrentAndPlaying = (song: any) =>
 const isCurrentSong = (song: any) =>
   currentSong.value?.id === song.id
 
-// Manejar reproducción: siempre empieza desde 0 (no hace toggle play/pause)
+// Si es la canción actual en este contexto: toggle play/pause.
+// Si es otra (o mismo song en otro contexto): la reproduce desde el inicio.
 const handlePlay = (song: any) => {
+  if (isCurrentSongInContext(song)) {
+    togglePlay()
+    return
+  }
   playSong(song, props.songs, { type: props.contextType, id: props.contextId })
 }
 

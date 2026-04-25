@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event)
-  const { title, audioUrl, duration, trackNumber, lyrics, isPublic } = body
+  const { title, duration, trackNumber, lyrics, isPublic } = body
 
   const db = useDB()
 
@@ -42,10 +42,6 @@ export default defineEventHandler(async (event) => {
       })
     }
     updateData.title = title.trim()
-  }
-
-  if (audioUrl !== undefined) {
-    updateData.audioUrl = audioUrl || null
   }
 
   if (duration !== undefined) {

@@ -32,7 +32,6 @@ export default defineEventHandler(async (event) => {
     trackNumber: row.song.trackNumber,
     duration: row.song.duration,
     cover: row.song.album?.cover || null,
-    audioUrl: row.song.audioUrl,
     plays: row.song.plays,
     playedAt: row.playedAt
   }))

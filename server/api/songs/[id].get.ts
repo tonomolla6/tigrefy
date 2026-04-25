@@ -48,7 +48,6 @@ export default defineEventHandler(async (event) => {
     trackNumber: result.trackNumber,
     duration: result.duration,
     cover: result.album?.cover || null,
-    audioUrl: result.audioUrl,
     lyrics: result.lyrics,
     plays: result.plays,
     releaseDate: result.album?.releaseDate || null,

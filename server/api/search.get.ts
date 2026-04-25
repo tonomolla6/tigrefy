@@ -117,7 +117,6 @@ export default defineEventHandler(async (event) => {
       trackNumber: song.trackNumber,
       duration: song.duration,
       cover: song.album?.cover || null,
-      audioUrl: song.audioUrl,
       lyrics: song.lyrics,
       plays: song.plays,
       releaseDate: song.album?.releaseDate || null

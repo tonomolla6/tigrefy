@@ -32,14 +32,14 @@ export const useMediaUrl = () => {
 
   /**
    * URL del playlist HLS para un track.
-   * Apunta al endpoint del backend que reescribe el .m3u8 con segmentos firmados.
+   * Apunta al endpoint que reescribe el .m3u8 con segmentos firmados.
    */
   const getTrackPlaylistUrl = (trackId: string): string => {
     let id = trackId
     if (id.startsWith('/audio/')) {
       id = id.replace('/audio/', '').replace('.mp3', '')
     }
-    return `/api/media/track/${id}.m3u8`
+    return `/api/hls/${id}/index.m3u8`
   }
 
   return {

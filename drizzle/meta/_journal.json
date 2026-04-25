@@ -8,6 +8,13 @@
       "when": 1766478346092,
       "tag": "0000_easy_groot",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1777123699678,
+      "tag": "0001_happy_sentinels",
+      "breakpoints": true
     }
   ]
 }

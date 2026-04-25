@@ -60,5 +60,13 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'cloudflare-module'
+  },
+
+  // ffmpeg.wasm usa Web Workers que el optimizer de Vite rompe.
+  // Hay que excluirlos para que se carguen tal cual desde node_modules.
+  vite: {
+    optimizeDeps: {
+      exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
+    }
   }
 })

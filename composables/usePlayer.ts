@@ -4,6 +4,16 @@ import { formatTime } from '~/utils/formatting'
 let globalAudioElement: HTMLAudioElement | null = null
 const DEFAULT_TITLE = 'Tigrefy'
 
+/**
+ * Carga el track HLS de la canción en el elemento de audio.
+ * El playlist se sirve desde /api/hls/<songId>/index.m3u8 con segmentos firmados.
+ */
+async function loadHlsTrack(audio: HTMLAudioElement, songId: string): Promise<void> {
+  const { destroy: destroyHls, loadTrack } = useHlsPlayer()
+  destroyHls()
+  await loadTrack(audio, `/api/hls/${songId}/index.m3u8`)
+}
+
 // Variables para tracking de tiempo real de reproducción
 let accumulatedPlayTime = 0
 let lastTimeUpdate = 0
@@ -206,8 +216,13 @@ export const usePlayer = () => {
       queueIndex.value = 0
     }
 
-    globalAudioElement.src = song.audioUrl
-    globalAudioElement.load()
+    try {
+      await loadHlsTrack(globalAudioElement, song.id)
+    } catch (err) {
+      console.error('Error cargando audio:', err)
+      isPlaying.value = false
+      return
+    }
 
     try {
       await globalAudioElement.play()
@@ -442,6 +457,9 @@ export const usePlayer = () => {
       globalAudioElement.src = ''
     }
 
+    // Limpiar instancia HLS si la había
+    useHlsPlayer().destroy()
+
     currentSong.value = null
     isPlaying.value = false
     currentTime.value = 0
@@ -510,14 +528,10 @@ export const usePlayer = () => {
 
     // Cargar la canción sin reproducir
     currentSong.value = song
-    globalAudioElement.src = song.audioUrl
-    globalAudioElement.load()
 
-    // Esperar a que cargue y establecer el tiempo
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>(async (resolve) => {
       const onLoadedMetadata = () => {
         duration.value = globalAudioElement?.duration || 0
-        // Restaurar posición de tiempo
         if (lastPlayed.currentTime > 0 && lastPlayed.currentTime < duration.value) {
           globalAudioElement!.currentTime = lastPlayed.currentTime
           currentTime.value = lastPlayed.currentTime
@@ -527,6 +541,14 @@ export const usePlayer = () => {
         resolve(true)
       }
       globalAudioElement?.addEventListener('loadedmetadata', onLoadedMetadata)
+
+      try {
+        await loadHlsTrack(globalAudioElement!, song.id)
+      } catch (err) {
+        console.error('Error cargando audio (restoreLastPlayed):', err)
+        globalAudioElement?.removeEventListener('loadedmetadata', onLoadedMetadata)
+        resolve(false)
+      }
     })
   }
 

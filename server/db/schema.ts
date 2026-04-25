@@ -58,7 +58,8 @@ export const songs = sqliteTable('songs', {
   albumId: text('album_id').references(() => albums.id),
   trackNumber: integer('track_number'),
   duration: integer('duration').default(0),
-  audioUrl: text('audio_url').notNull(),
+  // Nota: el audio HLS se sirve desde R2 en tracks/<song.id>/. No hay columna
+  // separada — el ID de la canción es el ID del track.
   lyrics: text('lyrics'),
   plays: integer('plays').default(0),
   isPublic: integer('is_public', { mode: 'boolean' }).default(false)

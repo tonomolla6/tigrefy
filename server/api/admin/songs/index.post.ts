@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   await requireTigre(event)
 
   const body = await readBody(event)
-  const { title, artistId, albumId, trackNumber, duration, audioUrl, lyrics, isPublic } = body
+  const { id, title, artistId, albumId, trackNumber, duration, lyrics, isPublic } = body
 
   if (!title || title.trim().length === 0) {
     throw createError({
@@ -26,13 +26,6 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 400,
       statusMessage: 'El álbum es requerido'
-    })
-  }
-
-  if (!audioUrl || audioUrl.trim().length === 0) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'La URL del audio es requerida'
     })
   }
 
@@ -78,14 +71,15 @@ export default defineEventHandler(async (event) => {
     finalTrackNumber = existingSongs.length + 1
   }
 
-  // Crear la canción
+  // Crear la canción. Si se pasa `id` (el songId generado al subir el audio),
+  // lo usamos para que coincida con la ruta tracks/<songId>/ en R2.
   const result = await db.insert(songs).values({
+    ...(id ? { id } : {}),
     title: title.trim(),
     artistId,
     albumId,
     trackNumber: finalTrackNumber,
     duration: duration || 0,
-    audioUrl: audioUrl.trim(),
     lyrics: lyrics || null,
     plays: 0,
     isPublic: isPublic ?? false

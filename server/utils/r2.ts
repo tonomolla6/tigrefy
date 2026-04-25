@@ -1,263 +1,155 @@
 /**
- * Cliente R2 para leer objetos desde Cloudflare R2
+ * Cliente R2.
  *
- * En Cloudflare Pages/Workers, usamos el binding nativo de R2
- * En desarrollo local, usamos fetch con URLs firmadas o el S3 API
+ * - En Cloudflare Workers, usa el binding nativo R2_BUCKET (más rápido).
+ * - En desarrollo Node.js, usa la S3 API con AWS Signature V4.
  */
 
-/**
- * Obtiene un objeto de R2 como string
- * @param key - Key del objeto (sin / inicial). Ej: tracks/abc123/index.m3u8
- * @returns Contenido del objeto como string, o null si no existe
- */
-export async function getR2Object(key: string): Promise<string | null> {
-  const config = useRuntimeConfig()
+import type { H3Event } from 'h3'
 
-  // En Cloudflare, usar el binding R2 nativo si está disponible
-  // @ts-ignore - R2 binding disponible en runtime de Cloudflare
-  if (typeof globalThis.__env__ !== 'undefined' && globalThis.__env__.R2_BUCKET) {
-    try {
-      // @ts-ignore
-      const object = await globalThis.__env__.R2_BUCKET.get(key)
-      if (!object) return null
-      return await object.text()
-    } catch (error) {
-      console.error('Error fetching from R2 binding:', error)
-      return null
-    }
-  }
+interface R2Binding {
+  get(key: string): Promise<R2Object | null>
+  put(key: string, value: ArrayBuffer | Uint8Array | string, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>
+  delete(key: string): Promise<unknown>
+}
 
-  // Fallback: usar S3 API via fetch (compatible con R2)
-  try {
-    const url = `https://${config.r2AccountId}.r2.cloudflarestorage.com/${config.r2BucketName}/${key}`
+interface R2Object {
+  body: ReadableStream
+  arrayBuffer(): Promise<ArrayBuffer>
+  text(): Promise<string>
+  size: number
+  httpEtag: string
+}
 
-    // Generar headers de autenticación AWS Signature V4
-    const headers = await generateAwsSignatureHeaders(
-      'GET',
-      url,
-      config.r2AccessKeyId,
-      config.r2SecretAccessKey,
-      config.r2AccountId
-    )
-
-    const response = await fetch(url, { headers })
-
-    if (response.status === 404) {
-      return null
-    }
-
-    if (!response.ok) {
-      throw new Error(`R2 fetch failed: ${response.status}`)
-    }
-
-    return await response.text()
-  } catch (error: any) {
-    console.error('Error fetching from R2:', error)
-    throw error
-  }
+function getBinding(event?: H3Event): R2Binding | null {
+  if (!event) return null
+  const cf = (event.context as any)?.cloudflare
+  return cf?.env?.R2_BUCKET ?? null
 }
 
 /**
- * Obtiene un objeto de R2 como ArrayBuffer (para binarios)
- * @param key - Key del objeto
- * @returns ArrayBuffer del objeto, o null si no existe
+ * Lee un objeto de R2 como string. Devuelve null si no existe.
  */
-export async function getR2ObjectBuffer(key: string): Promise<ArrayBuffer | null> {
-  const config = useRuntimeConfig()
-
-  // @ts-ignore - R2 binding
-  if (typeof globalThis.__env__ !== 'undefined' && globalThis.__env__.R2_BUCKET) {
-    try {
-      // @ts-ignore
-      const object = await globalThis.__env__.R2_BUCKET.get(key)
-      if (!object) return null
-      return await object.arrayBuffer()
-    } catch (error) {
-      console.error('Error fetching from R2 binding:', error)
-      return null
-    }
+export async function getR2Object(key: string, event?: H3Event): Promise<string | null> {
+  const binding = getBinding(event)
+  if (binding) {
+    const object = await binding.get(key)
+    if (!object) return null
+    return await object.text()
   }
-
-  // Fallback: usar S3 API via fetch
-  try {
-    const url = `https://${config.r2AccountId}.r2.cloudflarestorage.com/${config.r2BucketName}/${key}`
-
-    const headers = await generateAwsSignatureHeaders(
-      'GET',
-      url,
-      config.r2AccessKeyId,
-      config.r2SecretAccessKey,
-      config.r2AccountId
-    )
-
-    const response = await fetch(url, { headers })
-
-    if (response.status === 404) {
-      return null
-    }
-
-    if (!response.ok) {
-      throw new Error(`R2 fetch failed: ${response.status}`)
-    }
-
-    return await response.arrayBuffer()
-  } catch (error: any) {
-    console.error('Error fetching from R2:', error)
-    throw error
-  }
+  return s3Get(key, 'text') as Promise<string | null>
 }
 
 /**
- * Sube un objeto a R2
- * @param key - Key del objeto
- * @param body - Contenido del objeto
- * @param contentType - Tipo MIME del objeto
+ * Lee un objeto de R2 como ArrayBuffer. Devuelve null si no existe.
+ */
+export async function getR2ObjectBuffer(key: string, event?: H3Event): Promise<ArrayBuffer | null> {
+  const binding = getBinding(event)
+  if (binding) {
+    const object = await binding.get(key)
+    if (!object) return null
+    return await object.arrayBuffer()
+  }
+  return s3Get(key, 'buffer') as Promise<ArrayBuffer | null>
+}
+
+/**
+ * Sube un objeto a R2 con su Content-Type.
  */
 export async function putR2Object(
   key: string,
   body: ArrayBuffer | Uint8Array | string,
-  contentType: string
+  contentType: string,
+  event?: H3Event
 ): Promise<void> {
-  const config = useRuntimeConfig()
-
-  // @ts-ignore - R2 binding
-  if (typeof globalThis.__env__ !== 'undefined' && globalThis.__env__.R2_BUCKET) {
-    // @ts-ignore
-    await globalThis.__env__.R2_BUCKET.put(key, body, {
-      httpMetadata: { contentType }
-    })
+  const binding = getBinding(event)
+  if (binding) {
+    await binding.put(key, body, { httpMetadata: { contentType } })
     return
   }
-
-  // Fallback: usar S3 API via fetch
-  const url = `https://${config.r2AccountId}.r2.cloudflarestorage.com/${config.r2BucketName}/${key}`
-
-  const headers = await generateAwsSignatureHeaders(
-    'PUT',
-    url,
-    config.r2AccessKeyId,
-    config.r2SecretAccessKey,
-    config.r2AccountId,
-    contentType
-  )
-
-  const response = await fetch(url, {
-    method: 'PUT',
-    headers,
-    body,
-  })
-
-  if (!response.ok) {
-    throw new Error(`R2 upload failed: ${response.status}`)
-  }
+  await s3Put(key, body, contentType)
 }
 
-/**
- * Genera headers de autenticación AWS Signature V4 para R2
- * Simplificado para operaciones básicas GET/PUT
- */
-async function generateAwsSignatureHeaders(
+// ============================================================
+// Fallback S3 API (solo dev local)
+// ============================================================
+
+async function s3Get(key: string, format: 'text' | 'buffer'): Promise<string | ArrayBuffer | null> {
+  const config = useRuntimeConfig()
+  const url = `https://${config.r2AccountId}.r2.cloudflarestorage.com/${config.r2BucketName}/${key}`
+  const headers = await sigV4Headers('GET', url, '')
+  const response = await fetch(url, { headers })
+  if (response.status === 404) return null
+  if (!response.ok) throw new Error(`R2 GET ${key} → ${response.status}`)
+  return format === 'text' ? await response.text() : await response.arrayBuffer()
+}
+
+async function s3Put(key: string, body: ArrayBuffer | Uint8Array | string, contentType: string): Promise<void> {
+  const config = useRuntimeConfig()
+  const url = `https://${config.r2AccountId}.r2.cloudflarestorage.com/${config.r2BucketName}/${key}`
+  const bodyBuffer = typeof body === 'string' ? new TextEncoder().encode(body) : body
+  const bodyArray = bodyBuffer instanceof ArrayBuffer ? new Uint8Array(bodyBuffer) : bodyBuffer
+  const headers = await sigV4Headers('PUT', url, bodyArray, contentType)
+  const response = await fetch(url, { method: 'PUT', headers, body: bodyArray })
+  if (!response.ok) throw new Error(`R2 PUT ${key} → ${response.status}`)
+}
+
+async function sigV4Headers(
   method: string,
   url: string,
-  accessKeyId: string,
-  secretAccessKey: string,
-  accountId: string,
+  body: Uint8Array | string,
   contentType?: string
 ): Promise<Record<string, string>> {
-  const parsedUrl = new URL(url)
+  const config = useRuntimeConfig()
+  const parsed = new URL(url)
   const date = new Date()
   const amzDate = date.toISOString().replace(/[:-]|\.\d{3}/g, '')
   const dateStamp = amzDate.slice(0, 8)
+  const payloadHash = await sha256Hex(body)
 
-  const host = parsedUrl.host
-  const path = parsedUrl.pathname
-
-  // Headers canónicos
   const headers: Record<string, string> = {
-    'host': host,
+    host: parsed.host,
     'x-amz-date': amzDate,
-    'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
+    'x-amz-content-sha256': payloadHash,
   }
-
-  if (contentType) {
-    headers['content-type'] = contentType
-  }
+  if (contentType) headers['content-type'] = contentType
 
   const signedHeaders = Object.keys(headers).sort().join(';')
-  const canonicalHeaders = Object.keys(headers)
-    .sort()
-    .map(k => `${k}:${headers[k]}\n`)
-    .join('')
+  const canonicalHeaders = Object.keys(headers).sort().map(k => `${k}:${headers[k]}\n`).join('')
+  const canonicalRequest = [method, parsed.pathname, '', canonicalHeaders, signedHeaders, payloadHash].join('\n')
 
-  // Request canónico
-  const canonicalRequest = [
-    method,
-    path,
-    '', // query string
-    canonicalHeaders,
-    signedHeaders,
-    'UNSIGNED-PAYLOAD'
-  ].join('\n')
-
-  // String to sign
-  const algorithm = 'AWS4-HMAC-SHA256'
   const region = 'auto'
   const service = 's3'
-  const credentialScope = `${dateStamp}/${region}/${service}/aws4_request`
+  const credScope = `${dateStamp}/${region}/${service}/aws4_request`
+  const stringToSign = ['AWS4-HMAC-SHA256', amzDate, credScope, await sha256Hex(canonicalRequest)].join('\n')
 
-  const canonicalRequestHash = await sha256Hex(canonicalRequest)
-  const stringToSign = [
-    algorithm,
-    amzDate,
-    credentialScope,
-    canonicalRequestHash
-  ].join('\n')
-
-  // Signing key
-  const kDate = await hmacSha256(`AWS4${secretAccessKey}`, dateStamp)
-  const kRegion = await hmacSha256(kDate, region)
-  const kService = await hmacSha256(kRegion, service)
-  const kSigning = await hmacSha256(kService, 'aws4_request')
-
-  // Signature
-  const signature = await hmacSha256Hex(kSigning, stringToSign)
-
-  // Authorization header
-  const authorization = `${algorithm} Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
+  const kDate = await hmac(`AWS4${config.r2SecretAccessKey}`, dateStamp)
+  const kRegion = await hmac(kDate, region)
+  const kService = await hmac(kRegion, service)
+  const kSigning = await hmac(kService, 'aws4_request')
+  const signature = await hmacHex(kSigning, stringToSign)
 
   return {
-    'Authorization': authorization,
+    Authorization: `AWS4-HMAC-SHA256 Credential=${config.r2AccessKeyId}/${credScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
     'x-amz-date': amzDate,
-    'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
-    ...(contentType ? { 'Content-Type': contentType } : {})
+    'x-amz-content-sha256': payloadHash,
+    ...(contentType ? { 'Content-Type': contentType } : {}),
   }
 }
 
-async function sha256Hex(message: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(message)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('')
+async function sha256Hex(data: string | Uint8Array): Promise<string> {
+  const bytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
+  const hash = await crypto.subtle.digest('SHA-256', bytes)
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-async function hmacSha256(key: ArrayBuffer | string, message: string): Promise<ArrayBuffer> {
-  const encoder = new TextEncoder()
-  const keyData = typeof key === 'string' ? encoder.encode(key) : key
-  const cryptoKey = await crypto.subtle.importKey(
-    'raw',
-    keyData,
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  )
-  return await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(message))
+async function hmac(key: ArrayBuffer | string, message: string): Promise<ArrayBuffer> {
+  const keyData = typeof key === 'string' ? new TextEncoder().encode(key) : key
+  const cryptoKey = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
+  return await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(message))
 }
 
-async function hmacSha256Hex(key: ArrayBuffer, message: string): Promise<string> {
-  const signature = await hmacSha256(key, message)
-  return Array.from(new Uint8Array(signature))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('')
+async function hmacHex(key: ArrayBuffer, message: string): Promise<string> {
+  const sig = await hmac(key, message)
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('')
 }

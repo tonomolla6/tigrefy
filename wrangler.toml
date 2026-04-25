@@ -6,3 +6,10 @@ main = ".output/server/index.mjs"
 [assets]
 directory = ".output/public"
 binding = "ASSETS"
+
+# Bucket R2 para servir segmentos HLS desde el Worker.
+# Override por entorno con --env si hace falta.
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "tigrefy"
+preview_bucket_name = "tigrefy-dev"
