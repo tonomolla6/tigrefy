@@ -4,124 +4,177 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Tigrefy is a Spotify-inspired music player web application built with Nuxt 3 and Vue 3. It's a static site (SSR disabled) configured for deployment on Cloudflare Pages. The app features a complete music player with favorites, lyrics, search, shuffle, and repeat modes.
+Tigrefy is a Spotify-inspired music player built with Nuxt 3, Vue 3, Pinia and Tailwind CSS. Backend uses Turso (libSQL/SQLite) via Drizzle ORM, Cloudflare R2 for media storage and Cloudflare Workers for hosting. Hybrid rendering: pages render client-side (SPA), `/api/**` routes render server-side.
 
 ## Development Commands
 
 ```bash
-# Install dependencies
-npm install
-
-# Run development server (http://localhost:3000)
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-
-# Generate static site
-npm run generate
+npm install              # Install dependencies
+npm run dev              # Dev server at http://localhost:3000 (loads .env)
+npm run build            # Build for Cloudflare (NITRO_PRESET=cloudflare-module)
+npm run deploy:worker    # Build + wrangler deploy
+npm run preview          # Preview built output
+npm run db:push          # Push schema to Turso (dev) — uses .env
+npm run db:migrate       # Apply migrations to Turso (dev) — uses .env
+npm run db:studio        # Drizzle Studio UI
+npm run db:migrate:prod  # Apply migrations to prod — uses .env.production
 ```
+
+Production deploy is automatic via Cloudflare's Git integration on push to `main`.
 
 ## Architecture
 
-### Data Flow
+### Data flow
 
-**Single Source of Truth**: All music data (songs, albums, artists, playlists) is stored in `public/db.json`. This file is fetched and cached in global state via the `useData` composable.
+**Source of truth**: Turso (libSQL/SQLite) accessed via Drizzle ORM. Schema in [server/db/schema.ts](server/db/schema.ts), migrations in [drizzle/](drizzle/).
 
-**Global Audio Singleton**: The player uses a single `HTMLAudioElement` instance (`globalAudioElement` in `composables/usePlayer.ts:2`) shared across the entire app to prevent multiple audio instances from playing simultaneously.
+**Frontend**: Pinia stores ([stores/](stores/)) cache content fetched from `/api/*` endpoints. Composables in [composables/](composables/) wrap stores with reactive helpers.
 
-**State Management**: Uses Nuxt's `useState` for global reactive state. Key composables:
-- `useData.ts` - Loads and queries `db.json` data with search and filter functions
-- `usePlayer.ts` - Manages audio playback, queue, and player controls
-- `useFavorites.ts` - Manages favorites persisted to localStorage with `tigrefy_favorite_*` keys
-- `useModal.ts` - Controls modal visibility (alert, confirm, prompt)
-- `useUserPlaylists.ts` - Manages user-created playlists stored in localStorage
-- `useSearchHistory.ts` - Manages search history with `tigrefy_search_history` localStorage key
-- `useToast.ts` - Toast notification system for user feedback
+```
+Vue component → composable → Pinia store → $fetch('/api/...') → Drizzle → Turso
+```
 
-### Component Structure
+**Auth**: JWT (HS256, jose) in `tigrefy_token` cookie, 7-day expiry. PBKDF2 password hashing. Roles: `tigre` (admin), `user`, `guest`. Middleware in [server/middleware/](server/middleware/) protects API routes; route-level Vue middleware (`middleware: 'auth'` / `'tigre'`) guards pages.
 
-- `components/player/` - Music player UI and controls
-- `components/sidebar/` - Navigation sidebar
-- `components/cards/` - Album/song/artist/playlist card components
-- `components/ui/` - Reusable UI elements (icons, modals)
+**Media (covers, artists, audio)**: Cloudflare R2.
+- **Images**: served public from `https://media[-dev].tigrefy.tonomolla.com/{covers,artists}/...`
+- **Audio**: MP3s still served from `public/audio/` (HLS migration in progress, not yet active)
+- Frontend builds image URLs via [composables/useMediaUrl.ts](composables/useMediaUrl.ts) → [components/ui/SecureImage.vue](components/ui/SecureImage.vue)
 
-### Pages
+### Environments
 
-- `pages/index.vue` - Home page with featured content
-- `pages/albums.vue` - Album grid view
-- `pages/songs.vue` - Song list with search
-- `pages/search.vue` - Advanced search with genre filtering and search history
-- `pages/library.vue` - User library with playlists, favorite albums and artists tabs
-- `pages/album/[id].vue` - Individual album view with track list
-- `pages/artist/[id].vue` - Artist profile with albums and songs
-- `pages/playlist/[id].vue` - Playlist view with editable songs
+`tigrefy` (prod) and `tigrefy-dev` (dev) — both Turso DB and R2 bucket separated. Local dev always points to dev. See [.env.example](.env.example).
 
-### Styling
+| Source | Used by |
+|---|---|
+| `.env` | `npm run dev` and local scripts (`node --env-file=.env ...`) |
+| `.env.production` | Only `npm run db:migrate:prod` |
+| Cloudflare dashboard secrets | Deployed Worker — uses `NUXT_*` prefix to override `runtimeConfig` |
 
-Uses Tailwind CSS with custom theme:
-- Custom `tiger` color palette (orange tones: 50-950)
-- Dark theme colors (`dark`, `dark-lighter`, `dark-card`, `dark-hover`)
-- Theme defined in `tailwind.config.js`
+Required env vars: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `JWT_SECRET`, `R2_MEDIA_DOMAIN`, `R2_SIGNING_SECRET`, `R2_ACCOUNT_ID`, `R2_MEDIA_ACCESS_KEY_ID`, `R2_MEDIA_SECRET_ACCESS_KEY`, `R2_MEDIA_BUCKET`. In Cloudflare dashboard, prefix all with `NUXT_` (e.g. `NUXT_PUBLIC_R2_MEDIA_DOMAIN`).
 
-## Adding New Music Content
+### Component & page layout
 
-### Process for Adding Songs
+```
+components/
+├── admin/        FileUpload (drag-drop)
+├── auth/         LoginScreen
+├── cards/        Album/Artist/Playlist/SongCard
+├── home/         HomeContent, HeroNewRelease, MediaSection, QuickAccessCard...
+├── player/       MusicPlayer, FullscreenPlayer, QueueSheet, QueueSidebar, NowPlayingSidebar
+├── sidebar/      MainSidebar, MobileNav, MobileSideMenu
+├── song/         SongList, ArtistTopSongs
+└── ui/           SecureImage, modals, sheets, icons, base controls
+```
 
-1. Add MP3 file to `public/audio/`
-2. Add cover image to `public/covers/`
-3. Update `public/db.json` with new song/album entries
+Components auto-imported with `pathPrefix: false` → use `<PlayerBar />` directly.
 
-### db.json Structure
+```
+pages/
+├── index.vue          Home (auth-gated landing or content)
+├── login.vue          Login form
+├── admin.vue          Tigre-only admin dashboard
+├── library.vue        Saved playlists/albums
+├── liked-songs.vue    Liked songs
+├── search.vue         Multi-type search
+├── lyrics.vue         Current track lyrics
+├── songs.vue, albums.vue, artists.vue
+├── album/[id].vue, artist/[id].vue, playlist/[id].vue, track/[id].vue
+└── section/{albums,artists,playlists}.vue
+```
 
-The database has four main collections:
-- `artists` - Artist profiles with id, name, image, followers, genres, bio
-- `albums` - Albums with id, title, artistId, artistName, cover, releaseDate, totalTracks, duration, genres
-- `songs` - Songs with id, title, artistId, artistName, albumId, albumName, duration, cover, audioUrl, lyrics, plays, releaseDate
-- `playlists` - Playlists with id, name, description, cover, songIds, createdAt
+### API endpoints
 
-All IDs are strings. Relationships use `*Id` fields (e.g., `artistId`, `albumId`).
+```
+/api/auth/{login,logout,register,me}
+/api/admin/                        [tigre]
+  ├─ content.get
+  ├─ upload.post                   (cover/artist → R2; audio → public/audio or R2)
+  ├─ {artists,albums,songs,playlists,users}/  CRUD
+  └─ playlists/[id]/songs.{get,post}
+/api/{songs,albums,artists,playlists}/
+  ├─ index.get   (filtered by role)
+  └─ [id].get    (+ subroutes: play.post, like.{get,post}, save.post)
+/api/user/                         [auth]
+  ├─ liked-songs.get, saved-{playlists,albums}.get
+  ├─ playlists/index.get, [id]/save.post
+  ├─ favorites/  (legacy artist favorites)
+  └─ history/plays.{get,post}
+/api/search.get
+/api/media/track/[id].m3u8.get     (HLS playlist with signed segments — not in use yet)
+```
 
-## Important Technical Details
+### Pinia stores
 
-### Player Implementation
+- `auth` — current user, login/logout/register, role checks
+- `data` — orchestrates `loadAllData` across the four content stores
+- `songs`, `albums`, `artists`, `playlists` — cache + fetch + getters
+- `favorites` — liked songs, saved playlists/albums, followed artists
+- `user` — user-created playlists, play history
 
-The player (`usePlayer.ts`) implements:
-- Queue management with shuffle support
-- Three repeat modes: 'off', 'all', 'one'
-- Automatic playback on song end
-- Previous song restarts current track if > 3 seconds elapsed
-- Volume and mute controls
+### Composables
 
-When calling `playSong()`, always pause and reset any existing audio before loading new source to prevent overlapping playback.
+- `useAuth` — auth store wrapper (login/logout, role checks)
+- `usePlayer` — singleton `HTMLAudioElement`, queue, shuffle, repeat ('off' | 'all' | 'one')
+- `useMediaUrl` — `getImageUrl(path)` → R2 URL, `getTrackPlaylistUrl(id)` → HLS endpoint
+- `useFavorites` — toggle/check song/playlist/album/artist favorites
+- `useUserPreferences` — localStorage prefs (volume, layout, last played track/queue)
+- `useData` — orchestration wrapper for loading
+- `useContextPlayback` — reusable play-from-context for album/playlist/artist pages
+- `useSearchHistory`, `useRecentlyPlayed` — localStorage history
+- `useModal`, `useToast` — UI primitives
+- `useSongListColumns` — configure visible columns in song tables
+- `useSidebarResize`, `useScrollRestore`, `useDetailStickyHeader` — UI state
 
-### Favorites System
+LocalStorage keys: `tigrefy_user_preferences`, `tigrefy_search_history`, `tigrefy_recently_played`, `tigrefy_auth`.
 
-Favorites are stored in localStorage with these keys:
-- `tigrefy_favorite_songs`
-- `tigrefy_favorite_albums`
-- `tigrefy_favorite_artists`
-- `tigrefy_favorite_playlists`
+## Adding new music
 
-Load favorites on app mount using `useFavorites().loadFavorites()`.
+Through the admin page at `/admin` (requires `tigre` role):
 
-### User Playlists
+1. **Crear artista** → tab Artistas → form (incluye subir imagen vía `<FileUpload type="artist">` → R2 `artists/`)
+2. **Crear álbum** → tab Álbumes → form + subir cover (R2 `covers/`)
+3. **Crear canción** → tab Canciones → form + subir MP3 (`public/audio/` por defecto, o R2 si `USE_R2_STORAGE=true`)
+4. Marcar `isPublic` para que aparezca a usuarios sin rol tigre
 
-User-created playlists are stored separately from `db.json` in localStorage:
-- Key: `tigrefy_user_playlists`
-- IDs are prefixed with `user_` followed by timestamp (e.g., `user_1699123456789`)
-- Have `isUserCreated: true` flag to distinguish from predefined playlists
+The admin endpoints (`POST /api/admin/{artists,albums,songs}`) call Drizzle to insert. Upload endpoint at [server/api/admin/upload.post.ts](server/api/admin/upload.post.ts) routes by `type`: cover/artist/hls always to R2, audio depends on flag.
 
-### Deployment Configuration
+## Database schema (key tables)
 
-Configured for Cloudflare Workers:
-- Hybrid rendering (`ssr: true` with `routeRules` using SPA for pages and SSR for `/api/**`)
-- Nitro preset: `cloudflare-module`
-- All assets must be in `public/` directory to be accessible in production
+- `artists`, `albums`, `songs`, `genres`, `song_genres`
+- `playlists` (unified: system playlists have `ownerId = null`)
+- `playlist_songs` (junction with position)
+- `saved_playlists`, `saved_albums` — user library
+- `song_likes`, `artist_followers` — user favorites
+- `users`, `user_sessions`, `user_play_history`, `user_search_history`
 
-### Component Auto-imports
+IDs are 22-char hex strings generated by SQLite (`hex(randomblob(11))`). FK relationships defined in schema; cascading deletes for user-owned data.
 
-Components are auto-imported from `~/components` with `pathPrefix: false`, meaning you can use `<PlayerBar />` instead of `<player-PlayerBar />`.
+## Scripts (one-off utilities)
+
+- `scripts/upload-images-to-r2.mjs` — migrate `public/covers` + `public/artists` to R2
+- `scripts/test-r2-setup.mjs` — verify R2 connectivity + URL signing
+- `scripts/set-r2-cors.mjs` — set CORS policy on R2 bucket (currently fails with object-only token; use dashboard)
+- `scripts/clone-prod-to-dev.mjs` — copy data from prod Turso to dev Turso
+- `scripts/wipe-dev-db.mjs` — drop all tables in dev DB (guard against prod URL)
+- `scripts/delete-r2-test-file.mjs` — cleanup diagnostic file
+
+All read env via `node --env-file=.env scripts/<name>.mjs`. The `clone-prod-to-dev.mjs` reads both `.env` (dest) and `.env.production` (source).
+
+## Deployment notes
+
+- `nitro.preset = 'cloudflare-module'`, [wrangler.toml](wrangler.toml) configured.
+- Routing: `routeRules: { '/**': { ssr: false }, '/api/**': { ssr: true } }` — pages SPA, API SSR.
+- `runtimeConfig.public.r2MediaDomain` is the only public env var (rest are server-only).
+- Cloudflare auto-deploys on push to `main` via Workers Builds. Build token must exist in Cloudflare API tokens (don't delete it).
+- R2 buckets need CORS policy to allow `crossorigin="anonymous"` images (used by `extractDominantColor` in [utils/image.ts](utils/image.ts) for QuickAccessCard / HeroNewRelease).
+
+## In-progress / not yet active
+
+HLS audio streaming exists as scaffolding but is **not wired**:
+- [server/api/media/track/[id].m3u8.get.ts](server/api/media/track/) — playlist endpoint with signed segments (not committed yet)
+- [composables/useHlsPlayer.ts](composables/useHlsPlayer.ts) — HLS.js wrapper (not committed yet)
+- `scripts/convert-mp3-to-hls.ts`, `scripts/upload-hls-to-r2.ts` — migration tooling (not committed yet)
+- Plan: convert MP3s → HLS + R2, add Worker for HMAC validation on `media.tigrefy.tonomolla.com/tracks/*`, flip the flag in `usePlayer.ts`.
+
+Until then, audio is served directly from `public/audio/`.
