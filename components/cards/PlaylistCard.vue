@@ -20,8 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import { handleImageError } from '~/utils/image'
-
 const props = defineProps<{
   playlist: any
 }>()
@@ -47,6 +45,4 @@ const handlePlayPlaylist = () => {
     playSong(songs[0], songs, { type: 'playlist', id: props.playlist.id })
   }
 }
-
-const onImageError = (e: Event) => handleImageError(e)
 </script>

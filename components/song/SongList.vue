@@ -161,7 +161,6 @@
 
 <script setup lang="ts">
 import { formatTime, formatPlaysDetailed as formatPlays, formatRelativeDate } from '~/utils/formatting'
-import { handleImageError } from '~/utils/image'
 import type { PresetName } from '~/composables/useSongListColumns'
 import { useSongListColumns } from '~/composables/useSongListColumns'
 
@@ -218,8 +217,6 @@ const handleTitleClick = (song: any) => {
     playSong(song, props.songs, { type: props.contextType, id: props.contextId })
   }
 }
-
-const onImageError = (e: Event) => handleImageError(e)
 
 // Formatear fecha añadido
 const formatDateAdded = (date?: string) => {

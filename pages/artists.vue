@@ -33,8 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import { handleImageError } from '~/utils/image'
-
 definePageMeta({
   layout: 'default',
   middleware: 'auth'

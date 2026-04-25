@@ -107,7 +107,6 @@
 </template>
 
 <script setup lang="ts">
-import { handleImageError } from '~/utils/image'
 import { formatDuration } from '~/utils/formatting'
 
 definePageMeta({
@@ -160,6 +159,4 @@ const openSongActions = (song: any) => {
   selectedSong.value = song
   showSongActions.value = true
 }
-
-const onImageError = (e: Event) => handleImageError(e)
 </script>

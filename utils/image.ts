@@ -1,15 +1,6 @@
 /**
  * Utilidades para manejo de imágenes
- * Elimina duplicación de funciones de imagen en múltiples archivos
  */
-
-/**
- * Maneja errores de carga de imagen ocultando el elemento
- */
-export const handleImageError = (e: Event): void => {
-  const target = e.target as HTMLImageElement
-  target.style.display = 'none'
-}
 
 /**
  * Extrae el color dominante de una imagen

@@ -100,7 +100,6 @@
 <script setup lang="ts">
 import type { PlaybackContext } from '~/composables/usePlayer'
 import { formatTime } from '~/utils/formatting'
-import { handleImageError } from '~/utils/image'
 
 const props = defineProps<{
   song: any

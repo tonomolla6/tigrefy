@@ -96,8 +96,6 @@
 </template>
 
 <script setup lang="ts">
-import { handleImageError } from '~/utils/image'
-
 definePageMeta({
   layout: 'default',
   middleware: 'auth'
@@ -134,6 +132,4 @@ const openSongActions = (song: any) => {
   selectedSong.value = song
   showSongActions.value = true
 }
-
-const onImageError = (e: Event) => handleImageError(e)
 </script>
