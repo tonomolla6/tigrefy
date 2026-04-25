@@ -2,11 +2,10 @@
   <NuxtLink :to="`/playlist/${playlist.id}`" class="block">
     <div class="bg-dark-highlight p-4 rounded-lg card-hover group/card">
       <div class="relative mb-4">
-        <img
+        <SecureImage
           :src="playlist.cover"
           :alt="playlist.name"
-          class="w-full aspect-square object-cover rounded-md shadow-lg"
-          @error="onImageError"
+          class="w-full aspect-square rounded-md shadow-lg"
         />
         <CardPlayButton
           :is-playing="isCurrentlyPlaying"

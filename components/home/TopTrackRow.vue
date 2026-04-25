@@ -10,7 +10,7 @@
         {{ index + 1 }}
       </span>
     </div>
-    <img :src="song.cover" :alt="song.title" class="w-12 h-12 rounded object-cover flex-shrink-0" />
+    <SecureImage :src="song.cover" :alt="song.title" class="w-12 h-12 rounded flex-shrink-0" />
     <div class="flex-1 min-w-0">
       <h4 class="font-semibold truncate" :class="isCurrent ? 'text-tiger-500' : 'text-primary'">
         {{ song.title }}
@@ -31,7 +31,7 @@
       </span>
     </div>
     <div class="relative flex-shrink-0 cursor-pointer" @click="handlePlay">
-      <img :src="song.cover" :alt="song.title" class="w-12 h-12 rounded object-cover" />
+      <SecureImage :src="song.cover" :alt="song.title" class="w-12 h-12 rounded" />
       <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100
                   transition-opacity duration-200 flex items-center justify-center rounded">
         <IconPlay v-if="!isCurrentlyPlaying" :size="16" class="text-white" />

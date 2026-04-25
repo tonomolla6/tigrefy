@@ -1,12 +1,8 @@
 <script setup lang="ts">
 /**
- * Componente de imagen segura que obtiene URLs firmadas desde R2
- * En modo desarrollo local, usa las rutas directas.
- * Usa el composable useMediaUrl para cachear URLs.
+ * Imagen pública servida desde R2 (covers, artistas, playlists).
+ * En dev sin R2_MEDIA_DOMAIN configurado, sirve desde /public.
  */
-
-// Flag para activar URLs firmadas (sincronizado con usePlayer.ts)
-const useSecureUrls = true // Cambiar a false para desarrollo local
 
 const props = defineProps<{
   src: string | null | undefined
@@ -17,76 +13,31 @@ const props = defineProps<{
 
 const { getImageUrl } = useMediaUrl()
 
-const resolvedSrc = ref<string>('')
-const isLoading = ref(true)
+const resolvedSrc = computed(() => {
+  if (!props.src) return props.fallback ? getImageUrl(props.fallback) : ''
+  return getImageUrl(props.src)
+})
+
 const hasError = ref(false)
 
-// Resolver URL firmada cuando cambia el src
-watch(
-  () => props.src,
-  async (newSrc) => {
-    if (!newSrc) {
-      resolvedSrc.value = props.fallback || ''
-      isLoading.value = false
-      return
-    }
-
-    // Si ya es una URL completa (http/https), usarla directamente
-    if (newSrc.startsWith('http')) {
-      resolvedSrc.value = newSrc
-      isLoading.value = false
-      return
-    }
-
-    // Modo desarrollo: usar path directo
-    if (!useSecureUrls) {
-      resolvedSrc.value = newSrc.startsWith('/') ? newSrc : `/${newSrc}`
-      isLoading.value = false
-      return
-    }
-
-    // Modo producción: obtener URL firmada
-    isLoading.value = true
-    hasError.value = false
-
-    try {
-      resolvedSrc.value = await getImageUrl(newSrc)
-    } catch {
-      // Fallback al path original o imagen por defecto
-      resolvedSrc.value = props.fallback || newSrc
-      hasError.value = true
-    } finally {
-      isLoading.value = false
-    }
-  },
-  { immediate: true }
-)
+watch(() => props.src, () => {
+  hasError.value = false
+})
 
 const onError = () => {
-  if (!hasError.value) {
-    hasError.value = true
-    resolvedSrc.value = props.fallback || ''
-  }
+  hasError.value = true
 }
 </script>
 
 <template>
-  <!-- Loading skeleton -->
-  <div
-    v-if="isLoading"
-    :class="props.class"
-    class="bg-dark-lighter animate-pulse"
-  />
-  <!-- Image loaded successfully -->
   <img
-    v-else-if="resolvedSrc && !hasError"
+    v-if="resolvedSrc && !hasError"
     :src="resolvedSrc"
     :alt="alt"
     :class="[props.class, 'object-cover']"
     loading="lazy"
     @error="onError"
   />
-  <!-- Error or no image fallback -->
   <div
     v-else
     :class="props.class"

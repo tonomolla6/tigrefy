@@ -11,11 +11,10 @@
           @click="navigateTo(`/artist/${artist.id}`)"
         >
           <div class="relative mb-4 overflow-hidden rounded-full shadow-2xl aspect-square">
-            <img
+            <SecureImage
               :src="artist.image"
               :alt="artist.name"
-              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-              @error="handleImageError"
+              class="w-full h-full transition-transform duration-300 group-hover:scale-110"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <button

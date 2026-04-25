@@ -33,10 +33,10 @@
               <!-- Cover Picker Preview -->
               <div class="flex justify-center">
                 <div class="relative group cursor-pointer" @click="showingCoverPicker = true">
-                  <img
+                  <SecureImage
                     :src="editedCover"
                     alt="Portada"
-                    class="w-24 h-24 md:w-32 md:h-32 rounded-lg object-cover"
+                    class="w-24 h-24 md:w-32 md:h-32 rounded-lg"
                   />
                   <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center">
                     <span class="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
@@ -57,7 +57,7 @@
                     class="relative aspect-square rounded-lg overflow-hidden border-2 transition-all hover:scale-105"
                     :class="editedCover === cover ? 'border-tiger-500' : 'border-transparent'"
                   >
-                    <img :src="cover" alt="Cover option" class="w-full h-full object-cover" />
+                    <SecureImage :src="cover" alt="Cover option" class="w-full h-full" />
                   </button>
                 </div>
               </div>

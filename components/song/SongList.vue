@@ -35,12 +35,11 @@
 
           <!-- Title (incluye cover + título + artista) -->
           <div v-else-if="column.id === 'title'" class="flex items-center gap-3 min-w-0 overflow-hidden">
-            <img
+            <SecureImage
               v-if="showCover"
               :src="song.cover"
               :alt="song.title"
               class="w-12 h-12 rounded flex-shrink-0"
-              @error="onImageError"
             />
             <div class="min-w-0">
               <NuxtLink
@@ -114,12 +113,11 @@
           <span v-else class="text-secondary text-xs">{{ index + 1 }}</span>
         </div>
 
-        <img
+        <SecureImage
           v-if="showCover"
           :src="song.cover"
           :alt="song.title"
           class="w-12 h-12 rounded flex-shrink-0"
-          @error="onImageError"
         />
 
         <div class="flex-1 min-w-0">

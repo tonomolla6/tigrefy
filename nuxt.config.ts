@@ -45,6 +45,17 @@ export default defineNuxtConfig({
     tursoUrl: process.env.TURSO_DATABASE_URL,
     tursoToken: process.env.TURSO_AUTH_TOKEN,
     jwtSecret: process.env.JWT_SECRET,
+    // R2 Media - firma HMAC para audio (no para imágenes)
+    r2SigningSecret: process.env.R2_SIGNING_SECRET,
+    // R2 Access - lectura de playlists y uploads
+    r2AccountId: process.env.R2_ACCOUNT_ID,
+    r2AccessKeyId: process.env.R2_MEDIA_ACCESS_KEY_ID,
+    r2SecretAccessKey: process.env.R2_MEDIA_SECRET_ACCESS_KEY,
+    r2BucketName: process.env.R2_MEDIA_BUCKET || 'tigrefy',
+    public: {
+      // Dominio R2 público (covers/artists). Vacío en dev → fallback a /public.
+      r2MediaDomain: process.env.R2_MEDIA_DOMAIN || '',
+    },
   },
 
   nitro: {

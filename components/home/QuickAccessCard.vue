@@ -18,7 +18,7 @@
       <img
         v-else
         ref="imgRef"
-        :src="image"
+        :src="resolvedImage"
         :alt="title"
         crossorigin="anonymous"
         class="h-full w-full object-cover rounded-l-md"
@@ -55,6 +55,8 @@
 <script setup lang="ts">
 import { extractDominantColor } from '~/utils/image'
 
+const { getImageUrl } = useMediaUrl()
+
 const props = defineProps({
   image: {
     type: String,
@@ -77,6 +79,8 @@ const props = defineProps({
 const emit = defineEmits(['play', 'hover-color'])
 const router = useRouter()
 const { playbackContext, isPlaying, togglePlay } = usePlayer()
+
+const resolvedImage = computed(() => getImageUrl(props.image))
 
 // Color extraction
 const imgRef = ref<HTMLImageElement | null>(null)

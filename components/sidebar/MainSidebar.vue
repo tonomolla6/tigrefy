@@ -166,10 +166,10 @@
             @click="navigateTo(`/playlist/${playlist.id}`)"
           >
             <div class="relative flex-shrink-0">
-              <img
-                :src="playlist.cover || '/covers/default-playlist.png'"
+              <SecureImage
+                :src="playlist.cover"
                 :alt="playlist.name"
-                class="w-12 h-12 rounded-md object-cover aspect-square"
+                class="w-12 h-12 rounded-md aspect-square"
               />
               <button
                 @click.stop="handlePlaylistClick(playlist)"
@@ -203,10 +203,10 @@
             @click="navigateTo(`/artist/${artist.id}`)"
           >
             <div class="relative flex-shrink-0">
-              <img
+              <SecureImage
                 :src="artist.image"
                 :alt="artist.name"
-                class="w-12 h-12 rounded-full object-cover aspect-square"
+                class="w-12 h-12 rounded-full aspect-square"
               />
               <button
                 @click.stop="handleArtistClick(artist)"
@@ -240,10 +240,10 @@
             @click="navigateTo(`/playlist/${playlist.id}`)"
           >
             <div class="relative flex-shrink-0">
-              <img
+              <SecureImage
                 :src="playlist.cover"
                 :alt="playlist.name"
-                class="w-12 h-12 rounded-md object-cover aspect-square"
+                class="w-12 h-12 rounded-md aspect-square"
               />
               <button
                 @click.stop="handleSavedPlaylistClick(playlist)"
@@ -277,10 +277,10 @@
             @click="navigateTo(`/album/${album.id}`)"
           >
             <div class="relative flex-shrink-0">
-              <img
+              <SecureImage
                 :src="album.cover"
                 :alt="album.title"
-                class="w-12 h-12 rounded-md object-cover aspect-square"
+                class="w-12 h-12 rounded-md aspect-square"
               />
               <button
                 @click.stop="handleAlbumClick(album)"

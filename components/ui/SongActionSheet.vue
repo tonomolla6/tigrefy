@@ -3,10 +3,10 @@
     <!-- Header con info de la canción -->
     <template #header>
       <div class="flex items-center gap-3">
-        <img
-          :src="song?.cover || '/covers/default.png'"
+        <SecureImage
+          :src="song?.cover"
           :alt="song?.title"
-          class="w-12 h-12 rounded object-cover"
+          class="w-12 h-12 rounded"
         />
         <div class="min-w-0 flex-1">
           <p class="text-white font-semibold truncate">{{ song?.title }}</p>

@@ -93,10 +93,10 @@
           class="flex items-center gap-3 p-3 rounded-lg transition-colors"
           :class="item.isViewing ? 'bg-white/10' : 'hover:bg-white/5 active:bg-white/10'"
         >
-          <img
+          <SecureImage
             :src="item.image"
             :alt="item.name"
-            class="w-14 h-14 object-cover flex-shrink-0"
+            class="w-14 h-14 flex-shrink-0"
             :class="item.type === 'artist' ? 'rounded-full' : 'rounded'"
           />
           <div class="min-w-0 flex-1">
@@ -190,7 +190,7 @@ const libraryItems = computed<LibraryItem[]>(() => {
         type: 'playlist',
         name: playlist.name,
         subtitle: `Playlist · ${playlist.songIds?.length || 0} canciones`,
-        image: playlist.cover || '/covers/default-playlist.png',
+        image: playlist.cover,
         route: `/playlist/${playlist.id}`,
         isViewing: route.path === `/playlist/${playlist.id}`,
         isContext: playbackContext.value.type === 'playlist' && playbackContext.value.id === playlist.id,
@@ -214,7 +214,7 @@ const libraryItems = computed<LibraryItem[]>(() => {
         type: 'playlist',
         name: playlist.name,
         subtitle: `Playlist · ${playlist.songIds?.length || 0} canciones`,
-        image: playlist.cover || '/covers/default-playlist.png',
+        image: playlist.cover,
         route: `/playlist/${playlist.id}`,
         isViewing: route.path === `/playlist/${playlist.id}`,
         isContext: playbackContext.value.type === 'playlist' && playbackContext.value.id === playlist.id,
@@ -236,7 +236,7 @@ const libraryItems = computed<LibraryItem[]>(() => {
         type: 'artist',
         name: artist.name,
         subtitle: 'Artista',
-        image: artist.image || '/covers/default-artist.png',
+        image: artist.image,
         route: `/artist/${artist.id}`,
         isViewing: route.path === `/artist/${artist.id}`,
         isContext: playbackContext.value.type === 'artist' && playbackContext.value.id === artist.id,
@@ -258,7 +258,7 @@ const libraryItems = computed<LibraryItem[]>(() => {
         type: 'album',
         name: album.title,
         subtitle: `Álbum · ${album.artistName}`,
-        image: album.cover || '/covers/default.png',
+        image: album.cover,
         route: `/album/${album.id}`,
         isViewing: route.path === `/album/${album.id}`,
         isContext: playbackContext.value.type === 'album' && playbackContext.value.id === album.id,

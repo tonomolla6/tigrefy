@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const result = await db.insert(playlists).values({
     name: name.trim(),
     description: description || null,
-    cover: cover || '/covers/default-playlist.png',
+    cover: cover || null,
     ownerId: null, // Playlist del sistema
     isPublic: isPublic ?? true
   }).returning()

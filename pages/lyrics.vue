@@ -14,10 +14,10 @@
     <template v-else>
       <!-- Fondo con gradiente basado en la portada -->
       <div class="absolute inset-0 overflow-hidden">
-        <img
+        <SecureImage
           v-if="currentSong.cover"
           :src="currentSong.cover"
-          class="absolute inset-0 w-full h-full object-cover blur-3xl scale-150 opacity-40"
+          class="absolute inset-0 w-full h-full blur-3xl scale-150 opacity-40"
         />
         <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black/90" />
       </div>

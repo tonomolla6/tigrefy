@@ -86,10 +86,10 @@
                       class="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors group"
                     >
                     <div class="relative flex-shrink-0">
-                      <img
-                        :src="currentSong.cover || '/covers/default.png'"
+                      <SecureImage
+                        :src="currentSong.cover"
                         :alt="currentSong.title"
-                        class="w-12 h-12 rounded object-cover"
+                        class="w-12 h-12 rounded"
                       />
                       <button
                         @click="togglePlay"
@@ -139,10 +139,10 @@
                     class="flex items-center gap-3 p-2 rounded-md hover:bg-white/10 transition-colors cursor-pointer group"
                   >
                     <div class="relative flex-shrink-0">
-                      <img
-                        :src="song.cover || '/covers/default.png'"
+                      <SecureImage
+                        :src="song.cover"
                         :alt="song.title"
-                        class="w-12 h-12 rounded object-cover"
+                        class="w-12 h-12 rounded"
                       />
                       <div
                         class="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded"
@@ -199,10 +199,10 @@
           <CustomScrollbar class="flex-1 min-h-0 px-2">
             <!-- Card: Imagen grande + Info de la canción actual -->
             <div class="bg-[#1a1a1a] rounded-lg p-3 mx-2 mb-4">
-              <img
-                :src="currentSong.cover || '/covers/default.png'"
+              <SecureImage
+                :src="currentSong.cover"
                 :alt="currentSong.title"
-                class="w-full aspect-square rounded-lg object-cover shadow-xl mb-4"
+                class="w-full aspect-square rounded-lg shadow-xl mb-4"
               />
 
               <!-- Info de la canción -->
@@ -235,10 +235,10 @@
                 class="block rounded-lg overflow-hidden hover:brightness-110 transition-all"
               >
                 <div class="relative">
-                  <img
-                    :src="currentSongArtist.image || '/covers/default-artist.png'"
+                  <SecureImage
+                    :src="currentSongArtist.image"
                     :alt="currentSongArtist.name"
-                    class="w-full h-40 object-cover rounded-lg"
+                    class="w-full h-40 rounded-lg"
                   />
                   <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent rounded-b-lg">
                     <p class="text-white font-bold">{{ currentSongArtist.name }}</p>
@@ -265,10 +265,10 @@
                 @click="playFromQueue(0)"
                 class="flex items-center gap-3 cursor-pointer group"
               >
-                <img
-                  :src="nextSong.cover || '/covers/default.png'"
+                <SecureImage
+                  :src="nextSong.cover"
                   :alt="nextSong.title"
-                  class="w-12 h-12 rounded object-cover"
+                  class="w-12 h-12 rounded"
                 />
                 <div class="min-w-0 flex-1">
                   <p class="text-white text-sm truncate group-hover:underline">{{ nextSong.title }}</p>

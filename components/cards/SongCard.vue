@@ -5,11 +5,10 @@
     @click="handlePlay"
   >
     <div class="relative flex-shrink-0">
-      <img
+      <SecureImage
         :src="song.cover"
         :alt="song.title"
-        class="w-10 h-10 rounded object-cover"
-        @error="handleImageError"
+        class="w-10 h-10 rounded"
       />
     </div>
     <div class="flex-1 min-w-0">
@@ -28,11 +27,10 @@
     class="hidden md:flex items-center gap-4 p-2 rounded hover:bg-dark-hover transition-colors group"
   >
     <div class="relative flex-shrink-0 cursor-pointer" @click="handlePlay">
-      <img
+      <SecureImage
         :src="song.cover"
         :alt="song.title"
-        class="w-12 h-12 rounded object-cover"
-        @error="handleImageError"
+        class="w-12 h-12 rounded"
       />
       <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded">
         <IconPlay v-if="!isCurrentAndPlaying" :size="20" class="text-white" />

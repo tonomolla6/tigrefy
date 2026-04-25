@@ -16,7 +16,7 @@
       <div v-if="previewUrl || modelValue" class="flex items-center gap-4">
         <div v-if="type !== 'audio'" class="flex-shrink-0">
           <img
-            :src="previewUrl || modelValue"
+            :src="resolvedPreviewSrc"
             class="w-16 h-16 rounded object-cover"
             :class="{ 'rounded-full': type === 'artist' }"
           />
@@ -109,7 +109,16 @@ const fileSize = ref(0)
 const manualUrl = ref(props.modelValue || '')
 const pendingFile = ref<File | null>(null)
 
+const { getImageUrl } = useMediaUrl()
+
 const type = computed(() => props.type || 'cover')
+
+// Si previewUrl es un data:/blob: lo dejamos tal cual; si es modelValue (path
+// guardado tipo "/covers/x.jpg") lo resolvemos a la URL pública de R2.
+const resolvedPreviewSrc = computed(() => {
+  if (previewUrl.value) return previewUrl.value
+  return getImageUrl(props.modelValue)
+})
 
 const acceptTypes = computed(() => {
   if (type.value === 'audio') {

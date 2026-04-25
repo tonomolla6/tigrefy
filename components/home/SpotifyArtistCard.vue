@@ -7,10 +7,10 @@
   >
     <!-- Imagen circular -->
     <div class="relative mb-4">
-      <img
+      <SecureImage
         :src="artist.image"
         :alt="artist.name"
-        class="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover shadow-lg"
+        class="w-32 h-32 md:w-36 md:h-36 rounded-full shadow-lg"
       />
 
       <!-- Botón play -->

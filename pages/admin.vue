@@ -177,10 +177,10 @@
           >
             <td class="p-3">
               <div class="flex items-center gap-3">
-                <img
-                  :src="artist.image || '/covers/default-artist.png'"
+                <SecureImage
+                  :src="artist.image"
                   :alt="artist.name"
-                  class="w-10 h-10 rounded-full object-cover"
+                  class="w-10 h-10 rounded-full"
                 />
                 <span class="text-white text-sm font-medium">{{ artist.name }}</span>
               </div>
@@ -235,10 +235,10 @@
           >
             <td class="p-3">
               <div class="flex items-center gap-3">
-                <img
-                  :src="album.cover || '/covers/default.png'"
+                <SecureImage
+                  :src="album.cover"
                   :alt="album.title"
-                  class="w-10 h-10 rounded object-cover"
+                  class="w-10 h-10 rounded"
                 />
                 <div class="min-w-0">
                   <p class="text-white text-sm font-medium truncate">{{ album.title }}</p>
@@ -309,10 +309,10 @@
           >
             <td class="p-3">
               <div class="flex items-center gap-3">
-                <img
-                  :src="song.cover || '/covers/default.png'"
+                <SecureImage
+                  :src="song.cover"
                   :alt="song.title"
-                  class="w-10 h-10 rounded object-cover"
+                  class="w-10 h-10 rounded"
                 />
                 <div class="min-w-0">
                   <p class="text-white text-sm font-medium truncate">{{ song.title }}</p>
@@ -383,10 +383,10 @@
           >
             <td class="p-3">
               <div class="flex items-center gap-3">
-                <img
-                  :src="playlist.cover || '/covers/default-playlist.png'"
+                <SecureImage
+                  :src="playlist.cover"
                   :alt="playlist.name"
-                  class="w-10 h-10 rounded object-cover"
+                  class="w-10 h-10 rounded"
                 />
                 <div class="min-w-0">
                   <p class="text-white text-sm font-medium truncate">{{ playlist.name }}</p>
@@ -1223,10 +1223,10 @@
                     @click.stop
                     @change="togglePlaylistSong(song.id)"
                   />
-                  <img
-                    :src="song.cover || '/covers/default.png'"
+                  <SecureImage
+                    :src="song.cover"
                     :alt="song.title"
-                    class="w-8 h-8 rounded object-cover"
+                    class="w-8 h-8 rounded"
                   />
                   <div class="min-w-0 flex-1">
                     <p class="text-white text-sm truncate">{{ song.title }}</p>
@@ -1280,10 +1280,10 @@
                   :key="songId"
                   class="flex items-center gap-3 p-2 hover:bg-gray-700 transition-colors"
                 >
-                  <img
-                    :src="getSongById(songId)?.cover || '/covers/default.png'"
+                  <SecureImage
+                    :src="getSongById(songId)?.cover"
                     :alt="getSongById(songId)?.title"
-                    class="w-8 h-8 rounded object-cover"
+                    class="w-8 h-8 rounded"
                   />
                   <div class="min-w-0 flex-1">
                     <p class="text-white text-sm truncate">{{ getSongById(songId)?.title || 'Canción desconocida' }}</p>
@@ -1311,10 +1311,10 @@
                   @click="addToEditPlaylist(song.id)"
                   class="flex items-center gap-3 p-2 hover:bg-gray-700 cursor-pointer transition-colors"
                 >
-                  <img
-                    :src="song.cover || '/covers/default.png'"
+                  <SecureImage
+                    :src="song.cover"
                     :alt="song.title"
-                    class="w-8 h-8 rounded object-cover"
+                    class="w-8 h-8 rounded"
                   />
                   <div class="min-w-0 flex-1">
                     <p class="text-white text-sm truncate">{{ song.title }}</p>

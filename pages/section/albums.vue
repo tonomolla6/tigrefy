@@ -21,10 +21,10 @@
         >
           <!-- Imagen con botón play -->
           <div class="relative mb-3">
-            <img
+            <SecureImage
               :src="album.cover"
               :alt="album.title"
-              class="w-full aspect-square object-cover rounded-md shadow-md"
+              class="w-full aspect-square rounded-md shadow-md"
             />
             <CardPlayButton
               :is-playing="isCurrentlyPlaying(album)"

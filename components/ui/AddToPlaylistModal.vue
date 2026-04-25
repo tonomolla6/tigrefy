@@ -25,10 +25,10 @@
         class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-dark-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         :class="{ 'bg-dark-hover': playlist.songIds.includes(currentSongId) }"
       >
-        <img
+        <SecureImage
           :src="playlist.cover"
           :alt="playlist.name"
-          class="w-12 h-12 rounded object-cover"
+          class="w-12 h-12 rounded"
         />
         <div class="flex-1 text-left">
           <p class="font-semibold">{{ playlist.name }}</p>

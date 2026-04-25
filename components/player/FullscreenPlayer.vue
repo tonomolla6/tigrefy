@@ -19,10 +19,10 @@
       >
         <!-- Background blur de la portada -->
         <div class="absolute inset-0 overflow-hidden">
-          <img
+          <SecureImage
             v-if="currentSong.cover"
             :src="currentSong.cover"
-            class="absolute inset-0 w-full h-full object-cover blur-3xl opacity-30 scale-110"
+            class="absolute inset-0 w-full h-full blur-3xl opacity-30 scale-110"
           />
           <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black" />
         </div>
@@ -56,11 +56,11 @@
               class="w-full max-w-[320px] aspect-square transition-all duration-300 delay-50"
               :class="isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-90'"
             >
-              <img
+              <SecureImage
                 v-if="currentSong.cover"
                 :src="currentSong.cover"
                 :alt="currentSong.title"
-                class="w-full h-full object-cover rounded-lg shadow-2xl"
+                class="w-full h-full rounded-lg shadow-2xl"
               />
               <div v-else class="w-full h-full bg-dark-hover rounded-lg flex items-center justify-center">
                 <svg class="w-24 h-24 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

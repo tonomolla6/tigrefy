@@ -6,11 +6,10 @@
     <!-- Header de la playlist -->
     <div class="bg-gradient-to-b from-tiger-600 to-dark-base px-4 md:px-8 py-4 md:py-6 pb-6 md:pb-8">
       <div class="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6">
-        <img
+        <SecureImage
           :src="playlist.cover"
           :alt="playlist.name"
           class="w-52 h-52 md:w-48 md:h-48 lg:w-60 lg:h-60 rounded shadow-2xl flex-shrink-0"
-          @error="onImageError"
         />
         <div class="flex-1 text-center md:text-left md:pb-4 w-full">
           <p class="text-xs md:text-sm font-semibold uppercase">Playlist</p>

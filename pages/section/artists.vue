@@ -21,11 +21,10 @@
         >
           <!-- Imagen circular -->
           <div class="relative mb-3">
-            <img
+            <SecureImage
               :src="artist.image"
               :alt="artist.name"
-              class="w-full aspect-square object-cover rounded-full shadow-md"
-              @error="onImageError"
+              class="w-full aspect-square rounded-full shadow-md"
             />
             <CardPlayButton
               :is-playing="isCurrentlyPlaying(artist)"

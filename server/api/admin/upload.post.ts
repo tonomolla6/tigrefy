@@ -2,6 +2,12 @@ import { requireTigre } from '~/server/utils/auth'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { putR2Object } from '~/server/utils/r2'
+
+// Imágenes (cover/artist) → siempre R2 (dev y prod).
+// Audio MP3 → aún se sirve desde public/ hasta migrar a HLS.
+// HLS pre-convertido → siempre R2 (los scripts lo suben directo).
+const AUDIO_TO_R2 = process.env.USE_R2_STORAGE === 'true'
 
 export default defineEventHandler(async (event) => {
   await requireTigre(event)
@@ -17,6 +23,7 @@ export default defineEventHandler(async (event) => {
 
   const fileField = formData.find(f => f.name === 'file')
   const typeField = formData.find(f => f.name === 'type')
+  const trackIdField = formData.find(f => f.name === 'trackId')
 
   if (!fileField || !fileField.data) {
     throw createError({
@@ -26,6 +33,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const type = typeField?.data?.toString() || 'cover'
+  const trackId = trackIdField?.data?.toString()
 
   // Determinar el directorio según el tipo
   let subDir = 'covers'
@@ -35,6 +43,11 @@ export default defineEventHandler(async (event) => {
     case 'audio':
       subDir = 'audio'
       allowedMimes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/x-m4a']
+      break
+    case 'hls':
+      // Para archivos HLS pre-convertidos (.m3u8 y .ts)
+      subDir = 'tracks'
+      allowedMimes = ['application/vnd.apple.mpegurl', 'video/MP2T', 'application/octet-stream', 'text/plain']
       break
     case 'artist':
       subDir = 'artists'
@@ -47,9 +60,9 @@ export default defineEventHandler(async (event) => {
       break
   }
 
-  // Verificar tipo MIME
+  // Verificar tipo MIME (más permisivo para HLS)
   const mimeType = fileField.type || ''
-  if (allowedMimes.length > 0 && !allowedMimes.some(m => mimeType.includes(m.split('/')[1]))) {
+  if (type !== 'hls' && allowedMimes.length > 0 && !allowedMimes.some(m => mimeType.includes(m.split('/')[1]))) {
     throw createError({
       statusCode: 400,
       statusMessage: `Tipo de archivo no permitido. Se esperaba: ${allowedMimes.join(', ')}`
@@ -71,6 +84,110 @@ export default defineEventHandler(async (event) => {
     .replace(/^-|-$/g, '') // Quitar guiones al inicio/final
     .substring(0, 100) // Limitar longitud
 
+  // Imágenes y HLS pre-convertido → siempre R2.
+  if (type === 'cover' || type === 'artist' || type === 'hls') {
+    return await handleR2Upload(type, safeName, ext!, fileField.data, mimeType, originalName, trackId)
+  }
+
+  // Audio MP3: R2 si AUDIO_TO_R2 está activo, si no local.
+  if (type === 'audio' && AUDIO_TO_R2) {
+    return await handleR2Upload(type, safeName, ext!, fileField.data, mimeType, originalName, trackId)
+  }
+
+  return await handleLocalUpload(type, subDir, safeName, ext!, fileField.data)
+})
+
+/**
+ * Maneja la subida a R2 (producción)
+ * - HLS: Sube archivos pre-convertidos a tracks/{trackId}/
+ * - Imágenes: Sube directamente a covers/ o artists/
+ * - Audio MP3: No recomendado, usar HLS
+ */
+async function handleR2Upload(
+  type: string,
+  safeName: string,
+  ext: string,
+  data: Buffer,
+  mimeType: string,
+  originalName: string,
+  trackId?: string
+) {
+  if (type === 'hls') {
+    // Archivos HLS pre-convertidos
+    if (!trackId) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'trackId es requerido para archivos HLS'
+      })
+    }
+
+    // El nombre del archivo determina la ruta: index.m3u8 o segmentXXX.ts
+    const r2Key = `tracks/${trackId}/${originalName}`
+
+    let contentType = 'application/octet-stream'
+    if (originalName.endsWith('.m3u8')) {
+      contentType = 'application/vnd.apple.mpegurl'
+    } else if (originalName.endsWith('.ts')) {
+      contentType = 'video/MP2T'
+    }
+
+    await putR2Object(r2Key, data, contentType)
+
+    return {
+      success: true,
+      r2Key,
+      trackId,
+      fileName: originalName,
+      type,
+      size: data.length
+    }
+  }
+
+  if (type === 'audio') {
+    // Advertencia: Audio MP3 directo no soporta streaming HLS
+    // Subir como fallback pero recomendar conversión
+    const fileName = `${safeName}.${ext}`
+    const r2Key = `audio/${fileName}`
+
+    await putR2Object(r2Key, data, mimeType || 'audio/mpeg')
+
+    return {
+      success: true,
+      url: fileName, // ID para /api/media/audio/
+      r2Key,
+      fileName,
+      type,
+      size: data.length,
+      warning: 'Audio MP3 directo no soporta streaming HLS. Considera convertir a HLS.'
+    }
+  }
+
+  // Para imágenes: subir directamente a R2
+  const fileName = `${safeName}.${ext}`
+  const r2Path = type === 'artist' ? `artists/${fileName}` : `covers/${fileName}`
+
+  await putR2Object(r2Path, data, mimeType)
+
+  return {
+    success: true,
+    url: `/${type === 'artist' ? 'artists' : 'covers'}/${fileName}`, // Path para useMediaUrl
+    r2Path,
+    fileName,
+    type,
+    size: data.length
+  }
+}
+
+/**
+ * Maneja la subida local (desarrollo)
+ */
+async function handleLocalUpload(
+  type: string,
+  subDir: string,
+  safeName: string,
+  ext: string,
+  data: Buffer
+) {
   const fileName = `${safeName}.${ext}`
 
   // Construir ruta del archivo
@@ -85,7 +202,7 @@ export default defineEventHandler(async (event) => {
 
   // Guardar el archivo
   try {
-    await writeFile(filePath, fileField.data)
+    await writeFile(filePath, data)
   } catch (error) {
     console.error('Error saving file:', error)
     throw createError({
@@ -102,6 +219,6 @@ export default defineEventHandler(async (event) => {
     url,
     fileName,
     type,
-    size: fileField.data.length
+    size: data.length
   }
-})
+}

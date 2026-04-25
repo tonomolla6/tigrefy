@@ -32,10 +32,10 @@
               class="bg-dark-card hover:bg-dark-hover p-5 rounded-lg cursor-pointer transition-colors group relative"
               @click="goToResult(topResult)"
             >
-              <img
+              <SecureImage
                 :src="topResult.image || topResult.cover"
                 :alt="topResult.name || topResult.title"
-                class="w-24 h-24 md:w-28 md:h-28 rounded-full mb-4 object-cover shadow-lg"
+                class="w-24 h-24 md:w-28 md:h-28 rounded-full mb-4 shadow-lg"
                 :class="{ 'rounded-lg': topResult.type !== 'artist' }"
               />
               <h3 class="text-3xl font-bold mb-2">{{ topResult.name || topResult.title }}</h3>
@@ -66,7 +66,7 @@
                 class="flex items-center gap-3 p-2 rounded-md hover:bg-dark-card cursor-pointer group"
                 @click="handlePlaySong(song)"
               >
-                <img
+                <SecureImage
                   :src="song.cover"
                   :alt="song.title"
                   class="w-10 h-10 rounded flex-shrink-0"
@@ -99,10 +99,10 @@
               class="bg-dark-card hover:bg-dark-hover p-4 rounded-lg cursor-pointer transition-colors text-center"
               @click="goToArtist(artist.id)"
             >
-              <img
+              <SecureImage
                 :src="artist.image"
                 :alt="artist.name"
-                class="w-full aspect-square rounded-full mb-4 object-cover"
+                class="w-full aspect-square rounded-full mb-4"
               />
               <p class="text-white font-medium truncate">{{ artist.name }}</p>
               <p class="text-gray-400 text-sm">Artista</p>
@@ -134,7 +134,7 @@
             class="flex items-center gap-3 p-2 rounded-md hover:bg-dark-card cursor-pointer group"
             @click="handlePlaySong(song)"
           >
-            <img
+            <SecureImage
               :src="song.cover"
               :alt="song.title"
               class="w-12 h-12 rounded flex-shrink-0"
@@ -177,10 +177,10 @@
             class="bg-dark-card hover:bg-dark-hover p-4 rounded-lg cursor-pointer transition-colors text-center"
             @click="goToArtist(artist.id)"
           >
-            <img
+            <SecureImage
               :src="artist.image"
               :alt="artist.name"
-              class="w-full aspect-square rounded-full mb-4 object-cover"
+              class="w-full aspect-square rounded-full mb-4"
             />
             <p class="text-white font-medium truncate">{{ artist.name }}</p>
             <p class="text-gray-400 text-sm">Artista</p>

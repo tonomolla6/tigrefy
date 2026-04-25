@@ -10,7 +10,7 @@
         <div class="flex-shrink-0">
           <img
             ref="coverRef"
-            :src="song.cover"
+            :src="resolvedCover"
             :alt="song.title"
             crossorigin="anonymous"
             class="w-24 h-24 rounded-lg shadow-lg object-cover"
@@ -56,7 +56,7 @@
         <div class="flex-shrink-0">
           <img
             ref="coverRefDesktop"
-            :src="song.cover"
+            :src="resolvedCover"
             :alt="song.title"
             crossorigin="anonymous"
             class="w-48 h-48 rounded-lg shadow-lg object-cover"
@@ -107,6 +107,8 @@
 import type { PlaybackContext } from '~/composables/usePlayer'
 import { extractDominantColor } from '~/utils/image'
 
+const { getImageUrl } = useMediaUrl()
+
 const props = defineProps({
   song: {
     type: Object,
@@ -129,6 +131,8 @@ const { addToRecent } = useRecentlyPlayed()
 const isFavorite = computed(() => isFavoriteSong(props.song.id))
 const isCurrent = computed(() => currentSong.value?.id === props.song.id)
 const isCurrentlyPlaying = computed(() => isCurrent.value && isPlaying.value)
+
+const resolvedCover = computed(() => getImageUrl(props.song.cover))
 
 // Color extraction from cover
 const coverRef = ref<HTMLImageElement | null>(null)

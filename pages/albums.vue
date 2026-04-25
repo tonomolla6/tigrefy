@@ -14,11 +14,10 @@
           @click="navigateTo(`/album/${album.id}`)"
         >
           <div class="relative mb-4 overflow-hidden rounded-lg shadow-2xl">
-            <img
+            <SecureImage
               :src="album.cover"
               :alt="album.title"
-              class="w-full aspect-square object-cover transition-transform duration-300 group-hover:scale-105"
-              @error="handleImageError"
+              class="w-full aspect-square transition-transform duration-300 group-hover:scale-105"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
               <div class="w-full">

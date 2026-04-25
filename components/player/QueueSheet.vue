@@ -28,10 +28,10 @@
         <div v-if="currentSong" class="px-4 py-3 border-b border-white/10">
           <p class="text-xs text-white/40 uppercase tracking-wider mb-2">Reproduciendo ahora</p>
           <div class="flex items-center gap-3">
-            <img
-              :src="currentSong.cover || '/covers/default.png'"
+            <SecureImage
+              :src="currentSong.cover"
               :alt="currentSong.title"
-              class="w-12 h-12 rounded object-cover"
+              class="w-12 h-12 rounded"
             />
             <div class="min-w-0 flex-1">
               <p class="text-white font-medium truncate">{{ currentSong.title }}</p>
@@ -58,10 +58,10 @@
               class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
             >
               <span class="text-white/40 text-sm w-5 text-center">{{ index + 1 }}</span>
-              <img
-                :src="song.cover || '/covers/default.png'"
+              <SecureImage
+                :src="song.cover"
                 :alt="song.title"
-                class="w-10 h-10 rounded object-cover"
+                class="w-10 h-10 rounded"
               />
               <div class="min-w-0 flex-1">
                 <p class="text-white text-sm font-medium truncate">{{ song.title }}</p>

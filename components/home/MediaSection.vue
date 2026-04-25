@@ -64,10 +64,10 @@
                  snap-start block first:-ml-3"
         >
           <div class="relative mb-3">
-            <img
+            <SecureImage
               :src="item.cover"
               :alt="item.title"
-              class="w-full aspect-square object-cover rounded-md shadow-md"
+              class="w-full aspect-square rounded-md shadow-md"
             />
             <CardPlayButton
               :is-playing="isCurrentlyPlaying(item)"
@@ -103,10 +103,10 @@
                  snap-start block first:-ml-3"
         >
           <div class="relative mb-3">
-            <img
-              :src="item.cover || '/covers/default-playlist.png'"
+            <SecureImage
+              :src="item.cover"
               :alt="item.name"
-              class="w-full aspect-square object-cover rounded-md shadow-md"
+              class="w-full aspect-square rounded-md shadow-md"
             />
             <CardPlayButton
               :is-playing="isCurrentlyPlaying(item)"
@@ -131,10 +131,10 @@
                  snap-start block first:-ml-3"
         >
           <div class="relative mb-3">
-            <img
+            <SecureImage
               :src="item.image"
               :alt="item.name"
-              class="w-full aspect-square object-cover rounded-full shadow-md"
+              class="w-full aspect-square rounded-full shadow-md"
             />
           </div>
           <h3 class="font-bold text-base text-white mb-1 text-center truncate">{{ item.name }}</h3>
