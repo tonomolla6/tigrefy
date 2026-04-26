@@ -89,20 +89,12 @@
     >
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Nombre <span class="text-red-400">*</span></label>
-        <input
-          v-model="newPlaylist.name"
-          type="text"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-          required
-        />
+        <BaseInput v-model="newPlaylist.name" required />
       </div>
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Descripción</label>
-        <textarea
-          v-model="newPlaylist.description"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-28 resize-none"
-        ></textarea>
+        <BaseTextarea v-model="newPlaylist.description" />
       </div>
 
       <FileUpload

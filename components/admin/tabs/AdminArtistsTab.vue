@@ -64,13 +64,7 @@
     >
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Nombre <span class="text-red-400">*</span></label>
-        <input
-          v-model="newArtist.name"
-          type="text"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-          placeholder="Nombre del artista"
-          required
-        />
+        <BaseInput v-model="newArtist.name" placeholder="Nombre del artista" required />
       </div>
 
       <FileUpload
@@ -82,11 +76,7 @@
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Biografía</label>
-        <textarea
-          v-model="newArtist.bio"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-28 resize-none"
-          placeholder="Descripción del artista..."
-        ></textarea>
+        <BaseTextarea v-model="newArtist.bio" placeholder="Descripción del artista..." />
       </div>
     </AdminModal>
 
@@ -103,12 +93,7 @@
     >
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Nombre <span class="text-red-400">*</span></label>
-        <input
-          v-model="editForm.name"
-          type="text"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-          required
-        />
+        <BaseInput v-model="editForm.name" required />
       </div>
 
       <FileUpload
@@ -120,10 +105,7 @@
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Biografía</label>
-        <textarea
-          v-model="editForm.bio"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 h-28 resize-none"
-        ></textarea>
+        <BaseTextarea v-model="editForm.bio" />
       </div>
     </AdminModal>
 

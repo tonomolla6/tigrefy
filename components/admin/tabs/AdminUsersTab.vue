@@ -90,48 +90,26 @@
     >
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Username</label>
-        <input
-          v-model="newUser.username"
-          type="text"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-          placeholder="Mínimo 3 caracteres"
-          required
-          minlength="3"
-        />
+        <BaseInput v-model="newUser.username" placeholder="Mínimo 3 caracteres" required minlength="3" />
       </div>
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Nombre para mostrar</label>
-        <input
-          v-model="newUser.displayName"
-          type="text"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-          placeholder="Opcional"
-        />
+        <BaseInput v-model="newUser.displayName" placeholder="Opcional" />
       </div>
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Contraseña</label>
-        <input
-          v-model="newUser.password"
-          type="password"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-          placeholder="Mínimo 6 caracteres"
-          required
-          minlength="6"
-        />
+        <BaseInput v-model="newUser.password" type="password" placeholder="Mínimo 6 caracteres" required minlength="6" />
       </div>
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Rol</label>
-        <select
-          v-model="newUser.role"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-        >
+        <BaseSelect v-model="newUser.role">
           <option value="guest">Guest — Solo contenido público</option>
           <option value="user">User — Ve todo el contenido</option>
           <option value="tigre">Tigre — Acceso completo + gestión</option>
-        </select>
+        </BaseSelect>
       </div>
     </AdminModal>
 
@@ -148,48 +126,28 @@
     >
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Username</label>
-        <input
-          v-model="editForm.username"
-          type="text"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-          required
-          minlength="3"
-        />
+        <BaseInput v-model="editForm.username" required minlength="3" />
       </div>
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Nombre para mostrar</label>
-        <input
-          v-model="editForm.displayName"
-          type="text"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-        />
+        <BaseInput v-model="editForm.displayName" />
       </div>
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">
           Nueva contraseña <span class="text-white/40">(dejar vacío para mantener)</span>
         </label>
-        <input
-          v-model="editForm.password"
-          type="password"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-          placeholder="Mínimo 6 caracteres"
-          minlength="6"
-        />
+        <BaseInput v-model="editForm.password" type="password" placeholder="Mínimo 6 caracteres" minlength="6" />
       </div>
 
       <div class="space-y-1">
         <label class="block text-sm text-white/70">Rol</label>
-        <select
-          v-model="editForm.role"
-          class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500 disabled:opacity-60"
-          :disabled="editingUser?.id === currentUser?.id"
-        >
+        <BaseSelect v-model="editForm.role" :disabled="editingUser?.id === currentUser?.id">
           <option value="guest">Guest — Solo contenido público</option>
           <option value="user">User — Ve todo el contenido</option>
           <option value="tigre">Tigre — Acceso completo + gestión</option>
-        </select>
+        </BaseSelect>
         <p v-if="editingUser?.id === currentUser?.id" class="text-xs text-white/40 mt-1">
           No puedes cambiar tu propio rol
         </p>

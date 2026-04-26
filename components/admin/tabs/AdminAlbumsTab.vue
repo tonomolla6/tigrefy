@@ -97,33 +97,20 @@
         <div class="space-y-5">
           <div class="space-y-1">
             <label class="block text-sm text-white/70">Título <span class="text-red-400">*</span></label>
-            <input
-              v-model="newAlbum.title"
-              type="text"
-              class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-              required
-            />
+            <BaseInput v-model="newAlbum.title" required />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div class="space-y-1">
               <label class="block text-sm text-white/70">Artista <span class="text-red-400">*</span></label>
-              <select
-                v-model="newAlbum.artistId"
-                class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                required
-              >
+              <BaseSelect v-model="newAlbum.artistId" required>
                 <option value="" disabled>—</option>
                 <option v-for="artist in artistsList" :key="artist.id" :value="artist.id">{{ artist.name }}</option>
-              </select>
+              </BaseSelect>
             </div>
             <div class="space-y-1">
               <label class="block text-sm text-white/70">Fecha de lanzamiento</label>
-              <input
-                v-model="newAlbum.releaseDate"
-                type="date"
-                class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-              />
+              <BaseInput v-model="newAlbum.releaseDate" type="date" />
             </div>
           </div>
 
@@ -163,33 +150,20 @@
             <div class="space-y-3">
               <div class="space-y-1">
                 <label class="block text-sm text-white/70">Título <span class="text-red-400">*</span></label>
-                <input
-                  v-model="editForm.title"
-                  type="text"
-                  class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                  required
-                />
+                <BaseInput v-model="editForm.title" required />
               </div>
               <div class="space-y-1">
                 <label class="block text-sm text-white/70">Fecha</label>
-                <input
-                  v-model="editForm.releaseDate"
-                  type="date"
-                  class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-                />
+                <BaseInput v-model="editForm.releaseDate" type="date" />
               </div>
             </div>
           </div>
 
           <div class="space-y-1">
             <label class="block text-sm text-white/70">Artista <span class="text-red-400">*</span></label>
-            <select
-              v-model="editForm.artistId"
-              class="w-full bg-dark-hover text-white rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-tiger-500"
-              required
-            >
+            <BaseSelect v-model="editForm.artistId" required>
               <option v-for="artist in artistsList" :key="artist.id" :value="artist.id">{{ artist.name }}</option>
-            </select>
+            </BaseSelect>
           </div>
 
           <label class="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer select-none">
