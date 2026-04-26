@@ -1,4 +1,6 @@
 {
   // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+  // Excluir bundles HLS generados (los segmentos .ts son binarios MPEG-TS, no TypeScript)
+  "exclude": ["output", ".output", ".nuxt", "dist", "node_modules"]
 }
