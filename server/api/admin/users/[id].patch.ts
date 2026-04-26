@@ -1,16 +1,9 @@
 import { useDB, users } from '~/server/db'
+import { requireParam } from '~/server/utils/params'
 import { eq, and, ne } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de usuario requerido'
-    })
-  }
-
+  const id = requireParam(event, 'id', 'ID de usuario')
   const body = await readBody(event)
   const { role, displayName, username, password } = body
 

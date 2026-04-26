@@ -1,19 +1,11 @@
 import { useDB, playlists } from '~/server/db'
 import { requireTigre } from '~/server/utils/auth'
+import { requireParam } from '~/server/utils/params'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   await requireTigre(event)
-
-  const id = getRouterParam(event, 'id')
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de la playlist es requerido'
-    })
-  }
-
+  const id = requireParam(event, 'id', 'ID de la playlist')
   const db = useDB()
 
   // Verificar que la playlist existe

@@ -1,18 +1,11 @@
 import { useDB, playlists } from '~/server/db'
 import { eq } from 'drizzle-orm'
 import { getAuthUser } from '~/server/utils/auth'
+import { requireParam } from '~/server/utils/params'
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
+  const id = requireParam(event, 'id', 'ID de playlist')
   const user = await getAuthUser(event)
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de playlist requerido'
-    })
-  }
-
   const db = useDB()
 
   const result = await db.query.playlists.findFirst({

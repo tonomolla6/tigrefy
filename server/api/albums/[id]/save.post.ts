@@ -1,19 +1,12 @@
 import { useDB, savedAlbums, albums } from '~/server/db'
 import { requireAuth } from '~/server/utils/auth'
+import { requireParam } from '~/server/utils/params'
 import { eq, and } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
   const userId = user.userId
-
-  const albumId = getRouterParam(event, 'id')
-  if (!albumId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de álbum requerido'
-    })
-  }
-
+  const albumId = requireParam(event, 'id', 'ID de álbum')
   const db = useDB()
 
   // Verificar que el álbum existe

@@ -1,17 +1,11 @@
 import { useDB, songs } from '~/server/db'
 import { getAuthUser, canSeeAllContent } from '~/server/utils/auth'
+import { requireParam } from '~/server/utils/params'
+import { mapSongResponse } from '~/server/utils/mappers'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de canción requerido'
-    })
-  }
-
+  const id = requireParam(event, 'id', 'ID de canción')
   const db = useDB()
   const authUser = await getAuthUser(event)
 
@@ -38,19 +32,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  return {
-    id: result.id,
-    title: result.title,
-    artistId: result.artistId,
-    artistName: result.artist.name,
-    albumId: result.albumId,
-    albumName: result.album?.title || null,
-    trackNumber: result.trackNumber,
-    duration: result.duration,
-    cover: result.album?.cover || null,
-    lyrics: result.lyrics,
-    plays: result.plays,
-    releaseDate: result.album?.releaseDate || null,
-    isPublic: result.isPublic
-  }
+  return mapSongResponse(result)
 })

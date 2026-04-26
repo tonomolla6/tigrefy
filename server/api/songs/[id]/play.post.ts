@@ -1,16 +1,9 @@
 import { useDB, songs } from '~/server/db'
+import { requireParam } from '~/server/utils/params'
 import { eq, sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de canción requerido'
-    })
-  }
-
+  const id = requireParam(event, 'id', 'ID de canción')
   const db = useDB()
 
   // Incrementar contador de reproducciones

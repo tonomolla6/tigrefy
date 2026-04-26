@@ -1,17 +1,11 @@
 import { useDB, albums, parseJsonField } from '~/server/db'
 import { getAuthUser, canSeeAllContent } from '~/server/utils/auth'
+import { requireParam } from '~/server/utils/params'
+import { mapSongResponse } from '~/server/utils/mappers'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de álbum requerido'
-    })
-  }
-
+  const id = requireParam(event, 'id', 'ID de álbum')
   const db = useDB()
   const authUser = await getAuthUser(event)
 
@@ -57,20 +51,16 @@ export default defineEventHandler(async (event) => {
     isPublic: result.isPublic,
     songs: result.songs
       .filter(song => userCanSeeAll || song.isPublic)
-      .map(song => ({
-        id: song.id,
-        title: song.title,
-        artistId: song.artistId,
-        artistName: song.artist.name,
-        albumId: result.id,
-        albumName: result.title,
-        trackNumber: song.trackNumber,
-        duration: song.duration,
-        cover: result.cover,
-        lyrics: song.lyrics,
-        plays: song.plays,
-        releaseDate: result.releaseDate,
-        isPublic: song.isPublic
-      }))
+      .map(song => mapSongResponse(
+        // El mapper espera album object — aquí no lo tenemos cargado, pero
+        // pasamos overrides con los datos del álbum padre que sí conocemos.
+        { ...song, album: null },
+        {
+          albumId: result.id,
+          albumName: result.title,
+          cover: result.cover,
+          releaseDate: result.releaseDate,
+        }
+      ))
   }
 })

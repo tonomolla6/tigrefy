@@ -1,17 +1,10 @@
 import { useDB } from '~/server/db'
 import { requireTigre } from '~/server/utils/auth'
+import { requireParam } from '~/server/utils/params'
 
 export default defineEventHandler(async (event) => {
   await requireTigre(event)
-
-  const id = getRouterParam(event, 'id')
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de playlist requerido'
-    })
-  }
-
+  const id = requireParam(event, 'id', 'ID de playlist')
   const db = useDB()
 
   // Obtener las canciones de la playlist ordenadas por posición

@@ -1,18 +1,11 @@
 import { useDB, songLikes } from '~/server/db'
 import { eq, and } from 'drizzle-orm'
 import { requireAuth } from '~/server/utils/auth'
+import { requireParam } from '~/server/utils/params'
 
 export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
-  const songId = getRouterParam(event, 'id')
-
-  if (!songId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de canción requerido'
-    })
-  }
-
+  const songId = requireParam(event, 'id', 'ID de canción')
   const db = useDB()
 
   // Verificar si ya existe el like

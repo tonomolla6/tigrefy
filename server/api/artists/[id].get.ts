@@ -1,16 +1,10 @@
 import { useDB, artists, parseJsonField } from '~/server/db'
+import { requireParam } from '~/server/utils/params'
+import { mapSongResponse } from '~/server/utils/mappers'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de artista requerido'
-    })
-  }
-
+  const id = requireParam(event, 'id', 'ID de artista')
   const db = useDB()
 
   const result = await db.query.artists.findFirst({
@@ -51,20 +45,10 @@ export default defineEventHandler(async (event) => {
       genres: parseJsonField<string>(album.genres),
       isPublic: album.isPublic
     })),
-    songs: result.songs.map(song => ({
-      id: song.id,
-      title: song.title,
-      artistId: result.id,
-      artistName: result.name,
-      albumId: song.albumId,
-      albumName: song.album?.title || null,
-      trackNumber: song.trackNumber,
-      duration: song.duration,
-      cover: song.album?.cover || null,
-      lyrics: song.lyrics,
-      plays: song.plays,
-      releaseDate: song.album?.releaseDate || null,
-      isPublic: song.isPublic
-    }))
+    songs: result.songs.map(song =>
+      // El artista ya lo conocemos (es result), pero el mapper espera el shape
+      // {artist: {name}}, así que lo inyectamos para reutilizarlo.
+      mapSongResponse({ ...song, artist: { name: result.name } })
+    )
   }
 })

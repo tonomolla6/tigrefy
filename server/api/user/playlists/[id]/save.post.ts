@@ -1,18 +1,11 @@
 import { useDB, playlists, savedPlaylists } from '~/server/db'
+import { requireParam } from '~/server/utils/params'
 import { eq, and } from 'drizzle-orm'
 
 // Guardar o quitar una playlist de la biblioteca del usuario
 export default defineEventHandler(async (event) => {
   const userId = event.context.auth.userId
-  const playlistId = getRouterParam(event, 'id')
-
-  if (!playlistId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de playlist requerido'
-    })
-  }
-
+  const playlistId = requireParam(event, 'id', 'ID de playlist')
   const db = useDB()
 
   // Verificar que la playlist existe

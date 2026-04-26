@@ -9,15 +9,12 @@
  */
 import { useDB, songs } from '~/server/db'
 import { requireTigre } from '~/server/utils/auth'
+import { requireParam } from '~/server/utils/params'
 import { and, eq, inArray } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   await requireTigre(event)
-
-  const albumId = getRouterParam(event, 'id')
-  if (!albumId) {
-    throw createError({ statusCode: 400, statusMessage: 'albumId requerido' })
-  }
+  const albumId = requireParam(event, 'id', 'albumId')
 
   const body = await readBody<{ songIds?: string[] }>(event)
   const songIds = body?.songIds

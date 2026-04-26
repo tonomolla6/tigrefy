@@ -1,16 +1,10 @@
 import { useDB, users } from '~/server/db'
+import { requireParam } from '~/server/utils/params'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, 'id')
+  const id = requireParam(event, 'id', 'ID de usuario')
   const authUser = event.context.auth
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'ID de usuario requerido'
-    })
-  }
 
   // No permitir eliminarse a sí mismo
   if (authUser?.userId === id) {
