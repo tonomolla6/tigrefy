@@ -1,61 +1,27 @@
 <template>
-  <NuxtLink :to="`/artist/${artist.id}`" class="block">
-    <div class="bg-dark-highlight p-4 rounded-lg card-hover group">
-      <div class="relative mb-4">
-        <SecureImage
-          :src="artist.image"
-          :alt="artist.name"
-          class="w-full aspect-square object-cover rounded-full shadow-lg"
-        />
-        <button
-          @click.prevent="handlePlayArtist"
-          class="absolute bottom-2 right-2 bg-tiger-500 rounded-full p-3 shadow-lg transform translate-y-2 transition-all duration-300"
-          :class="isCurrentContext ? 'opacity-100 translate-y-0' : 'opacity-0 group-hover:opacity-100 group-hover:translate-y-0'"
-        >
-          <IconPause v-if="isCurrentlyPlaying" :size="24" class="text-white" />
-          <IconPlay v-else :size="24" class="text-white" />
-        </button>
-      </div>
-      <h3 class="font-bold text-primary truncate mb-1">{{ artist.name }}</h3>
-      <div class="flex items-center gap-2">
-        <p class="text-sm text-secondary truncate">Artista</p>
-        <span v-if="artist.genres && artist.genres.length > 0" class="text-xs px-2 py-0.5 bg-tiger-500/20 text-tiger-400 rounded-full">
-          {{ artist.genres[0] }}
-        </span>
-      </div>
+  <BaseContentCard
+    kind="artist"
+    :id="artist.id"
+    :title="artist.name"
+    :image="artist.image"
+    :get-songs="() => getSongsByArtistId(artist.id)"
+  >
+    <div class="flex items-center gap-2">
+      <p class="text-sm text-secondary truncate">Artista</p>
+      <span
+        v-if="artist.genres && artist.genres.length > 0"
+        class="text-xs px-2 py-0.5 bg-tiger-500/20 text-tiger-400 rounded-full"
+      >
+        {{ artist.genres[0] }}
+      </span>
     </div>
-  </NuxtLink>
+  </BaseContentCard>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   artist: any
 }>()
 
 const { getSongsByArtistId } = useData()
-const { playSong, playbackContext, isPlaying, togglePlay } = usePlayer()
-
-// Check if this artist is the current playback context
-const isCurrentContext = computed(() =>
-  playbackContext.value.type === 'artist' && playbackContext.value.id === props.artist.id
-)
-
-// Check if currently playing from this artist
-const isCurrentlyPlaying = computed(() =>
-  isCurrentContext.value && isPlaying.value
-)
-
-const handlePlayArtist = () => {
-  // If this is the current context, toggle play/pause
-  if (isCurrentContext.value) {
-    togglePlay()
-    return
-  }
-
-  // Otherwise, start playing this artist's songs
-  const songs = getSongsByArtistId(props.artist.id)
-  if (songs.length > 0) {
-    playSong(songs[0], songs, { type: 'artist', id: props.artist.id })
-  }
-}
 </script>

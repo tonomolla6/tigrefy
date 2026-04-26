@@ -1,48 +1,19 @@
 <template>
-  <NuxtLink :to="`/playlist/${playlist.id}`" class="block">
-    <div class="bg-dark-highlight p-4 rounded-lg card-hover group/card">
-      <div class="relative mb-4">
-        <SecureImage
-          :src="playlist.cover"
-          :alt="playlist.name"
-          class="w-full aspect-square rounded-md shadow-lg"
-        />
-        <CardPlayButton
-          :is-playing="isCurrentlyPlaying"
-          :is-visible="isCurrentContext"
-          @click="handlePlayPlaylist"
-        />
-      </div>
-      <h3 class="font-bold text-primary truncate mb-1">{{ playlist.name }}</h3>
-      <p class="text-sm text-secondary line-clamp-2">{{ playlist.description }}</p>
-    </div>
-  </NuxtLink>
+  <BaseContentCard
+    kind="playlist"
+    :id="playlist.id"
+    :title="playlist.name"
+    :image="playlist.cover"
+    :get-songs="() => getSongsByIds(playlist.songIds)"
+  >
+    <p class="text-sm text-secondary line-clamp-2">{{ playlist.description }}</p>
+  </BaseContentCard>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   playlist: any
 }>()
 
 const { getSongsByIds } = useData()
-const { playSong, playbackContext, isPlaying, togglePlay } = usePlayer()
-
-const isCurrentContext = computed(() =>
-  playbackContext.value.type === 'playlist' && playbackContext.value.id === props.playlist.id
-)
-
-const isCurrentlyPlaying = computed(() =>
-  isCurrentContext.value && isPlaying.value
-)
-
-const handlePlayPlaylist = () => {
-  if (isCurrentContext.value) {
-    togglePlay()
-    return
-  }
-  const songs = getSongsByIds(props.playlist.songIds)
-  if (songs.length > 0) {
-    playSong(songs[0], songs, { type: 'playlist', id: props.playlist.id })
-  }
-}
 </script>
