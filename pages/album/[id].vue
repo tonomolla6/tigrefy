@@ -83,8 +83,28 @@
     </div>
   </div>
 
-  <div v-else class="min-h-full flex items-center justify-center">
-    <p class="text-secondary">Cargando álbum...</p>
+  <div v-else class="min-h-full pb-20 md:pb-0" aria-busy="true" aria-label="Cargando álbum">
+    <MobileHeader />
+    <div class="bg-gradient-to-b from-dark-card via-dark-card to-dark-base px-4 md:px-8 py-6 md:py-8 pb-8">
+      <div class="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6">
+        <div class="w-56 h-56 md:w-60 md:h-60 rounded-lg bg-white/5 animate-pulse"></div>
+        <div class="flex-1 pb-0 md:pb-4 text-center md:text-left space-y-3 w-full">
+          <div class="h-3 w-12 bg-white/10 rounded animate-pulse mx-auto md:mx-0"></div>
+          <div class="h-12 md:h-20 w-3/4 bg-white/10 rounded animate-pulse mx-auto md:mx-0"></div>
+          <div class="h-4 w-1/2 bg-white/10 rounded animate-pulse mx-auto md:mx-0"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-dark-base px-4 md:px-8 py-6 space-y-3">
+      <div v-for="i in 6" :key="i" class="flex items-center gap-3 py-2">
+        <div class="w-4 h-4 bg-white/5 rounded animate-pulse"></div>
+        <div class="flex-1 space-y-2">
+          <div class="h-4 bg-white/10 rounded animate-pulse" :style="{ width: `${30 + Math.random() * 40}%` }"></div>
+          <div class="h-3 w-24 bg-white/5 rounded animate-pulse"></div>
+        </div>
+        <div class="h-3 w-10 bg-white/5 rounded animate-pulse"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Song Action Sheet -->

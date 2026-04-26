@@ -109,8 +109,29 @@
     </div>
   </div>
 
-  <div v-else class="min-h-full flex items-center justify-center">
-    <p class="text-secondary">Cargando artista...</p>
+  <div v-else class="min-h-full" aria-busy="true" aria-label="Cargando artista">
+    <div class="relative">
+      <div class="absolute inset-0 bg-dark-card"></div>
+      <div class="relative px-4 md:px-8 pt-16 md:pt-24 pb-6 md:pb-8">
+        <div class="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6">
+          <div class="w-40 h-40 md:w-56 md:h-56 rounded-full bg-white/5 animate-pulse"></div>
+          <div class="flex-1 text-center md:text-left md:pb-2 space-y-3 w-full">
+            <div class="h-5 w-32 bg-white/10 rounded-full animate-pulse mx-auto md:mx-0"></div>
+            <div class="h-12 md:h-20 w-3/4 bg-white/10 rounded animate-pulse mx-auto md:mx-0"></div>
+            <div class="h-4 w-1/3 bg-white/5 rounded animate-pulse mx-auto md:mx-0"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-dark-base px-4 md:px-8 py-6 space-y-6">
+      <div class="h-6 w-32 bg-white/10 rounded animate-pulse"></div>
+      <div class="space-y-2">
+        <div v-for="i in 5" :key="i" class="flex items-center gap-3 py-2">
+          <div class="w-10 h-10 bg-white/5 rounded animate-pulse"></div>
+          <div class="flex-1 h-4 bg-white/10 rounded animate-pulse" :style="{ maxWidth: `${30 + Math.random() * 40}%` }"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

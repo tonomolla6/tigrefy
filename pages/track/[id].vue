@@ -132,8 +132,17 @@
     </div>
   </div>
 
-  <div v-else class="min-h-full flex items-center justify-center">
-    <p class="text-secondary">Cargando canción...</p>
+  <div v-else class="min-h-full" aria-busy="true" aria-label="Cargando canción">
+    <div class="bg-gradient-to-b from-dark-card via-dark-card to-dark-base px-4 md:px-8 py-8 pb-8">
+      <div class="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6">
+        <div class="w-56 h-56 md:w-60 md:h-60 rounded-lg bg-white/5 animate-pulse"></div>
+        <div class="flex-1 pb-0 md:pb-4 text-center md:text-left space-y-3 w-full">
+          <div class="h-3 w-16 bg-white/10 rounded animate-pulse mx-auto md:mx-0"></div>
+          <div class="h-12 md:h-20 w-3/4 bg-white/10 rounded animate-pulse mx-auto md:mx-0"></div>
+          <div class="h-4 w-1/2 bg-white/5 rounded animate-pulse mx-auto md:mx-0"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
