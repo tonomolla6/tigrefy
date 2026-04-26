@@ -83,37 +83,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(
-    username: string,
-    password: string,
-    masterKey: string,
-    displayName?: string,
-    role: 'tigre' | 'user' | 'guest' = 'guest'
-  ): Promise<boolean> {
-    authError.value = null
-
-    try {
-      const response = await $fetch<{
-        success: boolean
-        user: User
-      }>('/api/auth/register', {
-        method: 'POST',
-        body: { username, password, displayName, masterKey, role }
-      })
-
-      if (response.success) {
-        user.value = response.user
-        return true
-      }
-
-      return false
-    } catch (error: any) {
-      authError.value =
-        error.data?.statusMessage || 'Error al registrarse'
-      return false
-    }
-  }
-
   async function logout() {
     try {
       await $fetch('/api/auth/logout', {
@@ -157,7 +126,6 @@ export const useAuthStore = defineStore('auth', () => {
     // actions
     initAuth,
     login,
-    register,
     logout
   }
 })

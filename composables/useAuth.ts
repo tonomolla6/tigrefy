@@ -73,8 +73,6 @@ export const useAuth = () => {
     initAuth: () => store.initAuth(),
     checkAuth: () => store.initAuth(),
     login,
-    register: (username: string, password: string, masterKey: string, displayName?: string, role?: 'tigre' | 'user' | 'guest') =>
-      store.register(username, password, masterKey, displayName, role),
     logout,
 
     // Legacy
