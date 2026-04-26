@@ -65,7 +65,6 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await $fetch<{
         success: boolean
         user: User
-        token: string
       }>('/api/auth/login', {
         method: 'POST',
         body: { username, password }
@@ -97,7 +96,6 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await $fetch<{
         success: boolean
         user: User
-        token: string
       }>('/api/auth/register', {
         method: 'POST',
         body: { username, password, displayName, masterKey, role }

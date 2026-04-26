@@ -45,6 +45,8 @@ export default defineNuxtConfig({
     tursoUrl: process.env.TURSO_DATABASE_URL,
     tursoToken: process.env.TURSO_AUTH_TOKEN,
     jwtSecret: process.env.JWT_SECRET,
+    // Clave para autorizar registros nuevos (sin esto, /register devuelve 403)
+    masterKey: process.env.MASTER_KEY,
     // R2 Media - firma HMAC para audio (no para imágenes)
     r2SigningSecret: process.env.R2_SIGNING_SECRET,
     // R2 Access - lectura de playlists y uploads

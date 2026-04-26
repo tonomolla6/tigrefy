@@ -1,8 +1,19 @@
 import { useDB, users } from '~/server/db'
 import { verifyPassword, generateToken } from '~/server/utils/auth'
+import { checkRateLimit, resetRateLimit, getClientIp } from '~/server/utils/rateLimit'
 import { eq, sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
+  // 5 intentos por IP cada 15 min — protege contra fuerza bruta
+  const ip = getClientIp(event)
+  const rateLimitKey = `login:${ip}`
+  if (!checkRateLimit(rateLimitKey, 5, 15 * 60_000)) {
+    throw createError({
+      statusCode: 429,
+      statusMessage: 'Demasiados intentos. Espera unos minutos antes de volver a intentarlo.'
+    })
+  }
+
   const body = await readBody(event)
 
   const { username, password } = body
@@ -42,6 +53,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Login OK → liberar el contador de intentos para esta IP
+  resetRateLimit(rateLimitKey)
+
   // Generar token con rol
   const token = await generateToken({
     userId: user.id,
@@ -79,7 +93,6 @@ export default defineEventHandler(async (event) => {
       username: user.username,
       displayName: user.displayName || user.username,
       role: user.role || 'user'
-    },
-    token
+    }
   }
 })

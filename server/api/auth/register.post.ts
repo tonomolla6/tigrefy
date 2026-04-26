@@ -1,8 +1,19 @@
 import { useDB, users } from '~/server/db'
 import { hashPassword, generateToken } from '~/server/utils/auth'
+import { checkRateLimit, getClientIp } from '~/server/utils/rateLimit'
 import { sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
+  // 3 intentos de registro por IP cada hora — la masterKey es secreta pero no
+  // queremos que se pueda forzar con miles de pruebas
+  const ip = getClientIp(event)
+  if (!checkRateLimit(`register:${ip}`, 3, 60 * 60_000)) {
+    throw createError({
+      statusCode: 429,
+      statusMessage: 'Demasiados intentos de registro. Espera un rato.'
+    })
+  }
+
   const body = await readBody(event)
   const config = useRuntimeConfig()
 
@@ -98,7 +109,6 @@ export default defineEventHandler(async (event) => {
       username,
       displayName: displayName || username,
       role: userRole
-    },
-    token
+    }
   }
 })
