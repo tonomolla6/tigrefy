@@ -36,6 +36,7 @@
 
             <button
               @click="$emit('close')"
+              aria-label="Cerrar reproductor"
               class="p-1.5 text-white/70 hover:text-white transition-colors"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,6 +97,8 @@
               </div>
               <button
                 @click="toggleFavoriteSong(currentSong.id)"
+                :aria-label="isFavoriteSong(currentSong.id) ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+                :aria-pressed="isFavoriteSong(currentSong.id)"
                 class="p-2 transition-all"
                 :class="isFavoriteSong(currentSong.id) ? 'text-tiger-500' : 'text-white/60 hover:text-white'"
               >
@@ -118,6 +121,8 @@
                 :value="currentTime"
                 :max="duration || 0"
                 @input="handleSeek"
+                aria-label="Progreso de la canción"
+                :aria-valuetext="`${formatTime(currentTime)} de ${formatTime(duration)}`"
                 class="absolute inset-0 w-full opacity-0 cursor-pointer"
               />
             </div>
@@ -135,6 +140,8 @@
             <div class="flex items-center justify-between">
               <button
                 @click="toggleShuffle"
+                :aria-label="isShuffled ? 'Desactivar reproducción aleatoria' : 'Activar reproducción aleatoria'"
+                :aria-pressed="isShuffled"
                 class="p-3 transition-colors"
                 :class="isShuffled ? 'text-tiger-500' : 'text-white'"
               >
@@ -143,6 +150,7 @@
 
               <button
                 @click="previousSong"
+                aria-label="Anterior"
                 class="p-3 text-white hover:scale-105 transition-transform"
               >
                 <IconSkipBack :size="32" />
@@ -150,6 +158,7 @@
 
               <button
                 @click="togglePlay"
+                :aria-label="isPlaying ? 'Pausar' : 'Reproducir'"
                 class="w-16 h-16 bg-white rounded-full flex items-center justify-center hover:scale-105 transition-transform"
               >
                 <IconPlay v-if="!isPlaying" :size="32" class="text-black ml-1" />
@@ -158,6 +167,7 @@
 
               <button
                 @click="nextSong"
+                aria-label="Siguiente"
                 class="p-3 text-white hover:scale-105 transition-transform"
               >
                 <IconSkipForward :size="32" />
@@ -165,6 +175,7 @@
 
               <button
                 @click="toggleRepeat"
+                :aria-label="repeatMode === 'off' ? 'Activar repetición' : repeatMode === 'all' ? 'Repetir solo esta canción' : 'Desactivar repetición'"
                 class="p-3 transition-colors"
                 :class="repeatMode !== 'off' ? 'text-tiger-500' : 'text-white'"
               >
@@ -209,6 +220,7 @@
               <h3 class="text-lg font-bold text-white">Letra</h3>
               <button
                 @click="showLyricsSheet = false"
+                aria-label="Cerrar letra"
                 class="p-2 text-white/70 hover:text-white"
               >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

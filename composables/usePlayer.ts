@@ -139,6 +139,15 @@ export const usePlayer = () => {
         handleSongEnd()
       })
 
+      // Errores del elemento (red caída a mitad de stream, etc.)
+      globalAudioElement.addEventListener('error', () => {
+        const err = globalAudioElement?.error
+        if (!err || err.code === MediaError.MEDIA_ERR_ABORTED) return
+        console.error('Audio element error:', err)
+        isPlaying.value = false
+        useToast().error('Se interrumpió la reproducción')
+      })
+
       // Sincronizar estado cuando se usan teclas multimedia del teclado
       globalAudioElement.addEventListener('play', () => {
         if (!isPlaying.value) {
@@ -216,11 +225,15 @@ export const usePlayer = () => {
       queueIndex.value = 0
     }
 
+    const toast = useToast()
+
     try {
       await loadHlsTrack(globalAudioElement, song.id)
     } catch (err) {
       console.error('Error cargando audio:', err)
       isPlaying.value = false
+      updateDocumentTitle(null, false)
+      toast.error(`No se pudo cargar "${song.title}"`)
       return
     }
 
@@ -241,9 +254,13 @@ export const usePlayer = () => {
       // La reproducción se registra después de 30 segundos reales de escucha
       // Guardar estado de última reproducción
       saveLastPlayedState()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al reproducir:', error)
       isPlaying.value = false
+      // NotAllowedError = autoplay bloqueado por el navegador, no es un fallo nuestro
+      if (error?.name !== 'NotAllowedError' && error?.name !== 'AbortError') {
+        toast.error('Error al reproducir el audio')
+      }
     }
   }
 
@@ -256,8 +273,17 @@ export const usePlayer = () => {
       updateDocumentTitle(currentSong.value, false)
     } else {
       globalAudioElement.play()
-      isPlaying.value = true
-      updateDocumentTitle(currentSong.value, true)
+        .then(() => {
+          isPlaying.value = true
+          updateDocumentTitle(currentSong.value, true)
+        })
+        .catch((err: any) => {
+          console.error('Error al reanudar:', err)
+          isPlaying.value = false
+          if (err?.name !== 'NotAllowedError' && err?.name !== 'AbortError') {
+            useToast().error('Error al reproducir el audio')
+          }
+        })
     }
   }
 

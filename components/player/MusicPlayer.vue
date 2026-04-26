@@ -28,6 +28,8 @@
           <Tooltip :text="isFavoriteSong(currentSong.id) ? 'Quitar de Favoritos' : 'Añadir a Favoritos'">
             <button
               @click.stop="toggleFavoriteSong(currentSong.id)"
+              :aria-label="isFavoriteSong(currentSong.id) ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+              :aria-pressed="isFavoriteSong(currentSong.id)"
               class="text-[#b3b3b3] hover:text-white transition-all flex-shrink-0"
               :class="{'!text-tiger-500 hover:!text-tiger-400': isFavoriteSong(currentSong.id)}"
             >
@@ -44,6 +46,8 @@
           <Tooltip :text="isShuffled ? 'Desactivar reproducción aleatoria' : 'Activar reproducción aleatoria'">
             <button
               @click="toggleShuffle"
+              :aria-label="isShuffled ? 'Desactivar reproducción aleatoria' : 'Activar reproducción aleatoria'"
+              :aria-pressed="isShuffled"
               class="flex items-center justify-center w-8 h-8 text-[#b3b3b3] hover:text-white transition-colors relative"
               :class="{'!text-tiger-500 hover:!text-tiger-400': isShuffled}"
             >
@@ -54,6 +58,7 @@
           <Tooltip text="Anterior">
             <button
               @click="previousSong"
+              aria-label="Anterior"
               class="flex items-center justify-center w-8 h-8 text-[#b3b3b3] hover:text-white transition-colors"
             >
               <IconSkipBack :size="24" />
@@ -62,6 +67,7 @@
           <Tooltip :text="isPlaying ? 'Pausar' : 'Reproducir'">
             <button
               @click="togglePlay"
+              :aria-label="isPlaying ? 'Pausar' : 'Reproducir'"
               class="flex items-center justify-center w-8 h-8 bg-white hover:scale-105 hover:bg-white text-black rounded-full transition-transform"
             >
               <IconPlay v-if="!isPlaying" :size="26"/>
@@ -71,6 +77,7 @@
           <Tooltip text="Siguiente">
             <button
               @click="nextSong"
+              aria-label="Siguiente"
               class="flex items-center justify-center w-8 h-8 text-[#b3b3b3] hover:text-white transition-colors"
             >
               <IconSkipForward :size="24" />
@@ -79,6 +86,7 @@
           <Tooltip :text="repeatTooltip">
             <button
               @click="toggleRepeat"
+              :aria-label="repeatTooltip"
               class="flex items-center justify-center w-8 h-8 text-[#b3b3b3] hover:text-white transition-colors relative"
               :class="{'!text-tiger-500 hover:!text-tiger-400': repeatMode !== 'off'}"
             >
@@ -110,6 +118,8 @@
               :value="currentTime"
               :max="duration || 0"
               @input="handleSeek"
+              aria-label="Progreso de la canción"
+              :aria-valuetext="`${formatTime(currentTime)} de ${formatTime(duration)}`"
               class="absolute inset-0 w-full opacity-0 cursor-pointer"
             />
           </div>
@@ -126,6 +136,8 @@
           <button
             v-if="currentSong.lyrics"
             @click="goToLyrics"
+            :aria-label="isLyricsPage ? 'Ocultar letra' : 'Ver letra'"
+            :aria-pressed="isLyricsPage"
             class="flex items-center justify-center w-8 h-8 text-[#b3b3b3] hover:text-white transition-colors relative"
             :class="{'!text-tiger-500 hover:!text-tiger-400': isLyricsPage}"
           >
@@ -139,6 +151,8 @@
         <Tooltip :text="showQueue ? 'Ocultar cola' : 'Ver cola'">
           <button
             @click="handleQueueToggle"
+            :aria-label="showQueue ? 'Ocultar cola de reproducción' : 'Ver cola de reproducción'"
+            :aria-pressed="showQueue"
             class="flex items-center justify-center w-8 h-8 text-[#b3b3b3] hover:text-white transition-colors relative"
             :class="{'!text-tiger-500 hover:!text-tiger-400': showQueue}"
           >
@@ -153,6 +167,8 @@
           <Tooltip :text="isMuted ? 'Activar sonido' : 'Silenciar'">
             <button
               @click="toggleMute"
+              :aria-label="isMuted ? 'Activar sonido' : 'Silenciar'"
+              :aria-pressed="isMuted"
               class="flex items-center justify-center w-8 h-8 text-[#b3b3b3] hover:text-white transition-colors"
             >
               <IconVolume :size="16" :level="volumeLevel" />
@@ -177,6 +193,8 @@
               max="1"
               step="0.01"
               @input="handleVolumeChange"
+              aria-label="Volumen"
+              :aria-valuetext="`${Math.round(volume * 100)}%`"
               class="absolute inset-0 w-full opacity-0 cursor-pointer"
             />
           </div>
@@ -240,6 +258,7 @@
           <!-- Botón Añadir a playlist -->
           <button
             @click.stop="showAddToPlaylistModal = true"
+            aria-label="Añadir a playlist"
             class="p-2 text-white/70 active:text-white transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -251,6 +270,7 @@
           <!-- Botón Play/Pause -->
           <button
             @click.stop="togglePlay"
+            :aria-label="isPlaying ? 'Pausar' : 'Reproducir'"
             class="p-1 text-white"
           >
             <IconPlay v-if="!isPlaying" :size="38" />
