@@ -71,9 +71,9 @@ const currentSongId = computed(() => props.songId)
 
 const handleClose = () => emit('close')
 
-const handleAddToPlaylist = (playlistId: string) => {
+const handleAddToPlaylist = async (playlistId: string) => {
   const playlist = userPlaylists.value.find(p => p.id === playlistId)
-  const added = addSongToPlaylist(playlistId, props.songId)
+  const added = await addSongToPlaylist(playlistId, props.songId)
 
   if (added) {
     success(`Añadida a "${playlist?.name}"`)
