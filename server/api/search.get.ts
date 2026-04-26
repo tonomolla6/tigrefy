@@ -1,6 +1,7 @@
-import { useDB, songs, albums, artists, playlists, playlistSongs, parseJsonField } from '~/server/db'
+import { useDB, songs, albums, artists, playlists } from '~/server/db'
 import { getAuthUser, canSeeAllContent } from '~/server/utils/auth'
-import { eq, or, like, desc, asc, and } from 'drizzle-orm'
+import { mapSongResponse, mapAlbumResponse, mapArtistResponse } from '~/server/utils/mappers'
+import { eq, or, like, and } from 'drizzle-orm'
 import { sql } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
@@ -99,58 +100,26 @@ export default defineEventHandler(async (event) => {
   let songsList = songsResult
     .filter(song => {
       if (!q) return true
-      const searchLower = q.toLowerCase()
       return (
-        song.title.toLowerCase().includes(searchLower) ||
-        song.artist.name.toLowerCase().includes(searchLower) ||
-        (song.album?.title || '').toLowerCase().includes(searchLower) ||
-        (song.lyrics || '').toLowerCase().includes(searchLower)
+        song.title.toLowerCase().includes(q) ||
+        song.artist.name.toLowerCase().includes(q) ||
+        (song.album?.title || '').toLowerCase().includes(q) ||
+        (song.lyrics || '').toLowerCase().includes(q)
       )
     })
-    .map(song => ({
-      id: song.id,
-      title: song.title,
-      artistId: song.artistId,
-      artistName: song.artist.name,
-      albumId: song.albumId,
-      albumName: song.album?.title || null,
-      trackNumber: song.trackNumber,
-      duration: song.duration,
-      cover: song.album?.cover || null,
-      lyrics: song.lyrics,
-      plays: song.plays,
-      releaseDate: song.album?.releaseDate || null
-    }))
+    .map(song => mapSongResponse(song))
 
   let albumsList = albumsResult
     .filter(album => {
       if (!q) return true
-      const searchLower = q.toLowerCase()
       return (
-        album.title.toLowerCase().includes(searchLower) ||
-        album.artist.name.toLowerCase().includes(searchLower)
+        album.title.toLowerCase().includes(q) ||
+        album.artist.name.toLowerCase().includes(q)
       )
     })
-    .map(album => ({
-      id: album.id,
-      title: album.title,
-      artistId: album.artistId,
-      artistName: album.artist.name,
-      cover: album.cover,
-      releaseDate: album.releaseDate,
-      totalTracks: album.totalTracks,
-      duration: album.duration,
-      genres: parseJsonField<string>(album.genres)
-    }))
+    .map(album => mapAlbumResponse(album))
 
-  let artistsList = artistsResult.map(artist => ({
-    id: artist.id,
-    name: artist.name,
-    image: artist.image,
-    followers: artist.followers,
-    genres: parseJsonField<string>(artist.genres),
-    bio: artist.bio
-  }))
+  let artistsList = artistsResult.map(artist => mapArtistResponse(artist))
 
   const playlistsList = playlistsResult.map(playlist => ({
     id: playlist.id,
