@@ -1,21 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import type { Song } from '~/types/song'
 
-export interface Song {
-  id: string
-  title: string
-  artistId: string
-  artistName: string
-  albumId: string | null
-  albumName: string | null
-  trackNumber: number | null
-  duration: number
-  cover: string | null
-  lyrics: string | null
-  plays: number
-  releaseDate: string | null
-  isPublic: boolean
-}
+export type { Song }
 
 export const useSongsStore = defineStore('songs', () => {
   // ====================
