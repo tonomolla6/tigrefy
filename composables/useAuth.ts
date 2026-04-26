@@ -40,10 +40,15 @@ export const useAuth = () => {
     const currentPath = route.path
 
     await store.logout()
-    // Resetear favoritos y playlists del usuario
+
+    // Resetear todos los stores con datos del usuario para que no se queden
+    // colgando entre sesiones (ej. likes del usuario anterior visibles tras
+    // login con otra cuenta). Los stores de contenido (songs/albums/...) se
+    // refrescan después con loadAllData para aplicar el filtro de rol guest.
     favoritesStore.$reset()
-    userStore.playlists = []
-    // Recargar datos públicos
+    userStore.$reset()
+
+    // Recargar datos públicos con el nuevo rol
     await dataStore.loadAllData(true)
 
     // Si estamos en una página protegida, redirigir a home
