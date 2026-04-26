@@ -223,9 +223,7 @@
                 aria-label="Cerrar letra"
                 class="p-2 text-white/70 hover:text-white"
               >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <IconClose :size="24" />
               </button>
             </div>
             <div class="flex-1 overflow-y-auto px-6 py-6">

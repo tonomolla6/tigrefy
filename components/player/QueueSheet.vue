@@ -14,11 +14,10 @@
         <h3 class="text-lg font-bold text-white">Cola de reproducción</h3>
         <button
           @click="$emit('close')"
+          aria-label="Cerrar cola"
           class="p-2 text-white/70 hover:text-white transition-colors"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <IconClose :size="24" />
         </button>
       </div>
 

@@ -38,9 +38,7 @@
           class="flex-shrink-0 w-8 h-8 rounded-full text-white/50 hover:text-red-400 hover:bg-white/5 flex items-center justify-center transition-colors"
           aria-label="Eliminar"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <IconClose :size="16" />
         </button>
       </div>
 
