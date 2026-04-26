@@ -26,15 +26,6 @@
         <span class="text-white">{{ isFavorite ? 'Quitar de Me gusta' : 'Añadir a Me gusta' }}</span>
       </button>
 
-      <!-- Añadir a playlist -->
-      <button
-        @click="handleAddToPlaylist"
-        class="w-full flex items-center gap-4 px-4 py-3 hover:bg-white/5 active:bg-white/10 transition-colors"
-      >
-        <IconPlus :size="24" class="text-white" />
-        <span class="text-white">Añadir a playlist</span>
-      </button>
-
       <!-- Añadir a la cola -->
       <button
         @click="handleAddToQueue"
@@ -90,14 +81,6 @@
       </button>
     </div>
 
-    <!-- Add to Playlist Modal -->
-    <AddToPlaylistModal
-      v-if="song"
-      :isOpen="showAddToPlaylistModal"
-      :songId="song.id"
-      :songTitle="song.title"
-      @close="showAddToPlaylistModal = false; $emit('close')"
-    />
   </BottomSheet>
 </template>
 
@@ -124,8 +107,6 @@ const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 const { addToQueue } = usePlayer()
 const { showToast } = useToast()
 
-const showAddToPlaylistModal = ref(false)
-
 const isFavorite = computed(() => {
   if (!props.song) return false
   return isFavoriteSong(props.song.id)
@@ -135,10 +116,6 @@ const handleToggleFavorite = () => {
   if (!props.song) return
   toggleFavoriteSong(props.song.id)
   emit('close')
-}
-
-const handleAddToPlaylist = () => {
-  showAddToPlaylistModal.value = true
 }
 
 const handleAddToQueue = () => {

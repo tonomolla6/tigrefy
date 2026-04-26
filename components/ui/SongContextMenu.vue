@@ -24,15 +24,6 @@
         <ul class="py-2">
           <li>
             <button
-              @click.stop="handleAddToPlaylist"
-              class="w-full flex items-center gap-3 px-4 py-3 hover:bg-dark-hover transition-colors text-left"
-            >
-              <IconPlus :size="18" />
-              <span>Añadir a playlist</span>
-            </button>
-          </li>
-          <li>
-            <button
               @click.stop="handleToggleFavorite"
               class="w-full flex items-center gap-3 px-4 py-3 hover:bg-dark-hover transition-colors text-left"
             >
@@ -64,7 +55,6 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  addToPlaylist: []
   toggleFavorite: []
   remove: []
 }>()
@@ -74,11 +64,6 @@ const menuRef = ref<HTMLElement | null>(null)
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value
-}
-
-const handleAddToPlaylist = () => {
-  emit('addToPlaylist')
-  isOpen.value = false
 }
 
 const handleToggleFavorite = () => {

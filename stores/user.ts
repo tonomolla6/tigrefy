@@ -99,43 +99,6 @@ export const useUserStore = defineStore('user', () => {
     return playlists.value.find(p => p.id === id)
   }
 
-  /**
-   * Añade o quita una canción de una playlist propia.
-   * Devuelve true si se añadió (idempotente: si ya estaba devuelve false).
-   */
-  async function toggleSongInPlaylist(
-    playlistId: string,
-    songId: string,
-    action: 'add' | 'remove' = 'add'
-  ): Promise<boolean> {
-    try {
-      const result = await $fetch<{ success: boolean; added: boolean; songCount: number }>(
-        `/api/user/playlists/${playlistId}/songs`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          body: { songId, action },
-        }
-      )
-
-      if (result.success) {
-        // Sincronizar el estado local
-        const playlist = playlists.value.find(p => p.id === playlistId)
-        if (playlist) {
-          if (action === 'add' && !playlist.songIds.includes(songId)) {
-            playlist.songIds.push(songId)
-          } else if (action === 'remove') {
-            playlist.songIds = playlist.songIds.filter(id => id !== songId)
-          }
-        }
-      }
-      return result.added
-    } catch (error) {
-      console.error('Error toggling song in playlist:', error)
-      return false
-    }
-  }
-
   function addToSearchHistory(query: string) {
     const index = searchHistory.value.indexOf(query)
     if (index > -1) {
@@ -179,7 +142,6 @@ export const useUserStore = defineStore('user', () => {
     loadPlaylists,
     savePlaylist,
     getPlaylistById,
-    toggleSongInPlaylist,
     addToSearchHistory,
     clearSearchHistory,
     $reset

@@ -234,14 +234,6 @@
           </div>
         </transition>
 
-        <!-- Add to Playlist Modal -->
-        <AddToPlaylistModal
-          v-if="currentSong"
-          :isOpen="showAddToPlaylistModal"
-          :songId="currentSong.id"
-          :songTitle="currentSong.title"
-          @close="showAddToPlaylistModal = false"
-        />
       </div>
     </transition>
   </Teleport>
@@ -278,7 +270,6 @@ const { data } = useData()
 
 const showQueueSheet = ref(false)
 const showLyricsSheet = ref(false)
-const showAddToPlaylistModal = ref(false)
 const isAnimating = ref(false)
 
 // Animaciones de entrada/salida

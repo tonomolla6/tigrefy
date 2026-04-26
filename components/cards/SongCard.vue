@@ -54,16 +54,6 @@
 
     <!-- Actions Container -->
     <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-      <!-- Add to Playlist Button -->
-      <Tooltip text="Añadir a playlist">
-        <button
-          @click.stop="showAddToPlaylist"
-          class="text-secondary hover:text-primary transition-colors"
-        >
-          <IconPlus :size="18" />
-        </button>
-      </Tooltip>
-
       <!-- Favorite Button -->
       <Tooltip :text="isFavoriteSong(song.id) ? 'Quitar de Favoritos' : 'Añadir a Favoritos'">
         <button
@@ -80,21 +70,11 @@
         :songId="song.id"
         :isFavorite="isFavoriteSong(song.id)"
         :showRemove="showRemoveOption"
-        @addToPlaylist="showAddToPlaylist"
         @toggleFavorite="toggleFavoriteSong(song.id)"
         @remove="handleRemoveFromPlaylist"
       />
     </div>
   </div>
-
-  <!-- Add to Playlist Modal -->
-  <AddToPlaylistModal
-    :isOpen="isAddToPlaylistModalOpen"
-    :songId="song.id"
-    :songTitle="song.title"
-    @close="isAddToPlaylistModalOpen = false"
-    @createNew="handleCreateNewPlaylist"
-  />
 </template>
 
 <script setup lang="ts">
@@ -119,8 +99,6 @@ const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 const isCurrentSong = computed(() => currentSong.value?.id === props.song.id)
 const isCurrentAndPlaying = computed(() => isCurrentSong.value && isPlaying.value)
 
-const isAddToPlaylistModalOpen = ref(false)
-
 const handlePlay = () => {
   // Si es la canción actual, toggle play/pause
   if (isCurrentSong.value) {
@@ -128,15 +106,6 @@ const handlePlay = () => {
   } else {
     playSong(props.song, props.playlist, props.context)
   }
-}
-
-const showAddToPlaylist = () => {
-  isAddToPlaylistModalOpen.value = true
-}
-
-const handleCreateNewPlaylist = () => {
-  // TODO: Implement create playlist modal
-  console.log('Create playlist')
 }
 
 const handleRemoveFromPlaylist = () => {

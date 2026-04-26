@@ -255,18 +255,6 @@
 
         <!-- Controles compactos (derecha) -->
         <div class="flex items-center gap-2">
-          <!-- Botón Añadir a playlist -->
-          <button
-            @click.stop="showAddToPlaylistModal = true"
-            aria-label="Añadir a playlist"
-            class="p-2 text-white/70 active:text-white transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-          </button>
           <!-- Botón Play/Pause -->
           <button
             @click.stop="togglePlay"
@@ -290,16 +278,6 @@
         ></div>
       </div>
     </div>
-
-    <!-- Add to Playlist Modal -->
-    <AddToPlaylistModal
-      v-if="currentSong"
-      :isOpen="showAddToPlaylistModal"
-      :songId="currentSong.id"
-      :songTitle="currentSong.title"
-      @close="showAddToPlaylistModal = false"
-      @createNew="handleCreateNewPlaylist"
-    />
 
     <!-- Fullscreen Player (móvil) -->
     <FullscreenPlayer
@@ -365,7 +343,6 @@ const goToLyrics = () => {
     router.push('/lyrics')
   }
 }
-const showAddToPlaylistModal = ref(false)
 const showFullscreenPlayer = ref(false)
 
 // Detectar si es móvil
@@ -479,11 +456,6 @@ const handleMobileInfoClick = () => {
   if (Math.abs(swipeOffset.value) < 10 && !isChangingSong.value) {
     openFullscreen()
   }
-}
-
-const handleCreateNewPlaylist = () => {
-  // TODO: Implement create playlist modal
-  console.log('Create playlist')
 }
 
 const volumeLevel = computed(() => {

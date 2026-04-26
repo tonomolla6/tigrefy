@@ -11,18 +11,6 @@ export const useUserPlaylists = () => {
     return store.savePlaylist(playlistId)
   }
 
-  /**
-   * Añade una canción a una playlist propia.
-   * Devuelve true si se añadió, false si ya estaba o falló.
-   */
-  const addSongToPlaylist = async (playlistId: string, songId: string): Promise<boolean> => {
-    if (!isAuthenticated.value) return false
-    const playlist = store.getPlaylistById(playlistId)
-    // Si ya está, no llamamos al servidor — la modal usará esto para feedback
-    if (playlist?.songIds.includes(songId)) return false
-    return store.toggleSongInPlaylist(playlistId, songId, 'add')
-  }
-
   const getPlaylistById = (id: string) => store.getPlaylistById(id)
 
   return {
@@ -38,7 +26,6 @@ export const useUserPlaylists = () => {
     // Actions
     loadUserPlaylists,
     savePlaylist,
-    addSongToPlaylist,
     getPlaylistById,
   }
 }
