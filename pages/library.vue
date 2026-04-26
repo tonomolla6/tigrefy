@@ -117,6 +117,8 @@
 </template>
 
 <script setup lang="ts">
+import IconLibrary from '~/components/ui/IconLibrary.vue'
+
 definePageMeta({
   middleware: 'auth'
 })

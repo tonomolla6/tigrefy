@@ -47,7 +47,7 @@
         title="No tienes canciones guardadas"
         description="Guarda canciones tocando el icono del corazón"
       >
-        <NuxtLink to="/songs" class="btn-tiger">
+        <NuxtLink to="/albums" class="btn-tiger">
           Explorar canciones
         </NuxtLink>
       </EmptyState>
@@ -63,6 +63,8 @@
 </template>
 
 <script setup lang="ts">
+import IconHeart from '~/components/ui/IconHeart.vue'
+
 definePageMeta({
   layout: 'default',
   middleware: 'auth'

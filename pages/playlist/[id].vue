@@ -128,6 +128,7 @@
 
 <script setup lang="ts">
 import { formatDuration } from '~/utils/formatting'
+import IconLibrary from '~/components/ui/IconLibrary.vue'
 
 definePageMeta({
   layout: 'default',
