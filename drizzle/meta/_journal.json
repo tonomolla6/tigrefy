@@ -15,6 +15,13 @@
       "when": 1777123699678,
       "tag": "0001_happy_sentinels",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1777190829230,
+      "tag": "0002_low_toad",
+      "breakpoints": true
     }
   ]
 }

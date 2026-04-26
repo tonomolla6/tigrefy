@@ -101,7 +101,9 @@ export const playlistSongs = sqliteTable('playlist_songs', {
   position: integer('position').default(0),
   addedAt: text('added_at').notNull().default(sql`(current_timestamp)`)
 }, (table) => [
-  primaryKey({ columns: [table.playlistId, table.songId] })
+  primaryKey({ columns: [table.playlistId, table.songId] }),
+  // Para consultar "¿en qué playlists está esta canción?"
+  index('idx_playlist_songs_song').on(table.songId)
 ])
 
 // Playlists guardadas en la biblioteca del usuario (como el corazón en Spotify)
@@ -133,7 +135,9 @@ export const songGenres = sqliteTable('song_genres', {
   songId: text('song_id').notNull().references(() => songs.id, { onDelete: 'cascade' }),
   genreId: integer('genre_id').notNull().references(() => genres.id, { onDelete: 'cascade' }),
 }, (table) => [
-  primaryKey({ columns: [table.songId, table.genreId] })
+  primaryKey({ columns: [table.songId, table.genreId] }),
+  // Para consultar "¿qué canciones tiene este género?"
+  index('idx_song_genres_genre').on(table.genreId)
 ])
 
 // ==================== USUARIOS ====================
