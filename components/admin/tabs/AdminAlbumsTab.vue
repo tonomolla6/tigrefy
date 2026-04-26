@@ -78,7 +78,7 @@
     </div>
 
     <!-- Modal Crear -->
-    <AdminModal
+    <BaseModal
       v-model:open="showCreateModal"
       title="Crear nuevo álbum"
       size="md"
@@ -124,10 +124,10 @@
           </label>
         </div>
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Editar -->
-    <AdminModal
+    <BaseModal
       :open="showEditModal && !!editingAlbum"
       @update:open="(v) => !v && closeEditModal()"
       title="Editar álbum"
@@ -221,10 +221,10 @@
           Este álbum no tiene canciones aún
         </div>
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Eliminar -->
-    <AdminModal
+    <BaseModal
       :open="!!albumToDelete"
       @update:open="(v) => !v && (albumToDelete = null, deleteError = '')"
       title="Eliminar álbum"
@@ -239,7 +239,7 @@
         ¿Eliminar <span class="text-white font-semibold">{{ albumToDelete?.title }}</span>?
       </p>
       <p class="text-yellow-400 text-sm">Solo se puede eliminar si no tiene canciones asociadas.</p>
-    </AdminModal>
+    </BaseModal>
   </div>
 </template>
 

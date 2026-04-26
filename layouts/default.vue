@@ -143,9 +143,6 @@
     <!-- Navegación Móvil -->
     <MobileNav />
 
-    <!-- Modal Global -->
-    <Modal />
-
     <!-- Toast Notifications -->
     <ToastContainer />
 

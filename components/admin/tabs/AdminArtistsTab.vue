@@ -53,7 +53,7 @@
     </div>
 
     <!-- Modal Crear -->
-    <AdminModal
+    <BaseModal
       v-model:open="showCreateModal"
       title="Crear nuevo artista"
       size="md"
@@ -78,10 +78,10 @@
         <label class="block text-sm text-white/70">Biografía</label>
         <BaseTextarea v-model="newArtist.bio" placeholder="Descripción del artista..." />
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Editar -->
-    <AdminModal
+    <BaseModal
       :open="showEditModal && !!editingArtist"
       @update:open="(v) => !v && closeEditModal()"
       title="Editar artista"
@@ -107,10 +107,10 @@
         <label class="block text-sm text-white/70">Biografía</label>
         <BaseTextarea v-model="editForm.bio" />
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Eliminar -->
-    <AdminModal
+    <BaseModal
       :open="!!artistToDelete"
       @update:open="(v) => !v && (artistToDelete = null, deleteError = '')"
       title="Eliminar artista"
@@ -127,7 +127,7 @@
       <p class="text-yellow-400 text-sm">
         Solo se puede eliminar si no tiene álbumes ni canciones asociadas.
       </p>
-    </AdminModal>
+    </BaseModal>
   </div>
 </template>
 

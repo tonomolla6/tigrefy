@@ -78,7 +78,7 @@
     </div>
 
     <!-- Modal Crear -->
-    <AdminModal
+    <BaseModal
       v-model:open="showCreateModal"
       title="Crear nueva playlist"
       size="md"
@@ -143,10 +143,10 @@
           </p>
         </div>
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Editar -->
-    <AdminModal
+    <BaseModal
       :open="showEditModal && !!editingPlaylist"
       @update:open="(v) => !v && closeEditModal()"
       :title="`Editar: ${editingPlaylist?.name || ''}`"
@@ -212,10 +212,10 @@
           </div>
         </div>
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Eliminar -->
-    <AdminModal
+    <BaseModal
       :open="!!playlistToDelete"
       @update:open="(v) => !v && (playlistToDelete = null, deleteError = '')"
       title="Eliminar playlist"
@@ -229,7 +229,7 @@
       <p class="text-white/80">
         ¿Eliminar <span class="text-white font-semibold">{{ playlistToDelete?.name }}</span>?
       </p>
-    </AdminModal>
+    </BaseModal>
   </div>
 </template>
 

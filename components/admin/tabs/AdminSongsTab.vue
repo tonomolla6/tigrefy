@@ -78,7 +78,7 @@
     </div>
 
     <!-- Modal Crear -->
-    <AdminModal
+    <BaseModal
       v-model:open="showCreateModal"
       title="Crear nueva canción"
       subtitle="Sube el MP3 y rellena los datos. La duración se detecta sola."
@@ -158,10 +158,10 @@
           </div>
         </div>
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Editar -->
-    <AdminModal
+    <BaseModal
       :open="showEditModal && !!editingSong"
       @update:open="(v) => !v && closeEditModal()"
       title="Editar canción"
@@ -210,10 +210,10 @@
           </div>
         </div>
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Eliminar -->
-    <AdminModal
+    <BaseModal
       :open="!!songToDelete"
       @update:open="(v) => !v && (songToDelete = null, deleteError = '')"
       title="Eliminar canción"
@@ -230,7 +230,7 @@
       <p class="text-yellow-400 text-sm">
         Esta acción también eliminará la canción de todas las playlists donde esté incluida.
       </p>
-    </AdminModal>
+    </BaseModal>
   </div>
 </template>
 

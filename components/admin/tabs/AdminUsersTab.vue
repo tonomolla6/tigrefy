@@ -79,7 +79,7 @@
     </div>
 
     <!-- Modal Crear -->
-    <AdminModal
+    <BaseModal
       v-model:open="showCreateModal"
       title="Crear nuevo usuario"
       size="md"
@@ -111,10 +111,10 @@
           <option value="tigre">Tigre — Acceso completo + gestión</option>
         </BaseSelect>
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Editar -->
-    <AdminModal
+    <BaseModal
       :open="showEditModal && !!editingUser"
       @update:open="(v) => !v && closeEditModal()"
       title="Editar usuario"
@@ -152,10 +152,10 @@
           No puedes cambiar tu propio rol
         </p>
       </div>
-    </AdminModal>
+    </BaseModal>
 
     <!-- Modal Eliminar -->
-    <AdminModal
+    <BaseModal
       :open="!!userToDelete"
       @update:open="(v) => !v && (userToDelete = null)"
       title="Eliminar usuario"
@@ -169,7 +169,7 @@
         ¿Eliminar a <span class="text-white font-semibold">{{ userToDelete?.username }}</span>?
       </p>
       <p class="text-yellow-400 text-sm">Esta acción no se puede deshacer.</p>
-    </AdminModal>
+    </BaseModal>
   </div>
 </template>
 
