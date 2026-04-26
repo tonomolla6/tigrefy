@@ -210,9 +210,9 @@
         <div
           class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer overflow-hidden"
           @click="handleMobileInfoClick"
-          @touchstart="handleSwipeStart"
-          @touchmove="handleSwipeMove"
-          @touchend="handleSwipeEnd"
+          @touchstart.passive="handleSwipeStart"
+          @touchmove.passive="handleSwipeMove"
+          @touchend.passive="handleSwipeEnd"
         >
           <!-- Portada con animación de cambio -->
           <div class="relative w-11 h-11 flex-shrink-0">
