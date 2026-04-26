@@ -1,60 +1,31 @@
+const MAX_HISTORY = 10
+
 export const useSearchHistory = () => {
-  const STORAGE_KEY = 'tigrefy_search_history'
-  const MAX_HISTORY = 10
+  const history = useLocalStorage<string[]>('tigrefy_search_history', [])
 
-  const history = useState<string[]>('searchHistory', () => [])
-
-  const loadHistory = () => {
-    if (process.client) {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        if (stored) {
-          history.value = JSON.parse(stored)
-        }
-      } catch (error) {
-        console.error('Error loading search history:', error)
-      }
-    }
-  }
-
-  const saveHistory = () => {
-    if (process.client) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(history.value))
-      } catch (error) {
-        console.error('Error saving search history:', error)
-      }
-    }
-  }
+  // Llamar al menos una vez para forzar la hidratación inicial.
+  // Los componentes existentes la usaban en onMounted, lo mantenemos por compat.
+  const loadHistory = () => history.value
 
   const addSearch = (query: string) => {
-    if (!query.trim()) return
+    const trimmed = query.trim()
+    if (!trimmed) return
 
-    // Eliminar duplicados (case insensitive)
+    // Quitar duplicado case-insensitive y meter al principio
     const filtered = history.value.filter(
-      item => item.toLowerCase() !== query.toLowerCase()
+      item => item.toLowerCase() !== trimmed.toLowerCase()
     )
-
-    // Agregar al inicio
-    history.value = [query, ...filtered].slice(0, MAX_HISTORY)
-
-    saveHistory()
+    history.value = [trimmed, ...filtered].slice(0, MAX_HISTORY)
   }
 
-  const getHistory = () => {
-    return history.value
-  }
+  const getHistory = () => history.value
 
   const clearHistory = () => {
     history.value = []
-    if (process.client) {
-      localStorage.removeItem(STORAGE_KEY)
-    }
   }
 
   const removeItem = (query: string) => {
     history.value = history.value.filter(item => item !== query)
-    saveHistory()
   }
 
   return {
@@ -62,6 +33,6 @@ export const useSearchHistory = () => {
     addSearch,
     getHistory,
     clearHistory,
-    removeItem
+    removeItem,
   }
 }
