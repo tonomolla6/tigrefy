@@ -1,7 +1,8 @@
-import { useDB, albums, parseJsonField } from '~/server/db'
+import { useDB, albums } from '~/server/db'
 import { getAuthUser, canSeeAllContent } from '~/server/utils/auth'
 import { requireParam } from '~/server/utils/params'
 import { mapSongResponse } from '~/server/utils/mappers'
+import { getAlbumGenres } from '~/server/utils/genres'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
@@ -15,7 +16,8 @@ export default defineEventHandler(async (event) => {
       artist: true,
       songs: {
         with: {
-          artist: true
+          artist: true,
+          genres: { with: { genre: true } }
         }
       }
     }
@@ -28,7 +30,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Verificar permisos: si no es público y el usuario no puede ver todo
   if (!result.isPublic && !canSeeAllContent(authUser?.role)) {
     throw createError({
       statusCode: 403,
@@ -37,6 +38,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const userCanSeeAll = canSeeAllContent(authUser?.role)
+  const aggregatedGenres = await getAlbumGenres(result.id)
 
   return {
     id: result.id,
@@ -47,13 +49,11 @@ export default defineEventHandler(async (event) => {
     releaseDate: result.releaseDate,
     totalTracks: result.totalTracks,
     duration: result.duration,
-    genres: parseJsonField<string>(result.genres),
+    genres: aggregatedGenres,
     isPublic: result.isPublic,
     songs: result.songs
       .filter(song => userCanSeeAll || song.isPublic)
       .map(song => mapSongResponse(
-        // El mapper espera album object — aquí no lo tenemos cargado, pero
-        // pasamos overrides con los datos del álbum padre que sí conocemos.
         { ...song, album: null },
         {
           albumId: result.id,

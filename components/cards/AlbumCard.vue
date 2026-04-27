@@ -13,7 +13,7 @@
         v-if="album.genres && album.genres.length > 0"
         class="text-xs px-2 py-0.5 bg-tiger-500/20 text-tiger-400 rounded-full"
       >
-        {{ album.genres[0] }}
+        {{ album.genres[0].name }}
       </span>
     </div>
   </BaseContentCard>

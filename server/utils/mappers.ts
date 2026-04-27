@@ -5,7 +5,11 @@
  * endpoints (/songs, /songs/[id], /albums/[id], /artists/[id], /search).
  * Centralizado aquí para tener una única definición del shape canónico.
  */
-import { parseJsonField } from '~/server/db'
+
+export interface GenreRef {
+  id: number
+  name: string
+}
 
 // Tipos relajados (la query con relations devuelve estructuras anidadas que no
 // modela limpio el schema inferido de Drizzle, así que aceptamos lo necesario).
@@ -21,6 +25,9 @@ interface SongWithRelations {
   isPublic: boolean | null
   artist: { name: string }
   album: { title: string; cover: string | null; releaseDate: string | null } | null
+  // De la relation `song_genres → genre`. Opcional porque algunos endpoints
+  // (admin/content) no lo cargan.
+  genres?: Array<{ genre: GenreRef }>
 }
 
 /**
@@ -32,9 +39,13 @@ interface SongOverrides {
   albumName?: string | null
   cover?: string | null
   releaseDate?: string | null
+  /** Para sobreescribir/inyectar géneros derivados (ej. desde el álbum padre). */
+  genres?: GenreRef[]
 }
 
 export function mapSongResponse(song: SongWithRelations, overrides: SongOverrides = {}) {
+  const genres: GenreRef[] = overrides.genres
+    ?? (song.genres?.map(sg => sg.genre).filter(Boolean) ?? [])
   return {
     id: song.id,
     title: song.title,
@@ -49,6 +60,7 @@ export function mapSongResponse(song: SongWithRelations, overrides: SongOverride
     plays: song.plays ?? 0,
     releaseDate: overrides.releaseDate ?? song.album?.releaseDate ?? null,
     isPublic: !!song.isPublic,
+    genres,
   }
 }
 
@@ -60,12 +72,16 @@ interface AlbumWithArtist {
   releaseDate: string | null
   totalTracks: number | null
   duration: number | null
-  genres: string | null
   isPublic: boolean | null
   artist: { name: string }
 }
 
-export function mapAlbumResponse(album: AlbumWithArtist) {
+interface AlbumExtras {
+  /** Géneros agregados de las canciones del álbum (calculados por el endpoint). */
+  genres?: GenreRef[]
+}
+
+export function mapAlbumResponse(album: AlbumWithArtist, extras: AlbumExtras = {}) {
   return {
     id: album.id,
     title: album.title,
@@ -75,7 +91,7 @@ export function mapAlbumResponse(album: AlbumWithArtist) {
     releaseDate: album.releaseDate,
     totalTracks: album.totalTracks ?? 0,
     duration: album.duration ?? 0,
-    genres: parseJsonField<string>(album.genres),
+    genres: extras.genres ?? [],
     isPublic: !!album.isPublic,
   }
 }
@@ -85,17 +101,21 @@ interface ArtistRow {
   name: string
   image: string | null
   followers: number | null
-  genres: string | null
   bio: string | null
 }
 
-export function mapArtistResponse(artist: ArtistRow) {
+interface ArtistExtras {
+  /** Géneros agregados de las canciones del artista (calculados por el endpoint). */
+  genres?: GenreRef[]
+}
+
+export function mapArtistResponse(artist: ArtistRow, extras: ArtistExtras = {}) {
   return {
     id: artist.id,
     name: artist.name,
     image: artist.image,
     followers: artist.followers ?? 0,
-    genres: parseJsonField<string>(artist.genres),
+    genres: extras.genres ?? [],
     bio: artist.bio,
   }
 }

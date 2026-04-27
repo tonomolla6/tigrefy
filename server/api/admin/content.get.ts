@@ -1,22 +1,19 @@
-import { useDB, songs, albums, parseJsonField } from '~/server/db'
+import { useDB } from '~/server/db'
 
 export default defineEventHandler(async (event) => {
   const db = useDB()
 
-  // Obtener todas las canciones con info del artista y álbum
   const allSongs = await db.query.songs.findMany({
     with: {
       artist: true,
-      album: true
+      album: true,
+      genres: { with: { genre: true } }
     },
     orderBy: (songs, { asc }) => [asc(songs.title)]
   })
 
-  // Obtener todos los álbumes con info del artista
   const allAlbums = await db.query.albums.findMany({
-    with: {
-      artist: true
-    },
+    with: { artist: true },
     orderBy: (albums, { asc }) => [asc(albums.title)]
   })
 
@@ -30,7 +27,9 @@ export default defineEventHandler(async (event) => {
       albumName: song.album?.title || null,
       trackNumber: song.trackNumber,
       cover: song.album?.cover || null,
-      isPublic: song.isPublic
+      isPublic: song.isPublic,
+      lyrics: song.lyrics,
+      genres: song.genres.map(g => g.genre)
     })),
     albums: allAlbums.map(album => ({
       id: album.id,

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   await requireTigre(event)
 
   const body = await readBody(event)
-  const { name, image, bio, genres } = body
+  const { name, image, bio } = body
 
   if (!name || name.trim().length === 0) {
     throw createError({
@@ -20,7 +20,6 @@ export default defineEventHandler(async (event) => {
     name: name.trim(),
     image: image || null,
     bio: bio || null,
-    genres: genres ? JSON.stringify(genres) : null,
     followers: 0
   }).returning()
 

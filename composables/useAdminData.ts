@@ -10,6 +10,7 @@
 import { ref, computed } from 'vue'
 import type { AdminSong as Song } from '~/types/song'
 import type { Artist, Album, Playlist, AdminUser, Stats } from '~/types/admin'
+import type { Genre } from '~/stores/genres'
 
 // Estado a nivel de módulo — singleton entre tabs del admin
 const artistsList = ref<Artist[]>([])
@@ -17,6 +18,7 @@ const songs = ref<Song[]>([])
 const albums = ref<Album[]>([])
 const playlistsList = ref<Playlist[]>([])
 const usersList = ref<AdminUser[]>([])
+const genresList = ref<Genre[]>([])
 const stats = ref<Stats | null>(null)
 const isLoadingContent = ref(true)
 
@@ -62,11 +64,20 @@ export const useAdminData = () => {
     }
   }
 
+  const loadGenres = async () => {
+    try {
+      genresList.value = await $fetch<Genre[]>('/api/admin/genres', { credentials: 'include' })
+    } catch (error) {
+      console.error('Error loading genres:', error)
+    }
+  }
+
   const loadAll = async () => {
     await loadArtists()
     await loadContent()
     await loadPlaylists()
     await loadUsers()
+    await loadGenres()
   }
 
   /**
@@ -94,6 +105,7 @@ export const useAdminData = () => {
     albums,
     playlistsList,
     usersList,
+    genresList,
     stats,
     isLoadingContent,
     usersByRole,
@@ -103,6 +115,7 @@ export const useAdminData = () => {
     loadContent,
     loadPlaylists,
     loadUsers,
+    loadGenres,
     // helpers
     recomputeVisibilityStats,
   }

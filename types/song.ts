@@ -5,6 +5,11 @@
  * Para tipos del panel de administración (Artist, Album, Playlist,
  * AdminUser, Stats) ver `~/types/admin.ts`.
  */
+export interface GenreRef {
+  id: number
+  name: string
+}
+
 export interface Song {
   id: string
   title: string
@@ -19,6 +24,7 @@ export interface Song {
   plays: number
   releaseDate: string | null
   isPublic: boolean
+  genres: GenreRef[]
 }
 
 /**
@@ -27,5 +33,8 @@ export interface Song {
  */
 export type AdminSong = Pick<
   Song,
-  'id' | 'title' | 'artistId' | 'artistName' | 'albumId' | 'albumName' | 'trackNumber' | 'cover' | 'isPublic'
->
+  'id' | 'title' | 'artistId' | 'artistName' | 'albumId' | 'albumName' | 'trackNumber' | 'cover' | 'isPublic' | 'lyrics'
+> & {
+  /** Géneros asignados a la canción. Cargado en el GET /api/admin/content. */
+  genres?: GenreRef[]
+}

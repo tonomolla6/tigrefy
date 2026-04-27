@@ -95,14 +95,15 @@
               <p class="text-sm md:text-base text-secondary leading-relaxed">{{ artist.bio }}</p>
             </div>
           </div>
-          <div v-if="artist.genres" class="flex flex-wrap gap-2">
-            <span
+          <div v-if="artist.genres && artist.genres.length > 0" class="flex flex-wrap gap-2">
+            <NuxtLink
               v-for="genre in artist.genres"
-              :key="genre"
-              class="bg-dark-base px-3 py-1 rounded-full text-xs md:text-sm"
+              :key="genre.id"
+              :to="`/genre/${genre.id}`"
+              class="bg-dark-base hover:bg-tiger-500/30 px-3 py-1 rounded-full text-xs md:text-sm transition-colors"
             >
-              {{ genre }}
-            </span>
+              {{ genre.name }}
+            </NuxtLink>
           </div>
         </div>
       </section>

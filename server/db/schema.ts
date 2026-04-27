@@ -23,7 +23,6 @@ export const artists = sqliteTable('artists', {
   name: text('name').notNull(),
   image: text('image'),
   followers: integer('followers').default(0),
-  genres: text('genres'), // JSON array
   bio: text('bio'),
   createdAt: text('created_at').notNull().default(sql`(current_timestamp)`),
 })
@@ -45,7 +44,6 @@ export const albums = sqliteTable('albums', {
   releaseDate: text('release_date'),
   totalTracks: integer('total_tracks').default(0),
   duration: integer('duration').default(0),
-  genres: text('genres'), // JSON array
   isPublic: integer('is_public', { mode: 'boolean' }).default(false)
 }, (table) => [
   index('idx_albums_artist').on(table.artistId)

@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
+import type { GenreRef } from '~/types/song'
+
 export interface Artist {
   id: string
   name: string
   image: string | null
   followers: number
-  genres: string[]
+  genres: GenreRef[]
   bio: string | null
 }
 

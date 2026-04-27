@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
+import type { GenreRef } from '~/types/song'
+
 export interface Album {
   id: string
   title: string
@@ -10,7 +12,7 @@ export interface Album {
   releaseDate: string | null
   totalTracks: number
   duration: number
-  genres: string[]
+  genres: GenreRef[]
   isPublic: boolean
 }
 

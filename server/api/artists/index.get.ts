@@ -1,4 +1,5 @@
-import { useDB, artists, parseJsonField } from '~/server/db'
+import { useDB, artists } from '~/server/db'
+import { mapArtistResponse } from '~/server/utils/mappers'
 import { asc } from 'drizzle-orm'
 
 export default defineEventHandler(async () => {
@@ -6,12 +7,6 @@ export default defineEventHandler(async () => {
 
   const result = await db.select().from(artists).orderBy(asc(artists.name))
 
-  return result.map(artist => ({
-    id: artist.id,
-    name: artist.name,
-    image: artist.image,
-    followers: artist.followers,
-    genres: parseJsonField<string>(artist.genres),
-    bio: artist.bio
-  }))
+  // En la lista no resolvemos géneros agregados (caro y no se muestra en cards).
+  return result.map(artist => mapArtistResponse(artist))
 })

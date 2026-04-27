@@ -13,7 +13,8 @@ export default defineEventHandler(async (event) => {
     where: eq(songs.id, id),
     with: {
       artist: true,
-      album: true
+      album: true,
+      genres: { with: { genre: true } }
     }
   })
 
@@ -24,7 +25,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Verificar permisos: si no es pública y el usuario no puede ver todo
   if (!result.isPublic && !canSeeAllContent(authUser?.role)) {
     throw createError({
       statusCode: 403,

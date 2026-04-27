@@ -246,22 +246,27 @@
           </div>
         </section>
 
-        <!-- Explorar por género -->
+        <!-- Explorar todo -->
         <section>
           <h2 class="text-2xl font-bold mb-4">Explorar todo</h2>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            <div
-              v-for="category in categories"
-              :key="category.name"
-              class="aspect-[1.5] rounded-lg p-4 cursor-pointer hover:scale-105 transition-transform relative overflow-hidden group"
-              :style="{ backgroundColor: category.color }"
-              @click="handleCategoryClick(category)"
+            <NuxtLink
+              v-for="genre in exploreGenres"
+              :key="genre.id"
+              :to="`/genre/${genre.id}`"
+              class="relative aspect-[1.5] rounded-lg overflow-hidden cursor-pointer hover:scale-[1.03] transition-transform group block"
+              :style="{ backgroundColor: genreColor(genre.name) }"
             >
-              <h3 class="text-xl md:text-2xl font-bold text-white drop-shadow-lg z-10 relative">{{ category.name }}</h3>
-              <div class="absolute bottom-2 right-2 transform rotate-12 opacity-80">
-                <font-awesome-icon :icon="category.icon" class="text-white text-3xl md:text-4xl" />
-              </div>
-            </div>
+              <h3 class="absolute top-4 left-4 right-4 text-xl md:text-2xl font-bold text-white drop-shadow-lg z-10 leading-tight">
+                {{ genre.name }}
+              </h3>
+              <SecureImage
+                v-if="genre.coverHint"
+                :src="genre.coverHint"
+                :alt="genre.name"
+                class="absolute -bottom-3 -right-3 w-24 h-24 md:w-28 md:h-28 rounded shadow-2xl rotate-[25deg] origin-center"
+              />
+            </NuxtLink>
           </div>
         </section>
       </div>
@@ -275,12 +280,15 @@ definePageMeta({
   middleware: 'auth'
 })
 
+import { useGenresStore } from '~/stores/genres'
+
 const route = useRoute()
 const router = useRouter()
 const { searchAll, searchByGenre, getSongsByArtistId } = useData()
 const { playSong, currentSong, formatTime, togglePlay, isPlaying } = usePlayer()
 const { toggleFavoriteSong, isFavoriteSong } = useFavorites()
 const { loadHistory, addSearch, getHistory, clearHistory, removeItem } = useSearchHistory()
+const genresStore = useGenresStore()
 
 // Estados
 const searchQuery = ref('')
@@ -306,16 +314,25 @@ const tabs = [
   { value: 'playlists', label: 'Listas' }
 ]
 
-const categories = [
-  { name: 'Party', color: '#e91e63', icon: 'glass-cheers' },
-  { name: 'Electronic', color: '#9c27b0', icon: 'bolt' },
-  { name: 'Urban', color: '#673ab7', icon: 'microphone' },
-  { name: 'Festival', color: '#3f51b5', icon: 'flag' },
-  { name: 'Pop', color: '#2196f3', icon: 'music' },
-  { name: 'Reggaeton', color: '#00bcd4', icon: 'drum' },
-  { name: 'Hip Hop', color: '#009688', icon: 'headphones' },
-  { name: 'Rock', color: '#4caf50', icon: 'guitar' }
-]
+// Géneros visibles (con al menos una canción) que mostramos en "Explorar todo".
+const exploreGenres = computed(() =>
+  genresStore.genres.filter(g => g.songCount > 0)
+)
+
+// Color sólido derivado de un hash simple del nombre. Mismo helper que en
+// /pages/genres.vue para que cada género conserve su color en toda la app.
+function genreColor(name: string): string {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) & 0xfffffff
+  }
+  const palette = [
+    '#7e57c2', '#26a69a', '#ef5350', '#ec407a',
+    '#42a5f5', '#66bb6a', '#ffa726', '#ab47bc',
+    '#5c6bc0', '#26c6da', '#9ccc65', '#ff7043',
+  ]
+  return palette[Math.abs(hash) % palette.length]
+}
 
 // Computeds
 const searchHistory = computed(() => getHistory())
@@ -397,14 +414,6 @@ const goToArtist = (id: string) => {
   router.push(`/artist/${id}`)
 }
 
-const handleCategoryClick = (category: any) => {
-  searchQuery.value = category.name
-  router.push({
-    path: '/search',
-    query: { q: category.name }
-  })
-}
-
 const selectHistoryItem = (item: string) => {
   router.push({
     path: '/search',
@@ -436,5 +445,6 @@ watch(() => route.query.q, (newQuery) => {
 // Lifecycle
 onMounted(() => {
   loadHistory()
+  genresStore.loadGenres()
 })
 </script>

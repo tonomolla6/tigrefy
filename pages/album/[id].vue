@@ -73,11 +73,16 @@
       <!-- Información adicional -->
       <div class="text-secondary text-sm space-y-2">
         <p>{{ album.releaseDate }}</p>
-        <p v-if="album.genres" class="flex flex-wrap gap-2">
+        <p v-if="album.genres && album.genres.length > 0" class="flex flex-wrap gap-2 items-center">
           <span class="text-primary font-semibold">Géneros:</span>
-          <span v-for="genre in album.genres" :key="genre" class="bg-dark-highlight px-3 py-1 rounded-full text-xs">
-            {{ genre }}
-          </span>
+          <NuxtLink
+            v-for="genre in album.genres"
+            :key="genre.id"
+            :to="`/genre/${genre.id}`"
+            class="bg-dark-highlight hover:bg-tiger-500/30 px-3 py-1 rounded-full text-xs transition-colors"
+          >
+            {{ genre.name }}
+          </NuxtLink>
         </p>
       </div>
     </div>

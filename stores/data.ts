@@ -4,6 +4,7 @@ import { useSongsStore, type Song } from './songs'
 import { useAlbumsStore, type Album } from './albums'
 import { useArtistsStore, type Artist } from './artists'
 import { usePlaylistsStore, type Playlist } from './playlists'
+import { useGenresStore } from './genres'
 
 export interface SearchResults {
   songs: Song[]
@@ -13,7 +14,8 @@ export interface SearchResults {
 }
 
 export interface AdvancedFilters {
-  genres?: string[]
+  /** IDs de géneros canónicos a aplicar como filtro. */
+  genreIds?: number[]
   yearFrom?: number
   yearTo?: number
   durationRange?: 'short' | 'medium' | 'long'
@@ -24,41 +26,34 @@ export const useDataStore = defineStore('data', () => {
   const albumsStore = useAlbumsStore()
   const artistsStore = useArtistsStore()
   const playlistsStore = usePlaylistsStore()
+  const genresStore = useGenresStore()
 
-  // ====================
-  // UNIFIED STATE
-  // ====================
   const isLoading = computed(() =>
     songsStore.isLoading || albumsStore.isLoading ||
-    artistsStore.isLoading || playlistsStore.isLoading
+    artistsStore.isLoading || playlistsStore.isLoading || genresStore.isLoading
   )
 
   const isLoaded = computed(() =>
     songsStore.isLoaded && albumsStore.isLoaded &&
-    artistsStore.isLoaded && playlistsStore.isLoaded
+    artistsStore.isLoaded && playlistsStore.isLoaded && genresStore.isLoaded
   )
 
-  // Acceso directo a los datos
   const songs = computed(() => songsStore.songs)
   const albums = computed(() => albumsStore.albums)
   const artists = computed(() => artistsStore.artists)
   const playlists = computed(() => playlistsStore.playlists)
+  const genres = computed(() => genresStore.genres)
 
-  // ====================
-  // ACTIONS
-  // ====================
   async function loadAllData(forceReload = false) {
     await Promise.all([
       songsStore.loadSongs(forceReload),
       albumsStore.loadAlbums(forceReload),
       artistsStore.loadArtists(forceReload),
-      playlistsStore.loadPlaylists(forceReload)
+      playlistsStore.loadPlaylists(forceReload),
+      genresStore.loadGenres(forceReload),
     ])
   }
 
-  // ====================
-  // SEARCH FUNCTIONS
-  // ====================
   function searchAll(query: string): SearchResults {
     const lowerQuery = query.toLowerCase()
 
@@ -68,21 +63,18 @@ export const useDataStore = defineStore('data', () => {
         const matchArtist = song.artistName.toLowerCase().includes(lowerQuery)
         const matchAlbum = song.albumName?.toLowerCase().includes(lowerQuery)
         const matchLyrics = song.lyrics?.toLowerCase().includes(lowerQuery)
-        return matchTitle || matchArtist || matchAlbum || matchLyrics
+        const matchGenre = song.genres?.some(g => g.name.toLowerCase().includes(lowerQuery))
+        return matchTitle || matchArtist || matchAlbum || matchLyrics || matchGenre
       }),
       albums: albumsStore.albums.filter(album => {
         const matchTitle = album.title.toLowerCase().includes(lowerQuery)
         const matchArtist = album.artistName.toLowerCase().includes(lowerQuery)
-        const matchGenres = album.genres?.some(genre =>
-          genre.toLowerCase().includes(lowerQuery)
-        )
+        const matchGenres = album.genres?.some(g => g.name.toLowerCase().includes(lowerQuery))
         return matchTitle || matchArtist || matchGenres
       }),
       artists: artistsStore.artists.filter(artist => {
         const matchName = artist.name.toLowerCase().includes(lowerQuery)
-        const matchGenres = artist.genres?.some(genre =>
-          genre.toLowerCase().includes(lowerQuery)
-        )
+        const matchGenres = artist.genres?.some(g => g.name.toLowerCase().includes(lowerQuery))
         return matchName || matchGenres
       }),
       playlists: playlistsStore.playlists.filter(playlist =>
@@ -91,30 +83,26 @@ export const useDataStore = defineStore('data', () => {
     }
   }
 
-  function searchByGenre(genre: string): SearchResults {
-    const lowerGenre = genre.toLowerCase()
-
-    const matchingArtists = artistsStore.artists.filter(artist =>
-      artist.genres?.some(g => g.toLowerCase() === lowerGenre)
-    )
-
-    const matchingAlbums = albumsStore.albums.filter(album =>
-      album.genres?.some(g => g.toLowerCase() === lowerGenre)
-    )
-
-    const matchingSongs = songsStore.songs.filter(song => {
-      const album = albumsStore.getAlbumById(song.albumId || '')
-      if (album?.genres?.length) {
-        return album.genres.some(g => g.toLowerCase() === lowerGenre)
+  /** Busca por id de género canónico (preciso) o nombre (case-insensitive). */
+  function searchByGenre(genreIdOrName: number | string): SearchResults {
+    const matchSong = (song: Song) => {
+      if (typeof genreIdOrName === 'number') {
+        return song.genres?.some(g => g.id === genreIdOrName)
       }
-      const artist = artistsStore.getArtistById(song.artistId)
-      return artist?.genres?.some(g => g.toLowerCase() === lowerGenre)
-    })
+      const lower = genreIdOrName.toLowerCase()
+      return song.genres?.some(g => g.name.toLowerCase() === lower)
+    }
+
+    const matchingSongs = songsStore.songs.filter(matchSong)
+    const matchingAlbumIds = new Set(
+      matchingSongs.map(s => s.albumId).filter((x): x is string => !!x)
+    )
+    const matchingArtistIds = new Set(matchingSongs.map(s => s.artistId))
 
     return {
       songs: matchingSongs,
-      albums: matchingAlbums,
-      artists: matchingArtists,
+      albums: albumsStore.albums.filter(a => matchingAlbumIds.has(a.id)),
+      artists: artistsStore.artists.filter(a => matchingArtistIds.has(a.id)),
       playlists: []
     }
   }
@@ -122,26 +110,21 @@ export const useDataStore = defineStore('data', () => {
   function applyAdvancedFilters(results: SearchResults, filters: AdvancedFilters): SearchResults {
     let filteredResults = { ...results }
 
-    if (filters.genres && filters.genres.length > 0) {
-      const lowerGenres = filters.genres.map(g => g.toLowerCase())
+    if (filters.genreIds && filters.genreIds.length > 0) {
+      const idSet = new Set(filters.genreIds)
 
-      filteredResults.songs = results.songs.filter(song => {
-        const album = albumsStore.getAlbumById(song.albumId || '')
-        const artist = artistsStore.getArtistById(song.artistId)
-        const songGenres = [
-          ...(album?.genres || []),
-          ...(artist?.genres || [])
-        ].map(g => g.toLowerCase())
-        return lowerGenres.some(fg => songGenres.includes(fg))
-      })
-
-      filteredResults.albums = results.albums.filter(album =>
-        album.genres?.some(g => lowerGenres.includes(g.toLowerCase()))
+      filteredResults.songs = results.songs.filter(song =>
+        song.genres?.some(g => idSet.has(g.id))
       )
 
-      filteredResults.artists = results.artists.filter(artist =>
-        artist.genres?.some(g => lowerGenres.includes(g.toLowerCase()))
+      // Para álbumes y artistas filtramos por canciones que cumplan el género.
+      const matchingAlbumIds = new Set(
+        filteredResults.songs.map(s => s.albumId).filter((x): x is string => !!x)
       )
+      const matchingArtistIds = new Set(filteredResults.songs.map(s => s.artistId))
+
+      filteredResults.albums = results.albums.filter(a => matchingAlbumIds.has(a.id))
+      filteredResults.artists = results.artists.filter(a => matchingArtistIds.has(a.id))
     }
 
     if (filters.yearFrom || filters.yearTo) {
@@ -181,29 +164,21 @@ export const useDataStore = defineStore('data', () => {
     albumsStore.$reset()
     artistsStore.$reset()
     playlistsStore.$reset()
+    genresStore.$reset()
   }
 
-  // ====================
-  // EXPORT
-  // ====================
   return {
-    // state
     isLoading,
     isLoaded,
-
-    // direct access to data
     songs,
     albums,
     artists,
     playlists,
-
-    // actions
+    genres,
     loadAllData,
     searchAll,
     searchByGenre,
     applyAdvancedFilters,
-
-    // delegate to sub-stores
     getSongById: (id: string) => songsStore.getSongById(id),
     getAlbumById: (id: string) => albumsStore.getAlbumById(id),
     getArtistById: (id: string) => artistsStore.getArtistById(id),

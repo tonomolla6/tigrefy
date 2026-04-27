@@ -1,6 +1,7 @@
-import { useDB, artists, parseJsonField } from '~/server/db'
+import { useDB, artists } from '~/server/db'
 import { requireParam } from '~/server/utils/params'
-import { mapSongResponse } from '~/server/utils/mappers'
+import { mapSongResponse, mapAlbumResponse } from '~/server/utils/mappers'
+import { getArtistGenres, getAlbumsGenresMap } from '~/server/utils/genres'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
@@ -10,10 +11,11 @@ export default defineEventHandler(async (event) => {
   const result = await db.query.artists.findFirst({
     where: eq(artists.id, id),
     with: {
-      albums: true,
+      albums: { with: { artist: true } },
       songs: {
         with: {
-          album: true
+          album: true,
+          genres: { with: { genre: true } }
         }
       }
     }
@@ -26,28 +28,22 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const [artistGenres, albumGenresMap] = await Promise.all([
+    getArtistGenres(result.id),
+    getAlbumsGenresMap(result.albums.map(a => a.id))
+  ])
+
   return {
     id: result.id,
     name: result.name,
     image: result.image,
     followers: result.followers,
-    genres: parseJsonField<string>(result.genres),
+    genres: artistGenres,
     bio: result.bio,
-    albums: result.albums.map(album => ({
-      id: album.id,
-      title: album.title,
-      artistId: result.id,
-      artistName: result.name,
-      cover: album.cover,
-      releaseDate: album.releaseDate,
-      totalTracks: album.totalTracks,
-      duration: album.duration,
-      genres: parseJsonField<string>(album.genres),
-      isPublic: album.isPublic
+    albums: result.albums.map(album => mapAlbumResponse(album, {
+      genres: albumGenresMap.get(album.id) ?? []
     })),
     songs: result.songs.map(song =>
-      // El artista ya lo conocemos (es result), pero el mapper espera el shape
-      // {artist: {name}}, así que lo inyectamos para reutilizarlo.
       mapSongResponse({ ...song, artist: { name: result.name } })
     )
   }

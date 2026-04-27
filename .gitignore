@@ -22,3 +22,6 @@ logs
 .env
 .env.*
 !.env.example
+
+# Notas locales (referencia personal, no repo)
+suno-tags.md

@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
   await requireTigre(event)
 
   const body = await readBody(event)
-  const { title, artistId, cover, releaseDate, genres, isPublic } = body
+  const { title, artistId, cover, releaseDate, isPublic } = body
 
   if (!title || title.trim().length === 0) {
     throw createError({
@@ -40,7 +40,6 @@ export default defineEventHandler(async (event) => {
     artistId,
     cover: cover || null,
     releaseDate: releaseDate || new Date().toISOString().split('T')[0],
-    genres: genres ? JSON.stringify(genres) : null,
     totalTracks: 0,
     duration: 0,
     isPublic: isPublic ?? false

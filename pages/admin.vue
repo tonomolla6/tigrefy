@@ -32,6 +32,7 @@
       <AdminArtistsTab v-if="activeTab === 'artists'" />
       <AdminAlbumsTab v-else-if="activeTab === 'albums'" />
       <AdminSongsTab v-else-if="activeTab === 'songs'" />
+      <AdminGenresTab v-else-if="activeTab === 'genres'" />
       <AdminPlaylistsTab v-else-if="activeTab === 'playlists'" />
       <AdminUsersTab v-else-if="activeTab === 'users'" />
     </template>
@@ -43,12 +44,13 @@ definePageMeta({
   middleware: 'tigre',
 })
 
-type TabValue = 'artists' | 'albums' | 'songs' | 'playlists' | 'users'
+type TabValue = 'artists' | 'albums' | 'songs' | 'genres' | 'playlists' | 'users'
 
 const tabs: Array<{ value: TabValue; label: string }> = [
   { value: 'artists', label: 'Artistas' },
   { value: 'albums', label: 'Álbumes' },
   { value: 'songs', label: 'Canciones' },
+  { value: 'genres', label: 'Géneros' },
   { value: 'playlists', label: 'Playlists' },
   { value: 'users', label: 'Usuarios' },
 ]

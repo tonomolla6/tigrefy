@@ -3,6 +3,7 @@ import { useSongsStore } from '~/stores/songs'
 import { useAlbumsStore } from '~/stores/albums'
 import { useArtistsStore } from '~/stores/artists'
 import { usePlaylistsStore } from '~/stores/playlists'
+import { useGenresStore } from '~/stores/genres'
 
 export const useData = () => {
   const dataStore = useDataStore()
@@ -10,13 +11,15 @@ export const useData = () => {
   const albumsStore = useAlbumsStore()
   const artistsStore = useArtistsStore()
   const playlistsStore = usePlaylistsStore()
+  const genresStore = useGenresStore()
 
   // Backward compatibility: data object
   const data = computed(() => ({
     songs: songsStore.songs,
     albums: albumsStore.albums,
     artists: artistsStore.artists,
-    playlists: playlistsStore.playlists
+    playlists: playlistsStore.playlists,
+    genres: genresStore.genres
   }))
 
   const isLoaded = computed(() => dataStore.isLoaded)
@@ -42,10 +45,11 @@ export const useData = () => {
     getAlbumsByArtistId: (artistId: string) => albumsStore.getAlbumsByArtistId(artistId),
     getSongsByArtistId: (artistId: string) => songsStore.getSongsByArtistId(artistId),
     getSongsByIds: (ids: string[]) => songsStore.getSongsByIds(ids),
+    getGenreById: (id: number) => genresStore.getGenreById(id),
 
     // Search functions
     searchAll: (query: string) => dataStore.searchAll(query),
-    searchByGenre: (genre: string) => dataStore.searchByGenre(genre),
+    searchByGenre: (genre: number | string) => dataStore.searchByGenre(genre),
     applyAdvancedFilters: (results: SearchResults, filters: AdvancedFilters) =>
       dataStore.applyAdvancedFilters(results, filters),
 

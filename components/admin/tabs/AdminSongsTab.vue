@@ -153,6 +153,11 @@
           </div>
 
           <div class="space-y-1">
+            <label class="block text-sm text-white/70">Géneros</label>
+            <GenreMultiSelect v-model="newSong.genreIds" :options="genresList" />
+          </div>
+
+          <div class="space-y-1">
             <label class="block text-sm text-white/70">Letra</label>
             <LyricsTextarea v-model="newSong.lyrics" :min-lines="10" />
           </div>
@@ -205,6 +210,11 @@
           />
 
           <div class="space-y-1">
+            <label class="block text-sm text-white/70">Géneros</label>
+            <GenreMultiSelect v-model="editForm.genreIds" :options="genresList" />
+          </div>
+
+          <div class="space-y-1">
             <label class="block text-sm text-white/70">Letra</label>
             <LyricsTextarea v-model="editForm.lyrics" :min-lines="10" />
           </div>
@@ -238,7 +248,7 @@
 import type { AdminSong as Song } from '~/types/song'
 import type { FileUploadHandle, VisibilityFilter } from '~/types/admin'
 
-const { artistsList, albums, songs, stats, recomputeVisibilityStats } = useAdminData()
+const { artistsList, albums, songs, stats, genresList, recomputeVisibilityStats } = useAdminData()
 
 const filter = ref<VisibilityFilter>('all')
 const filterOptions = [
@@ -273,6 +283,7 @@ const newSong = ref({
   duration: 0,
   lyrics: '',
   isPublic: false,
+  genreIds: [] as number[],
 })
 
 const editForm = ref({
@@ -281,6 +292,7 @@ const editForm = ref({
   duration: 0,
   lyrics: '',
   isPublic: false,
+  genreIds: [] as number[],
 })
 
 const createAudioUpload = ref<FileUploadHandle | null>(null)
@@ -328,8 +340,9 @@ const openEditModal = (song: Song) => {
     title: song.title,
     trackNumber: song.trackNumber || null,
     duration: 0,
-    lyrics: '',
+    lyrics: song.lyrics ?? '',
     isPublic: song.isPublic,
+    genreIds: song.genres?.map(g => g.id) ?? [],
   }
   editError.value = ''
   showEditModal.value = true
@@ -338,7 +351,7 @@ const openEditModal = (song: Song) => {
 const closeEditModal = () => {
   showEditModal.value = false
   editingSong.value = null
-  editForm.value = { title: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false }
+  editForm.value = { title: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false, genreIds: [] }
   editError.value = ''
 }
 
@@ -372,6 +385,7 @@ const createSong = async () => {
         duration,
         lyrics: newSong.value.lyrics || null,
         isPublic: newSong.value.isPublic,
+        genreIds: newSong.value.genreIds,
       },
     })
 
@@ -385,7 +399,7 @@ const createSong = async () => {
       const album = albums.value.find(a => a.id === newSong.value.albumId)
       if (album) album.totalTracks++
       showCreateModal.value = false
-      newSong.value = { title: '', artistId: '', albumId: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false }
+      newSong.value = { title: '', artistId: '', albumId: '', trackNumber: null, duration: 0, lyrics: '', isPublic: false, genreIds: [] }
     }
   } catch (error: any) {
     createError.value = error?.data?.statusMessage || 'Error al crear canción'
@@ -421,13 +435,20 @@ const saveSongChanges = async () => {
           ...(newDuration !== undefined ? { duration: newDuration } : {}),
           lyrics: editForm.value.lyrics || null,
           isPublic: editForm.value.isPublic,
+          genreIds: editForm.value.genreIds,
         },
       }
     )
 
     if (data.success && data.song) {
       const idx = songs.value.findIndex(s => s.id === editingSong.value?.id)
-      if (idx !== -1) songs.value[idx] = data.song
+      if (idx !== -1) {
+        // Preservar campos del shape AdminSong que el endpoint no devuelve
+        songs.value[idx] = {
+          ...songs.value[idx],
+          ...data.song,
+        }
+      }
       recomputeVisibilityStats()
       closeEditModal()
     }

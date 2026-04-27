@@ -21,13 +21,3 @@ export function useDB() {
 
 // Re-exportar todo el schema para facilitar imports
 export * from './schema'
-
-// Helper para parsear campos JSON
-export function parseJsonField<T>(value: string | null): T[] {
-  if (!value) return []
-  try {
-    return JSON.parse(value)
-  } catch {
-    return []
-  }
-}

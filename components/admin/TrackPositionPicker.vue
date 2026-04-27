@@ -1,19 +1,25 @@
 <script setup lang="ts">
 /**
  * Selector visual de posición de track en un álbum.
- * Muestra las canciones existentes con su número y permite elegir entre:
- * - "Al final" (auto)
- * - Cualquier posición intermedia (insertar)
  *
- * Solo visible cuando hay un albumId seleccionado y el álbum tiene canciones.
+ * Muestra TODAS las canciones del álbum + la canción que se está editando o
+ * creando, destacada en su posición actual. Dos botones ↑/↓ mueven esa
+ * canción una posición arriba o abajo dentro del álbum.
+ *
+ * Modo editar: pasar `excludeSongId` con el id de la canción editada (debe
+ *   estar también dentro de `albumSongs`); su `trackNumber` se ignora y se
+ *   usa `modelValue` como posición.
+ * Modo crear: omitir `excludeSongId`; se renderiza un placeholder con el
+ *   título "Esta canción nueva" en la posición que indique `modelValue` (o
+ *   al final si es null).
  */
 
 const props = defineProps<{
-  /** Track number actual (null = al final) */
+  /** Posición 1-based actual; null = al final */
   modelValue: number | null
-  /** Lista de canciones existentes del álbum, en orden */
+  /** Lista de canciones existentes del álbum */
   albumSongs: Array<{ id: string; title: string; trackNumber: number | null }>
-  /** Si está editando una canción existente, su id (se excluye de la lista) */
+  /** Si está editando una canción existente, su id */
   excludeSongId?: string
 }>()
 
@@ -21,19 +27,51 @@ const emit = defineEmits<{
   'update:modelValue': [value: number | null]
 }>()
 
-const orderedSongs = computed(() => {
-  return [...props.albumSongs]
+interface Row {
+  key: string
+  title: string
+  isCurrent: boolean
+}
+
+const rows = computed<Row[]>(() => {
+  const others = [...props.albumSongs]
     .filter(s => s.id !== props.excludeSongId)
-    .sort((a, b) => (a.trackNumber || 999) - (b.trackNumber || 999))
+    .sort((a, b) => (a.trackNumber ?? 9999) - (b.trackNumber ?? 9999))
+
+  const currentRow: Row = {
+    key: props.excludeSongId || '__new__',
+    title: props.excludeSongId
+      ? (props.albumSongs.find(s => s.id === props.excludeSongId)?.title ?? 'Esta canción')
+      : 'Esta canción nueva',
+    isCurrent: true,
+  }
+
+  // Posición 0-based donde insertar la canción actual.
+  const targetIdx = props.modelValue == null
+    ? others.length
+    : Math.max(0, Math.min(props.modelValue - 1, others.length))
+
+  const result: Row[] = others.map(s => ({ key: s.id, title: s.title, isCurrent: false }))
+  result.splice(targetIdx, 0, currentRow)
+  return result
 })
 
-// Renumera: el "auto" o último ocupa nextNumber
-const nextNumber = computed(() => orderedSongs.value.length + 1)
+const currentIdx = computed(() => rows.value.findIndex(r => r.isCurrent))
+const isFirst = computed(() => currentIdx.value <= 0)
+const isLast = computed(() => currentIdx.value >= rows.value.length - 1)
 
-const isAuto = computed(() => props.modelValue == null || props.modelValue >= nextNumber.value)
+const moveUp = () => {
+  const idx = currentIdx.value
+  if (idx <= 0) return
+  // Nueva posición 0-based = idx-1; 1-based = idx.
+  emit('update:modelValue', idx)
+}
 
-const select = (n: number | null) => {
-  emit('update:modelValue', n)
+const moveDown = () => {
+  const idx = currentIdx.value
+  if (idx >= rows.value.length - 1) return
+  // Nueva posición 0-based = idx+1; 1-based = idx+2.
+  emit('update:modelValue', idx + 2)
 }
 </script>
 
@@ -41,48 +79,55 @@ const select = (n: number | null) => {
   <div class="space-y-1.5">
     <label class="block text-sm text-white/70">Orden en el álbum</label>
 
-    <div v-if="orderedSongs.length === 0" class="text-sm text-white/50 bg-dark-hover rounded-lg p-3">
-      Será la primera canción del álbum (#1)
+    <div v-if="albumSongs.length === 0 || (excludeSongId && albumSongs.length === 1)"
+         class="text-sm text-white/50 bg-dark-hover rounded-lg p-3">
+      {{ excludeSongId ? 'Esta es la única canción del álbum.' : 'Será la primera canción del álbum (#1).' }}
     </div>
 
     <div v-else class="bg-dark-hover rounded-lg p-1.5 space-y-1">
-      <!-- Lista de canciones existentes con botón "insertar antes" -->
-      <button
-        v-for="(song, idx) in orderedSongs"
-        :key="song.id"
-        type="button"
-        @click="select(idx + 1)"
-        class="w-full flex items-center gap-3 px-2 py-1.5 rounded transition-colors group"
-        :class="modelValue === idx + 1
-          ? 'bg-tiger-500/20 ring-1 ring-tiger-500'
-          : 'hover:bg-white/5'"
+      <div
+        v-for="(row, idx) in rows"
+        :key="row.key"
+        class="flex items-center gap-3 px-2 py-1.5 rounded transition-colors"
+        :class="row.isCurrent ? 'bg-tiger-500/20 ring-1 ring-tiger-500' : ''"
       >
-        <span class="text-tiger-400 text-xs font-bold w-6 text-right tabular-nums">
-          {{ modelValue === idx + 1 ? '↓ Aquí' : '#' + (idx + 1) }}
+        <span
+          class="text-xs font-bold w-6 text-right tabular-nums"
+          :class="row.isCurrent ? 'text-tiger-400' : 'text-white/50'"
+        >
+          #{{ idx + 1 }}
         </span>
-        <span class="text-sm text-white/80 truncate flex-1 text-left">{{ song.title }}</span>
-      </button>
-
-      <!-- Opción "al final" -->
-      <button
-        type="button"
-        @click="select(null)"
-        class="w-full flex items-center gap-3 px-2 py-1.5 rounded transition-colors"
-        :class="isAuto
-          ? 'bg-tiger-500/20 ring-1 ring-tiger-500'
-          : 'hover:bg-white/5'"
-      >
-        <span class="text-tiger-400 text-xs font-bold w-6 text-right tabular-nums">
-          #{{ nextNumber }}
+        <span
+          class="text-sm truncate flex-1 text-left"
+          :class="row.isCurrent ? 'text-white font-medium' : 'text-white/60'"
+        >
+          {{ row.title }}
         </span>
-        <span class="text-sm text-white/80 truncate flex-1 text-left">
-          Al final del álbum
-        </span>
-      </button>
+        <div v-if="row.isCurrent" class="flex items-center gap-1">
+          <button
+            type="button"
+            @click="moveUp"
+            :disabled="isFirst"
+            class="w-7 h-7 flex items-center justify-center rounded text-white/80 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Subir una posición"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            @click="moveDown"
+            :disabled="isLast"
+            class="w-7 h-7 flex items-center justify-center rounded text-white/80 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Bajar una posición"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
-
-    <p v-if="orderedSongs.length > 0" class="text-xs text-white/40 px-1">
-      Click en una canción para insertar antes de ella
-    </p>
   </div>
 </template>
