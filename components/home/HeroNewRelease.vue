@@ -7,14 +7,19 @@
     >
       <div class="flex items-center gap-4 p-4">
         <!-- Cover -->
-        <div class="flex-shrink-0">
+        <div class="flex-shrink-0 w-24 h-24 rounded-lg shadow-lg overflow-hidden bg-dark-lighter relative">
+          <div
+            v-if="!coverLoadedMobile"
+            class="absolute inset-0 bg-white/5 animate-pulse"
+          ></div>
           <img
             ref="coverRef"
             :src="resolvedCover"
             :alt="song.title"
             crossorigin="anonymous"
-            class="w-24 h-24 rounded-lg shadow-lg object-cover"
-            @load="extractColor"
+            class="w-full h-full object-cover transition-opacity duration-300"
+            :class="coverLoadedMobile ? 'opacity-100' : 'opacity-0'"
+            @load="onLoadMobile"
           />
         </div>
 
@@ -53,14 +58,19 @@
     >
       <div class="flex items-center gap-6 p-6">
         <!-- Cover -->
-        <div class="flex-shrink-0">
+        <div class="flex-shrink-0 w-48 h-48 rounded-lg shadow-lg overflow-hidden bg-dark-lighter relative">
+          <div
+            v-if="!coverLoadedDesktop"
+            class="absolute inset-0 bg-white/5 animate-pulse"
+          ></div>
           <img
             ref="coverRefDesktop"
             :src="resolvedCover"
             :alt="song.title"
             crossorigin="anonymous"
-            class="w-48 h-48 rounded-lg shadow-lg object-cover"
-            @load="extractColorDesktop"
+            class="w-full h-full object-cover transition-opacity duration-300"
+            :class="coverLoadedDesktop ? 'opacity-100' : 'opacity-0'"
+            @load="onLoadDesktop"
           />
         </div>
 
@@ -138,15 +148,24 @@ const resolvedCover = computed(() => getImageUrl(props.song.cover))
 const coverRef = ref<HTMLImageElement | null>(null)
 const coverRefDesktop = ref<HTMLImageElement | null>(null)
 const dominantColor = ref('#ea580c') // tiger-600 as fallback
+const coverLoadedMobile = ref(false)
+const coverLoadedDesktop = ref(false)
 
-const extractColor = () => {
+watch(resolvedCover, () => {
+  coverLoadedMobile.value = false
+  coverLoadedDesktop.value = false
+})
+
+const onLoadMobile = () => {
+  coverLoadedMobile.value = true
   if (coverRef.value) {
     const color = extractDominantColor(coverRef.value)
     if (color) dominantColor.value = color
   }
 }
 
-const extractColorDesktop = () => {
+const onLoadDesktop = () => {
+  coverLoadedDesktop.value = true
   if (coverRefDesktop.value) {
     const color = extractDominantColor(coverRefDesktop.value)
     if (color) dominantColor.value = color

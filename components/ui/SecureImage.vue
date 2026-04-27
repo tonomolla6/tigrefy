@@ -19,30 +19,49 @@ const resolvedSrc = computed(() => {
 })
 
 const hasError = ref(false)
+const isLoaded = ref(false)
 
-watch(() => props.src, () => {
+watch(() => resolvedSrc.value, () => {
   hasError.value = false
+  isLoaded.value = false
 })
 
 const onError = () => {
   hasError.value = true
 }
+
+const onLoad = () => {
+  isLoaded.value = true
+}
 </script>
 
 <template>
-  <img
-    v-if="resolvedSrc && !hasError"
-    :src="resolvedSrc"
-    :alt="alt"
-    :class="[props.class, 'object-cover']"
-    loading="lazy"
-    @error="onError"
-  />
-  <div
-    v-else
-    :class="props.class"
-    class="bg-dark-lighter flex items-center justify-center"
-  >
-    <IconMusic class="w-1/3 h-1/3 text-gray-600" />
+  <!-- Wrapper que mantiene la forma (rounded, aspect-ratio…) y aloja placeholder + img -->
+  <div :class="[props.class, 'relative overflow-hidden bg-dark-lighter']">
+    <!-- Placeholder con shimmer mientras la imagen no ha cargado -->
+    <div
+      v-if="resolvedSrc && !hasError && !isLoaded"
+      class="absolute inset-0 bg-white/5 animate-pulse"
+    ></div>
+
+    <!-- Imagen real (fade-in cuando carga) -->
+    <img
+      v-if="resolvedSrc && !hasError"
+      :src="resolvedSrc"
+      :alt="alt"
+      class="w-full h-full object-cover transition-opacity duration-300"
+      :class="isLoaded ? 'opacity-100' : 'opacity-0'"
+      loading="lazy"
+      @load="onLoad"
+      @error="onError"
+    />
+
+    <!-- Fallback si no hay src o error -->
+    <div
+      v-if="!resolvedSrc || hasError"
+      class="absolute inset-0 flex items-center justify-center"
+    >
+      <IconMusic class="w-1/3 h-1/3 text-gray-600" />
+    </div>
   </div>
 </template>

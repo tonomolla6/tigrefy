@@ -8,22 +8,28 @@
     @mouseleave="handleMouseLeave"
   >
     <!-- Imagen cuadrada o gradiente para liked-songs -->
-    <div class="h-full aspect-square">
+    <div class="h-full aspect-square relative overflow-hidden rounded-l-md bg-dark-lighter">
       <div
         v-if="type === 'liked-songs'"
-        class="h-full w-full bg-gradient-to-br from-indigo-800 via-indigo-600 to-indigo-400 flex items-center justify-center rounded-l-md"
+        class="h-full w-full bg-gradient-to-br from-indigo-800 via-indigo-600 to-indigo-400 flex items-center justify-center"
       >
         <IconHeart :size="24" class="text-white" :filled="true" />
       </div>
-      <img
-        v-else
-        ref="imgRef"
-        :src="resolvedImage"
-        :alt="title"
-        crossorigin="anonymous"
-        class="h-full w-full object-cover rounded-l-md"
-        @load="extractColor"
-      />
+      <template v-else>
+        <div
+          v-if="!imgLoaded"
+          class="absolute inset-0 bg-white/5 animate-pulse"
+        ></div>
+        <img
+          ref="imgRef"
+          :src="resolvedImage"
+          :alt="title"
+          crossorigin="anonymous"
+          class="h-full w-full object-cover transition-opacity duration-300"
+          :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
+          @load="onLoad"
+        />
+      </template>
     </div>
 
     <!-- Título -->
@@ -85,10 +91,17 @@ const resolvedImage = computed(() => getImageUrl(props.image))
 // Color extraction
 const imgRef = ref<HTMLImageElement | null>(null)
 const extractedColor = ref<string | null>(null)
+const imgLoaded = ref(false)
 
-const extractColor = () => {
-  if (!imgRef.value) return
-  extractedColor.value = extractDominantColor(imgRef.value)
+watch(resolvedImage, () => {
+  imgLoaded.value = false
+})
+
+const onLoad = () => {
+  imgLoaded.value = true
+  if (imgRef.value) {
+    extractedColor.value = extractDominantColor(imgRef.value)
+  }
 }
 
 const handleMouseEnter = () => {
