@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
         showAll ? sql`1=1` : eq(songs.isPublic, true)
       } THEN ${songs.id} END)`,
       // Subquery: cover de un álbum del género (visible si no-tigre).
+      // ORDER BY RANDOM() para que la portada cambie en cada carga.
       coverHint: sql<string | null>`(
         SELECT a.cover
         FROM songs s2
@@ -30,6 +31,7 @@ export default defineEventHandler(async (event) => {
         WHERE sg2.genre_id = ${genres.id}
           AND a.cover IS NOT NULL
           ${showAll ? sql`` : sql`AND a.is_public = 1`}
+        ORDER BY RANDOM()
         LIMIT 1
       )`
     })

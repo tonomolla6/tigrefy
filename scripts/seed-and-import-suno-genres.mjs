@@ -197,8 +197,9 @@ const SONG_SUNO_TAGS = {
   'Penagos: Tgrs Music Sessions, Vol. 13':['afrobeat latino bailable'],
   'Tigre Soy':                            ['voz flamenca masculina', 'flamenco-bulería', 'efectos a coro', 'sentimental'],
   'Omar Está Soltero (Versión 2)':        ['latin cumbia', 'dance', 'upbeat'],
+  'La Esquina del Hoy':                   ['rumba-pop'],
   // Canciones existentes en la BD aún sin tags Suno aportados:
-  //   BOF, Me Vas A Extrañar, Omar Está Soltero (Versión 1), LA ESQUINA DEL "HOY".
+  //   BOF, Me Vas A Extrañar, Omar Está Soltero (Versión 1).
   // Asígnalas desde /admin (tab Canciones → editar → seleccionar géneros)
   // o añádelas aquí cuando recuperes el prompt Suno.
 }
