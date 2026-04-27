@@ -156,7 +156,7 @@ const route = useRoute()
 const { loadData } = useData()
 const { loadFavorites } = useFavorites()
 const { loadUserPlaylists } = useUserPlaylists()
-const { user, logout, canManage } = useAuth()
+const { user, logout, canManage, initAuth, isAuthenticated } = useAuth()
 const { currentSong } = usePlayer()
 
 const showUserMenu = ref(false)
@@ -191,9 +191,15 @@ const handleLogout = async () => {
 }
 
 onMounted(async () => {
-  await loadData()
-  loadFavorites()
-  loadUserPlaylists()
+  // loadData (contenido público) corre en paralelo desde ya.
+  // Para favoritos y playlists del usuario hay que esperar a que auth
+  // resuelva, si no `isAuthenticated` está en false y los stores hacen
+  // bail-out dejando la biblioteca colgada en skeleton.
+  loadData()
+  await initAuth()
+  if (isAuthenticated.value) {
+    await Promise.all([loadFavorites(), loadUserPlaylists()])
+  }
 
   // Cerrar menú al hacer clic fuera
   document.addEventListener('click', (event: MouseEvent) => {
