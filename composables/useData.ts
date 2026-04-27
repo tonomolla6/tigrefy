@@ -25,6 +25,12 @@ export const useData = () => {
   const isLoaded = computed(() => dataStore.isLoaded)
   const isLoading = computed(() => dataStore.isLoading)
 
+  // Per-store flags so secciones puedan renderizar de forma independiente
+  const isSongsLoaded = computed(() => songsStore.isLoaded)
+  const isAlbumsLoaded = computed(() => albumsStore.isLoaded)
+  const isArtistsLoaded = computed(() => artistsStore.isLoaded)
+  const isPlaylistsLoaded = computed(() => playlistsStore.isLoaded)
+
   const loadData = async (forceReload = false) => {
     await dataStore.loadAllData(forceReload)
   }
@@ -34,6 +40,10 @@ export const useData = () => {
     data,
     isLoaded,
     isLoading,
+    isSongsLoaded,
+    isAlbumsLoaded,
+    isArtistsLoaded,
+    isPlaylistsLoaded,
     loadData,
 
     // Getter functions

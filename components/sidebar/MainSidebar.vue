@@ -99,8 +99,8 @@
 
       <!-- Lista de biblioteca -->
       <CustomScrollbar class="flex-1 min-h-0 pt-2" :class="isCollapsed ? 'px-2' : 'px-2'">
-        <!-- Skeleton mientras carga -->
-        <template v-if="!isLoaded">
+        <!-- Skeleton hasta que favoritos + user playlists estén cargados (lo demás se rellena conforme llega) -->
+        <template v-if="!isLibraryLoaded">
           <div
             v-for="i in 8"
             :key="i"
@@ -314,9 +314,13 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { data, isLoaded } = useData()
-const { userPlaylists } = useUserPlaylists()
-const { favoriteSongs, favoriteArtists, savedPlaylistIds, savedAlbumIds } = useFavorites()
+const { data } = useData()
+const { userPlaylists, isUserPlaylistsLoaded } = useUserPlaylists()
+const { favoriteSongs, favoriteArtists, savedPlaylistIds, savedAlbumIds, isFavoritesLoaded } = useFavorites()
+
+// La biblioteca está lista en cuanto favoritos + playlists del usuario carguen.
+// Los artistas/álbumes/playlists guardadas se irán mostrando conforme llegan sus stores.
+const isLibraryLoaded = computed(() => isFavoritesLoaded.value && isUserPlaylistsLoaded.value)
 const { isPlaying, playbackContext, playSong, togglePlay } = usePlayer()
 const { leftSidebarWidth, leftSidebarCollapsed, toggleLeftSidebar, resizeLeftSidebar, resetCollapseThreshold } = useSidebarResize()
 

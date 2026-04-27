@@ -21,6 +21,7 @@ export const useUserPlaylists = () => {
     // Solo playlists guardadas (de otros)
     savedPlaylists: computed(() => store.savedPlaylists),
     isLoadingPlaylists: computed(() => store.isLoadingPlaylists),
+    isUserPlaylistsLoaded: computed(() => store.isPlaylistsLoaded),
     playlistsCount: computed(() => store.playlistsCount),
 
     // Actions

@@ -1,34 +1,23 @@
 <template>
   <NuxtLayout name="default">
-    <!-- Loading dots mientras carga -->
-    <div v-if="!isLoaded" class="min-h-full flex items-center justify-center py-20">
-      <LoadingDots />
-    </div>
-
-    <!-- Contenido real cuando está cargado -->
-    <div v-else class="min-h-full pb-20 md:pb-0">
+    <div class="min-h-full pb-20 md:pb-0">
       <!-- Mobile Header con perfil -->
       <MobileHeader />
 
       <!-- Header con gradiente dinámico (solo desktop) -->
       <div class="relative pt-1 md:pt-6 px-4 md:px-8">
-        <!-- Única capa de gradiente con color interpolado -->
-        <div
-          class="absolute inset-0"
-          :style="gradientStyle"
-        />
+        <div class="absolute inset-0" :style="gradientStyle" />
 
-        <!-- Contenido (sobre las capas de gradiente) -->
         <div class="relative z-10">
-          <!-- Saludo -->
+          <!-- Saludo (siempre, con fallback) -->
           <div class="mb-4 md:mb-6">
             <h1 class="text-2xl md:text-5xl font-bold mb-1">¡Hola, {{ userName }}!</h1>
             <p class="text-secondary text-base md:text-lg">{{ greeting }}</p>
           </div>
 
-          <!-- Quick Access Grid -->
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-            <!-- Canciones que te gustan -->
+          <!-- Quick Access: skeleton hasta que albums cargue -->
+          <QuickAccessGridSkeleton v-if="!isAlbumsLoaded" />
+          <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
             <QuickAccessCard
               title="Canciones que te gustan"
               type="liked-songs"
@@ -36,7 +25,6 @@
               @play="handlePlayLikedSongs"
               @hover-color="handleHoverColor"
             />
-            <!-- Álbumes y playlists recientes/favoritos -->
             <QuickAccessCard
               v-for="item in quickAccessItems"
               :key="`${item.type}-${item.id}`"
@@ -53,15 +41,18 @@
 
       <!-- Contenido principal -->
       <div class="px-4 md:px-8 pt-6 pb-6 space-y-6 bg-dark-base">
-        <!-- Hero Nueva Canción -->
+        <!-- Hero: skeleton hasta que songs cargue -->
+        <HeroSkeleton v-if="!isSongsLoaded" />
         <HeroNewRelease
-          v-if="latestSong"
+          v-else-if="latestSong"
           :song="latestSong"
           :queue="topSongs"
         />
 
         <!-- Álbumes -->
+        <MediaSectionSkeleton v-if="!isAlbumsLoaded" shape="square" />
         <MediaSection
+          v-else-if="albums.length > 0"
           title="Álbumes"
           type="albums"
           :items="albums"
@@ -69,8 +60,9 @@
         />
 
         <!-- Listas -->
+        <MediaSectionSkeleton v-if="!isPlaylistsLoaded" shape="square" />
         <MediaSection
-          v-if="visiblePlaylists.length > 0"
+          v-else-if="visiblePlaylists.length > 0"
           title="Listas"
           type="playlists"
           :items="visiblePlaylists"
@@ -78,8 +70,9 @@
         />
 
         <!-- Artistas -->
+        <MediaSectionSkeleton v-if="!isArtistsLoaded" shape="circle" />
         <MediaSection
-          v-if="artists.length > 0"
+          v-else-if="artists.length > 0"
           title="Artistas"
           type="artists"
           :items="artists"
@@ -91,7 +84,14 @@
 </template>
 
 <script setup lang="ts">
-const { data, getSongsByAlbumId, isLoaded } = useData()
+const {
+  data,
+  getSongsByAlbumId,
+  isSongsLoaded,
+  isAlbumsLoaded,
+  isArtistsLoaded,
+  isPlaylistsLoaded
+} = useData()
 const { playSong } = usePlayer()
 const { favoriteSongs } = useFavorites()
 const { user, isGuest } = useAuth()

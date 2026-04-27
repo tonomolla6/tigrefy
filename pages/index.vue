@@ -1,8 +1,8 @@
 <template>
-  <!-- Si está autenticado, mostrar el home normal -->
-  <HomeContent v-if="isAuthenticated" />
+  <!-- Mientras carga auth o si está autenticado, mostrar el home (su skeleton se encarga del loading) -->
+  <HomeContent v-if="isAuthenticated || isLoading" />
 
-  <!-- Si no está autenticado, mostrar landing page -->
+  <!-- Si auth resolvió y NO está autenticado, mostrar landing page -->
   <div v-else class="min-h-screen bg-black text-white overflow-x-hidden">
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
@@ -273,7 +273,7 @@ definePageMeta({
   layout: false
 })
 
-const { isAuthenticated } = useAuth()
+const { isAuthenticated, isLoading } = useAuth()
 
 // Easter egg: contador de clicks en el logo
 const logoClicks = ref(0)

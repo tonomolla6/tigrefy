@@ -16,9 +16,12 @@
     </div>
 
     <div class="px-4 md:px-8 py-6 space-y-10">
-      <!-- Loading -->
-      <div v-if="pending" class="flex justify-center py-20">
-        <LoadingDots />
+      <!-- Skeleton mientras carga -->
+      <div v-if="pending" class="space-y-10">
+        <section>
+          <div class="h-7 w-32 bg-white/10 rounded animate-pulse mb-4"></div>
+          <CardGridSkeleton :count="12" shape="square" />
+        </section>
       </div>
 
       <!-- Error -->

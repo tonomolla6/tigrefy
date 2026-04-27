@@ -6,10 +6,8 @@
     <div class="px-4 md:px-8 py-6">
       <h1 class="text-2xl md:text-3xl font-bold mb-6">Álbumes</h1>
 
-      <!-- Loading -->
-      <div v-if="!isLoaded" class="flex justify-center py-20">
-        <LoadingDots />
-      </div>
+      <!-- Skeleton mientras carga -->
+      <CardGridSkeleton v-if="!isLoaded" shape="square" />
 
       <!-- Grid responsive alineado arriba -->
       <div v-else class="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4 items-start">
