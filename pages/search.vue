@@ -254,18 +254,22 @@
               v-for="genre in exploreGenres"
               :key="genre.id"
               :to="`/genre/${genre.id}`"
-              class="relative aspect-[1.5] rounded-lg overflow-hidden cursor-pointer hover:scale-[1.03] transition-transform group block"
+              class="relative aspect-[1.8] rounded-lg overflow-hidden cursor-pointer hover:scale-[1.03] transition-transform group block"
               :style="{ backgroundColor: genreColor(genre.name) }"
             >
-              <h3 class="absolute top-4 left-4 right-4 text-xl md:text-2xl font-bold text-white drop-shadow-lg z-10 leading-tight">
+              <h3 class="absolute top-4 left-4 right-[45%] text-xl md:text-2xl font-bold text-white drop-shadow-lg z-10 leading-tight">
                 {{ genre.name }}
               </h3>
-              <SecureImage
+              <div
                 v-if="genre.coverHint"
-                :src="genre.coverHint"
-                :alt="genre.name"
-                class="absolute -bottom-3 -right-3 w-24 h-24 md:w-28 md:h-28 rounded shadow-2xl rotate-[25deg] origin-center"
-              />
+                class="absolute -bottom-2 -right-3 w-[40%] aspect-square rotate-[25deg] origin-center shadow-[0_8px_24px_rgba(0,0,0,0.6)] rounded"
+              >
+                <SecureImage
+                  :src="genre.coverHint"
+                  :alt="genre.name"
+                  class="w-full h-full rounded"
+                />
+              </div>
             </NuxtLink>
           </div>
         </section>
@@ -319,9 +323,24 @@ const exploreGenres = computed(() =>
   genresStore.genres.filter(g => g.songCount > 0)
 )
 
-// Color sólido derivado de un hash simple del nombre. Mismo helper que en
-// /pages/genres.vue para que cada género conserve su color en toda la app.
+// Paleta curada por género canónico — cada uno con un tono único y saturado
+// estilo Spotify. Para géneros que no estén en el mapa (ej. nuevos creados
+// por el admin), fallback a hash sobre el nombre.
+const GENRE_COLORS: Record<string, string> = {
+  'Tech House':         '#e91e63', // rosa fuerte
+  'Techno':             '#7c4dff', // morado eléctrico
+  'Reggaeton':          '#5e35b1', // morado oscuro
+  'Trap':               '#388e3c', // verde bosque
+  'Rap':                '#00838f', // teal
+  'Rumba & Flamenco':   '#bf360c', // terracota / naranja oscuro
+  'Pop Latino':         '#ff7043', // coral
+  'Corridos Tumbados':  '#fb8c00', // ámbar
+  'Tropical':           '#039be5', // azul cielo
+  'Otros':              '#455a64', // gris azulado
+}
+
 function genreColor(name: string): string {
+  if (GENRE_COLORS[name]) return GENRE_COLORS[name]
   let hash = 0
   for (let i = 0; i < name.length; i++) {
     hash = (hash * 31 + name.charCodeAt(i)) & 0xfffffff
@@ -329,7 +348,6 @@ function genreColor(name: string): string {
   const palette = [
     '#7e57c2', '#26a69a', '#ef5350', '#ec407a',
     '#42a5f5', '#66bb6a', '#ffa726', '#ab47bc',
-    '#5c6bc0', '#26c6da', '#9ccc65', '#ff7043',
   ]
   return palette[Math.abs(hash) % palette.length]
 }

@@ -122,7 +122,23 @@ const totalCount = computed(() => {
   return data.value.songs.length + data.value.albums.length + data.value.artists.length
 })
 
+// Misma paleta que en /pages/search.vue para que cada género tenga el mismo
+// color en la card y en su página de detalle.
+const GENRE_COLORS: Record<string, string> = {
+  'Tech House':         '#e91e63',
+  'Techno':             '#7c4dff',
+  'Reggaeton':          '#5e35b1',
+  'Trap':               '#388e3c',
+  'Rap':                '#00838f',
+  'Rumba & Flamenco':   '#bf360c',
+  'Pop Latino':         '#ff7043',
+  'Corridos Tumbados':  '#fb8c00',
+  'Tropical':           '#039be5',
+  'Otros':              '#455a64',
+}
+
 function genreColor(name: string): string {
+  if (GENRE_COLORS[name]) return GENRE_COLORS[name]
   let hash = 0
   for (let i = 0; i < name.length; i++) {
     hash = (hash * 31 + name.charCodeAt(i)) & 0xfffffff
@@ -130,7 +146,6 @@ function genreColor(name: string): string {
   const palette = [
     '#7e57c2', '#26a69a', '#ef5350', '#ec407a',
     '#42a5f5', '#66bb6a', '#ffa726', '#ab47bc',
-    '#5c6bc0', '#26c6da', '#9ccc65', '#ff7043',
   ]
   return palette[Math.abs(hash) % palette.length]
 }
