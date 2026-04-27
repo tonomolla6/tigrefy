@@ -14,12 +14,14 @@
           ></div>
           <img
             ref="coverRef"
+            :key="`mobile-${resolvedCover}-${corsBlocked}`"
             :src="resolvedCover"
             :alt="song.title"
-            crossorigin="anonymous"
+            :crossorigin="corsBlocked ? null : 'anonymous'"
             class="w-full h-full object-cover transition-opacity duration-300"
             :class="coverLoadedMobile ? 'opacity-100' : 'opacity-0'"
             @load="onLoadMobile"
+            @error="onError"
           />
         </div>
 
@@ -65,12 +67,14 @@
           ></div>
           <img
             ref="coverRefDesktop"
+            :key="`desktop-${resolvedCover}-${corsBlocked}`"
             :src="resolvedCover"
             :alt="song.title"
-            crossorigin="anonymous"
+            :crossorigin="corsBlocked ? null : 'anonymous'"
             class="w-full h-full object-cover transition-opacity duration-300"
             :class="coverLoadedDesktop ? 'opacity-100' : 'opacity-0'"
             @load="onLoadDesktop"
+            @error="onError"
           />
         </div>
 
@@ -150,15 +154,20 @@ const coverRefDesktop = ref<HTMLImageElement | null>(null)
 const dominantColor = ref('#ea580c') // tiger-600 as fallback
 const coverLoadedMobile = ref(false)
 const coverLoadedDesktop = ref(false)
+// Si CORS bloquea la imagen (cache de Cloudflare sin headers, etc.) se reintenta
+// sin crossorigin: la cover se ve, pero el canvas queda tainted y la extracción
+// de color cae al fallback naranja.
+const corsBlocked = ref(false)
 
 watch(resolvedCover, () => {
   coverLoadedMobile.value = false
   coverLoadedDesktop.value = false
+  corsBlocked.value = false
 })
 
 const onLoadMobile = () => {
   coverLoadedMobile.value = true
-  if (coverRef.value) {
+  if (coverRef.value && !corsBlocked.value) {
     const color = extractDominantColor(coverRef.value)
     if (color) dominantColor.value = color
   }
@@ -166,9 +175,15 @@ const onLoadMobile = () => {
 
 const onLoadDesktop = () => {
   coverLoadedDesktop.value = true
-  if (coverRefDesktop.value) {
+  if (coverRefDesktop.value && !corsBlocked.value) {
     const color = extractDominantColor(coverRefDesktop.value)
     if (color) dominantColor.value = color
+  }
+}
+
+const onError = () => {
+  if (!corsBlocked.value) {
+    corsBlocked.value = true
   }
 }
 

@@ -22,12 +22,14 @@
         ></div>
         <img
           ref="imgRef"
+          :key="`${resolvedImage}-${corsBlocked}`"
           :src="resolvedImage"
           :alt="title"
-          crossorigin="anonymous"
+          :crossorigin="corsBlocked ? null : 'anonymous'"
           class="h-full w-full object-cover transition-opacity duration-300"
           :class="imgLoaded ? 'opacity-100' : 'opacity-0'"
           @load="onLoad"
+          @error="onError"
         />
       </template>
     </div>
@@ -92,15 +94,26 @@ const resolvedImage = computed(() => getImageUrl(props.image))
 const imgRef = ref<HTMLImageElement | null>(null)
 const extractedColor = ref<string | null>(null)
 const imgLoaded = ref(false)
+// Si CORS bloquea la imagen (cache de Cloudflare sin headers, etc.) se reintenta
+// sin crossorigin: la cover se ve, pero el canvas queda tainted y la extracción
+// de color cae al fallback naranja.
+const corsBlocked = ref(false)
 
 watch(resolvedImage, () => {
   imgLoaded.value = false
+  corsBlocked.value = false
 })
 
 const onLoad = () => {
   imgLoaded.value = true
-  if (imgRef.value) {
+  if (imgRef.value && !corsBlocked.value) {
     extractedColor.value = extractDominantColor(imgRef.value)
+  }
+}
+
+const onError = () => {
+  if (!corsBlocked.value) {
+    corsBlocked.value = true
   }
 }
 
