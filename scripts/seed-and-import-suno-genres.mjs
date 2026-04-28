@@ -156,7 +156,7 @@ const IGNORED_EXACT = new Set([
   'efectos a coro', 'a coro', 'coro',
   // Mood/atmósfera adicionales
   'sentimental', 'una canción sentimental', 'festiva', 'festivo',
-  'bailable',
+  'bailable', 'luminosa', 'luminoso', 'oscura', 'oscuro',
   // Genéricos demasiado amplios
   'dance',
 ])
@@ -185,10 +185,13 @@ const SONG_SUNO_TAGS = {
   'Tarde Pa’ Querer':                     ['Spanish rumba-pop', 'flamenco guitar', 'cajón & handclaps', 'upbeat', 'anthemic singalong chorus'],
   'Esto Es Un Mierdón':                   ['Minimal Tech House', 'Deep Tech'],
   'Esto Es Aún Peor':                     ['tech house', 'deep tech'],
-  'Donde Duele el Aire':                  ['flamenco', 'pop', 'rumba'],
+  // Donde Duele el Aire: aunque Suno la etiquetó como flamenco/pop/rumba,
+  // sonoramente es flamenco-pop puro, no pop latino. Omitimos 'pop'.
+  'Donde Duele el Aire':                  ['flamenco', 'rumba'],
   'Bicente: Tgrs Music Sessions, Vol. 3': ['industrial', 'reggaeton', 'minimal techno'],
   'Óscar: Tgrs Music Sessions, Vol. 2':   ['reggaeton', 'urbano latino', 'colombian urbano', 'dancehall influence', 'dembow', '95 bpm', 'e minor', 'dark melodic synths', 'heavy sub bass', 'catchy hook', 'rap-sung vocals', 'autotune', 'street anthem', 'club'],
-  'Calle Sin Mapa':                       ['pop', 'worldmusic'],
+  // Calle Sin Mapa: el prompt Suno real es "Rumba-pop luminosa".
+  'Calle Sin Mapa':                       ['rumba-pop', 'luminosa'],
   'Bar de las Dos':                       ['rumba-pop', 'flamenco-pop'],
   'Nubes De Tormenta':                    ['rap', 'cinematográfica', 'introspectiva'],
   'Komorebi: Tgrs Music Sessions, Vol. 8':['industrial techno', 'hardstyle'],
