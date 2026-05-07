@@ -8,10 +8,14 @@ const DEFAULT_TITLE = 'Tigrefy'
  * Carga el track HLS de la canción en el elemento de audio.
  * El playlist se sirve desde /api/hls/<songId>/index.m3u8 con segmentos firmados.
  */
-async function loadHlsTrack(audio: HTMLAudioElement, songId: string): Promise<void> {
+async function loadHlsTrack(
+  audio: HTMLAudioElement,
+  songId: string,
+  onFatalError?: (reason: string) => void
+): Promise<void> {
   const { destroy: destroyHls, loadTrack } = useHlsPlayer()
   destroyHls()
-  await loadTrack(audio, `/api/hls/${songId}/index.m3u8`)
+  await loadTrack(audio, `/api/hls/${songId}/index.m3u8`, onFatalError)
 }
 
 // Variables para tracking de tiempo real de reproducción
@@ -228,7 +232,13 @@ export const usePlayer = () => {
     const toast = useToast()
 
     try {
-      await loadHlsTrack(globalAudioElement, song.id)
+      await loadHlsTrack(globalAudioElement, song.id, (reason) => {
+        // Recovery agotado mid-playback: avisar y saltar a la siguiente.
+        // Si la cola se acaba y no hay siguiente, nextSong() pausa.
+        console.warn('HLS fatal mid-playback:', reason)
+        toast.error(reason)
+        nextSong()
+      })
     } catch (err) {
       console.error('Error cargando audio:', err)
       isPlaying.value = false

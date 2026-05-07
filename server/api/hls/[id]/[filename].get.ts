@@ -31,7 +31,12 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 404, statusMessage: 'Playlist not found' })
     }
 
-    const expires = getExpires(300) // 5 min, mismo timestamp para todos los segmentos
+    // 15 min. El cliente (useHlsPlayer) refresca proactivamente este manifest
+    // a los 12 min de cargarlo, así que la caducidad real nunca afecta a
+    // playback en curso. Si por algún motivo el refresh proactivo falla (tab
+    // throttled, etc.), el recovery reactivo del cliente lo coge.
+    // Mantener este valor en sintonía con MANIFEST_REFRESH_MS de useHlsPlayer.
+    const expires = getExpires(900)
 
     const lines = original.split('\n')
     const rewritten = await Promise.all(
