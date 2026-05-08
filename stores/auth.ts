@@ -37,25 +37,49 @@ export const useAuthStore = defineStore('auth', () => {
   // ====================
   // ACTIONS
   // ====================
-  async function initAuth() {
+
+  // initAuth es idempotente para toda la vida de la sesión. Múltiples
+  // sitios pueden necesitar "esperar a que la auth esté lista" (app.vue,
+  // layout default, middlewares) y ninguno debería disparar /me extra:
+  //
+  //  - inFlightInit: si hay una llamada en vuelo, las concurrentes
+  //    esperan a esa misma promesa.
+  //  - initialized: tras la primera resolución (éxito o fallo), las
+  //    siguientes llamadas devuelven Promise.resolve() de inmediato.
+  //
+  // logout() resetea `initialized` para permitir un nuevo bootstrap en
+  // la siguiente sesión sin recargar la página.
+  let inFlightInit: Promise<void> | null = null
+  let initialized = false
+
+  function initAuth(): Promise<void> {
+    if (inFlightInit) return inFlightInit
+    if (initialized) return Promise.resolve()
+
     isLoading.value = true
     authError.value = null
 
-    try {
-      const response = await $fetch<User>('/api/auth/me', {
-        credentials: 'include'
-      })
-      user.value = response
+    inFlightInit = (async () => {
+      try {
+        const response = await $fetch<User>('/api/auth/me', {
+          credentials: 'include'
+        })
+        user.value = response
 
-      const authCookie = useCookie('tigrefy_auth')
-      authCookie.value = '1'
-    } catch {
-      user.value = null
-      const authCookie = useCookie('tigrefy_auth')
-      authCookie.value = null
-    } finally {
-      isLoading.value = false
-    }
+        const authCookie = useCookie('tigrefy_auth')
+        authCookie.value = '1'
+      } catch {
+        user.value = null
+        const authCookie = useCookie('tigrefy_auth')
+        authCookie.value = null
+      } finally {
+        isLoading.value = false
+        inFlightInit = null
+        initialized = true
+      }
+    })()
+
+    return inFlightInit
   }
 
   async function login(username: string, password: string): Promise<boolean> {
@@ -96,6 +120,10 @@ export const useAuthStore = defineStore('auth', () => {
 
       const authCookie = useCookie('tigrefy_auth')
       authCookie.value = null
+
+      // Permitir que un futuro initAuth vuelva a hacer bootstrap (p. ej.
+      // si el usuario hace login con otra cuenta sin recargar la página).
+      initialized = false
 
       const favoritesStore = useFavoritesStore()
       const userStore = useUserStore()

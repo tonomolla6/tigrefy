@@ -270,7 +270,8 @@
 import HomeContent from '~/components/home/HomeContent.vue'
 
 definePageMeta({
-  layout: false
+  layout: false,
+  middleware: 'landing-or-login'
 })
 
 const { isAuthenticated, isLoading } = useAuth()
